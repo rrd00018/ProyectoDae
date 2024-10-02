@@ -58,10 +58,10 @@ public class Socio {
         this.claveAcceso = claveAcceso;
     }
 
-    public void crear_solicitud(Actividad _actividad, Integer num_acompañantes){
-        Solicitud solicitud_actual = new Solicitud(false,num_acompañantes,_actividad);
+    public void crearSolicitud(Actividad actividad, Integer numAcompañantes){
+        Solicitud solicitud_actual = new Solicitud(false,numAcompañantes,actividad);
         solicitudes.put(solicitud_actual.getIdSolicitud(),solicitud_actual);
-        _actividad.nueva_solicitud(solicitud_actual);
+        actividad.nuevaSolicitud(solicitud_actual);
     }
 
 }

@@ -5,9 +5,9 @@ import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Temporada;
 import org.springframework.stereotype.Service;
 
-import java.io.InvalidObjectException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 public class ServiciosAdmin {
@@ -41,6 +41,23 @@ public class ServiciosAdmin {
         }else throw new Exception("La temporada no existe");
     }
 
+    public Optional<Socio> login(String email, String clave){
+        Socio s = socios.get(email);
+        if(s != null){
+            if(s.getClaveAcceso().equals(clave))
+                return Optional.of(s);
+        }
+        return Optional.empty();
+    }
+
+    public Temporada crearTemporada(Integer anio){
+        Temporada t = new Temporada(anio);
+        temporadas.put(anio,t);
+        return t;
+    }
 
 
+    public void cerrarActividad(Temporada temporada, Integer idActividad){
+
+    }
 }

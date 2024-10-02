@@ -95,7 +95,7 @@ public class Actividad {
         return idSolicitud;
     }
 
-    public void nueva_solicitud(Solicitud solicitud) {
+    public void nuevaSolicitud(Solicitud solicitud) {
         solicitudes.put(solicitud.getIdSolicitud(), solicitud);
     }
 }
