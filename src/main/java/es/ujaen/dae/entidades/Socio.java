@@ -61,7 +61,7 @@ public class Socio {
     }
 
     public void crearSolicitud(Actividad actividad, Integer numAcompaniantes){
-        Solicitud solicitud_actual = new Solicitud(false,numAcompaniantes,actividad);
+        Solicitud solicitud_actual = new Solicitud(this,numAcompaniantes,actividad);
         solicitudes.put(solicitud_actual.getActividad().getId(),solicitud_actual);
         actividad.nuevaSolicitud(solicitud_actual);
     }
