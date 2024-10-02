@@ -1,6 +1,7 @@
 package es.ujaen.dae.entidades;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class Socio {
     private String email;
@@ -50,18 +51,24 @@ public class Socio {
         this.telefono = telefono;
     }
 
-    public String getClaveAcceso() {
-        return claveAcceso;
-    }
+    public String getClaveAcceso() {return claveAcceso;}
 
     public void setClaveAcceso(String claveAcceso) {
         this.claveAcceso = claveAcceso;
     }
 
-    public void crearSolicitud(Actividad actividad, Integer numAcompañantes){
-        Solicitud solicitud_actual = new Solicitud(false,numAcompañantes,actividad);
-        solicitudes.put(solicitud_actual.getIdSolicitud(),solicitud_actual);
+    public void crearSolicitud(Actividad actividad, Integer numAcompaniantes){
+        Solicitud solicitud_actual = new Solicitud(false,numAcompaniantes,actividad);
+        solicitudes.put(solicitud_actual.getActividad().getId(),solicitud_actual);
         actividad.nuevaSolicitud(solicitud_actual);
+    }
+
+    public Boolean existeSolicitud(Integer id_actividad){
+        if(solicitudes.containsKey(id_actividad)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }

@@ -13,8 +13,11 @@ public class Temporada {
         identificadorActividades = 0;
     }
     public void crearActividad(Actividad actividad) {
+        identificadorActividades++;
         actividad.setId(identificadorActividades);
         actividades.put(identificadorActividades,actividad);
-        identificadorActividades++;
     }
+
+    public Integer getAnio() {return anio;}
+    public Integer getIdentificadorActividades() {return identificadorActividades;}
 }

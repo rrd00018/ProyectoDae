@@ -5,8 +5,9 @@ public class Solicitud {
     private Boolean aceptada = false;
     private Integer NumAcompaniantes;
     private Actividad actividad;
+    private Socio socio;
 
-    public Solicitud(boolean estadoAceptada, Integer numAcompaniantes, Actividad actividad) {
+    public Solicitud(Boolean estadoAceptada, Integer numAcompaniantes, Actividad actividad) {
         this.idSolicitud = actividad.generarIdSolicitud();
         this.aceptada = estadoAceptada;
         this.NumAcompaniantes = numAcompaniantes;
@@ -19,6 +20,5 @@ public class Solicitud {
     public void setNuevoEstado(boolean nuevoEstado){aceptada = nuevoEstado;}
     public Boolean getNuevoEstado(){return aceptada;}
     public Actividad getActividad() {return actividad;}
-
-
+    public Socio getSocio() {return socio;}
 }

@@ -1,5 +1,6 @@
 package es.ujaen.dae.entidades;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -13,9 +14,9 @@ public class Actividad {
     private Date fechaInicioInscripcion;
     private Date fechaFinInscripcion;
     private Integer contadorSolicitudes = 0;
-    private HashMap<Integer,Solicitud> solicitudes;
+    private ArrayList<Solicitud> solicitudes;
 
-    public Actividad(String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion) {
+    public Actividad(String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion, Temporada temporada) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -23,6 +24,7 @@ public class Actividad {
         this.fechaCelebracion = fechaCelebracion;
         this.fechaInicioInscripcion = fechaInicioInscripcion;
         this.fechaFinInscripcion = fechaFinInscripcion;
+        this.crearIdActividad(temporada);
     }
 
     public Integer getId() {
@@ -88,14 +90,37 @@ public class Actividad {
     public void setFechaFinInscripcion(Date fechaFinInscripcion) {
         this.fechaFinInscripcion = fechaFinInscripcion;
     }
+
+
+    /**
+     * @brief Genera un ID único para las solicitudes basado en el ID de la actividad y un contador secuencial.
+     *
+     * El ID de la solicitud se genera multiplicando el ID de la actividad por 100, y sumando un contador
+     * de solicitudes que se incrementa con cada nueva solicitud. De esta manera, las solicitudes para
+     * cada actividad tendrán un ID único del tipo "actividadID + número de solicitud".
+     *
+     * @return Un número entero que representa el ID único de la solicitud.
+     */
     public Integer generarIdSolicitud() {
-        // Generar el ID combinando el ID de la actividad y el contador de solicitudes
         Integer idSolicitud = this.id * 100 + this.contadorSolicitudes;
-        contadorSolicitudes++;  // Incrementar el contador para la próxima solicitud
+        contadorSolicitudes++;
         return idSolicitud;
     }
 
-    public void nuevaSolicitud(Solicitud solicitud) {
-        solicitudes.put(solicitud.getIdSolicitud(), solicitud);
+    public void crearIdActividad(Temporada temporada) {
+        id = temporada.getAnio()*1000 + temporada.getIdentificadorActividades();
     }
+
+    /**
+     * @brief Añade una nueva solicitud al conjunto de solicitudes del socio.
+     *
+     * La solicitud se almacena en un mapa utilizando su ID como clave.
+     *
+     * @param solicitud La solicitud a ser añadida.
+     */
+    public void nuevaSolicitud(Solicitud solicitud) {
+        solicitudes.add(solicitud);
+    }
+
+
 }
