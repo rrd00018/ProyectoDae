@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @Service
 public class ServiciosAdmin {
-    private HashMap<String,Socio> socios;
-    private HashMap<Integer, Temporada> temporadas;
+    private HashMap<String,Socio> socios; //Usa el email como clave
+    private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
 
     public ServiciosAdmin(){
         socios = new HashMap<>();
@@ -41,6 +41,12 @@ public class ServiciosAdmin {
         }else throw new Exception("La temporada no existe");
     }
 
+    /**
+     * @brief Devuelve el objeto socio para logearse
+     * @param email email del socio
+     * @param clave clave de acceso del socio
+     * @return Optional.empty si el login es correcto o Optional.of(Socio) si existe
+     */
     public Optional<Socio> login(String email, String clave){
         Socio s = socios.get(email);
         if(s != null){
@@ -59,5 +65,15 @@ public class ServiciosAdmin {
 
     public void cerrarActividad(Temporada temporada, Integer idActividad){
 
+    }
+
+    /**
+     * @brief comprueba si una actividad existe en su temporada
+     * @param idActividad
+     * @return true o false segun la consulta
+     */
+    public Actividad buscarActividad( Integer idActividad){
+        Integer temporada = idActividad / 1000;
+        return temporadas.get(temporada).buscarActividad(idActividad);
     }
 }

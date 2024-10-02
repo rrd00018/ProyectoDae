@@ -1,7 +1,6 @@
 package es.ujaen.dae.entidades;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class Socio {
     private String email;
@@ -9,7 +8,8 @@ public class Socio {
     private String apellidos;
     private Integer telefono;
     private String claveAcceso;
-    private HashMap<Integer,Solicitud> solicitudes;
+    private HashMap<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
+    private Boolean haPagado;
 
     public Socio(String email, String nombre, String apellidos, Integer telefono, String claveAcceso) {
         this.email = email;
@@ -17,6 +17,7 @@ public class Socio {
         this.apellidos = apellidos;
         this.telefono = telefono;
         this.claveAcceso = claveAcceso;
+        this.haPagado = false;
     }
 
     public String getEmail() {
@@ -51,7 +52,9 @@ public class Socio {
         this.telefono = telefono;
     }
 
-    public String getClaveAcceso() {return claveAcceso;}
+    public String getClaveAcceso() {
+        return claveAcceso;
+    }
 
     public void setClaveAcceso(String claveAcceso) {
         this.claveAcceso = claveAcceso;
