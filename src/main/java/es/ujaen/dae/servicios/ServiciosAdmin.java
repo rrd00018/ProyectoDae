@@ -33,9 +33,7 @@ public class ServiciosAdmin {
         if(temporadas.containsValue(temporada)){
             if(fechaCelebracion.before(fechaInicioInscripcion) && fechaCelebracion.before(fechaFinInscripcion)) {
                 if(fechaInicioInscripcion.before(fechaFinInscripcion)){
-                    Actividad actividad = new Actividad(titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion, temporada);
-                    temporada.crearActividad(actividad);
-                    return actividad;
+                    return temporada.crearActividad(titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
                 }else throw new Exception("La fecha de inicio de inscripcion debe ser anterior a la de fin de inscripcion");
             }else throw new Exception("La fecha de inicio de la inscripcion y de fin de la inscripcion deben ser previas a la celebracion de la actividad");
         }else throw new Exception("La temporada no existe");

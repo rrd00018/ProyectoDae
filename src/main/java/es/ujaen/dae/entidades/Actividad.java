@@ -106,15 +106,15 @@ public class Actividad {
         contadorSolicitudes++;
         return idSolicitud;
     }
-
+        //funcion auxiliar del constructor de actividad para generar el id dependiendo de la temporada
     public void crearIdActividad(Temporada temporada) {
-        id = temporada.getAnio()*1000 + temporada.getIdentificadorActividades();
+        id = temporada.getAnio()*1000 + temporada.getIdentificadorActividades(); // segun la temporada que sea, se genera la actividad teniendo en cuenta la id de la temporada y tras esta el contador de actividades, ej, la temporada 2016 y la actividad 3 seria el id 2016003
     }
 
     /**
      * @brief Añade una nueva solicitud al conjunto de solicitudes del socio.
      *
-     * La solicitud se almacena en un mapa utilizando su ID como clave.
+     * La solicitud se almacena en un array.
      *
      * @param solicitud La solicitud a ser añadida.
      */
