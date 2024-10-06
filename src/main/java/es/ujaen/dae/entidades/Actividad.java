@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Actividad {
+    private ArrayList<Solicitud> solicitudes;
     private Integer id;
     private String titulo;
     private String descripcion;
@@ -14,7 +15,6 @@ public class Actividad {
     private Date fechaInicioInscripcion;
     private Date fechaFinInscripcion;
     private Integer contadorSolicitudes = 0;
-    private ArrayList<Solicitud> solicitudes;
 
     public Actividad(String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion, Temporada temporada) {
         this.titulo = titulo;
@@ -102,6 +102,7 @@ public class Actividad {
      * @return Un número entero que representa el ID único de la solicitud.
      */
     public Integer generarIdSolicitud() {
+        // Generar el ID combinando el ID de la actividad y el contador de solicitudes
         Integer idSolicitud = this.id * 100 + this.contadorSolicitudes;
         contadorSolicitudes++;
         return idSolicitud;
@@ -121,6 +122,4 @@ public class Actividad {
     public void nuevaSolicitud(Solicitud solicitud) {
         solicitudes.add(solicitud);
     }
-
-
 }
