@@ -1,11 +1,15 @@
 package es.ujaen.dae.entidades;
 
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashMap;
 
 public class Temporada {
+    @Getter @Setter
     private Integer anio;
-    private HashMap<Integer,Actividad> actividades; //Contiene el id de la actividad como clave
+    private HashMap<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
+    @Getter @Setter
     private Integer numActividades;
 
     public Temporada(Integer anio){
@@ -21,7 +25,4 @@ public class Temporada {
     public Actividad buscarActividad(Integer actividad){
         return actividades.get(actividad);
     }
-
-    public Integer getAnio() {return anio;}
-    public Integer getIdentificadorActividades() {return numActividades;}
 }

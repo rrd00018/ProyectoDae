@@ -1,21 +1,32 @@
 package es.ujaen.dae.entidades;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 public class Actividad {
     private ArrayList<Solicitud> solicitudes;
     private ArrayList<String> plazasAceptadas; //Acepta a los socios que han pagado directamente
     private ArrayList<String> listaEspera; //Almacena los invitados y socios q no han pagado en orden
+    @Getter @Setter
     private Integer id;
+    @Getter @Setter
     private String titulo;
+    @Getter @Setter
     private String descripcion;
+    @Getter @Setter
     private Float precio;
+    @Getter @Setter
     private Integer plazas;
+    @Getter @Setter
     private Date fechaCelebracion;
+    @Getter @Setter
     private Date fechaInicioInscripcion;
+    @Getter @Setter
     private Date fechaFinInscripcion;
+    @Getter @Setter
     private Integer contadorSolicitudes = 0;
 
     public Actividad(String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion, Temporada temporada) {
@@ -30,71 +41,6 @@ public class Actividad {
         this.plazasAceptadas = new ArrayList<>();
         this.listaEspera = new ArrayList<>();
     }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public Float getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Float precio) {
-        this.precio = precio;
-    }
-
-    public Integer getPlazas() {
-        return plazas;
-    }
-
-    public void setPlazas(Integer plazas) {
-        this.plazas = plazas;
-    }
-
-    public Date getFechaCelebracion() {
-        return fechaCelebracion;
-    }
-
-    public void setFechaCelebracion(Date fechaCelebracion) {
-        this.fechaCelebracion = fechaCelebracion;
-    }
-
-    public Date getFechaInicioInscripcion() {
-        return fechaInicioInscripcion;
-    }
-
-    public void setFechaInicioInscripcion(Date fechaInicioInscripcion) {
-        this.fechaInicioInscripcion = fechaInicioInscripcion;
-    }
-
-    public Date getFechaFinInscripcion() {
-        return fechaFinInscripcion;
-    }
-
-    public void setFechaFinInscripcion(Date fechaFinInscripcion) {
-        this.fechaFinInscripcion = fechaFinInscripcion;
-    }
-
 
     /**
      * @brief Genera un ID único para las solicitudes basado en el ID de la actividad y un contador secuencial.
@@ -113,7 +59,7 @@ public class Actividad {
     }
         //funcion auxiliar del constructor de actividad para generar el id dependiendo de la temporada
     public void crearIdActividad(Temporada temporada) {
-        id = temporada.getAnio()*1000 + temporada.getIdentificadorActividades(); // segun la temporada que sea, se genera la actividad teniendo en cuenta la id de la temporada y tras esta el contador de actividades, ej, la temporada 2016 y la actividad 3 seria el id 2016003
+        id = temporada.getAnio()*1000 + temporada.getNumActividades(); // segun la temporada que sea, se genera la actividad teniendo en cuenta la id de la temporada y tras esta el contador de actividades, ej, la temporada 2016 y la actividad 3 seria el id 2016003
     }
 
     /**

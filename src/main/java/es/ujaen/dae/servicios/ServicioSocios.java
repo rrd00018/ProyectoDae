@@ -5,6 +5,7 @@ import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Temporada;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +29,7 @@ public class ServicioSocios {
         return null;
     }
 
-    public Solicitud modificarSolicitud(Socio socio, Integer idActividad, Integer nuevosInvitados) {
+    public Solicitud modificarSolicitud(@NotNull Socio socio, Integer idActividad, Integer nuevosInvitados) {
         // Buscar la solicitud existente para la actividad
         Solicitud solicitud = socio.obtenerSolicitud(idActividad);
         modificarSolicitud(socio, idActividad, nuevosInvitados);
@@ -36,7 +37,7 @@ public class ServicioSocios {
     }
 
 
-    public Solicitud cancelarSolicitud(Socio socio, Integer idActividad) {
+    public Solicitud cancelarSolicitud(@NotNull Socio socio, Integer idActividad) {
         Solicitud solicitud = socio.obtenerSolicitud(idActividad);
         cancelarSolicitud(socio, idActividad);
         return solicitud;
