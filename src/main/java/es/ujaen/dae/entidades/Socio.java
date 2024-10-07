@@ -1,14 +1,23 @@
 package es.ujaen.dae.entidades;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Socio {
+    @Getter @Setter
     private String email;
+    @Getter @Setter
     private String nombre;
+    @Getter @Setter
     private String apellidos;
+    @Getter @Setter
     private Integer telefono;
+    @Getter @Setter
     private String claveAcceso;
     private HashMap<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
+    @Getter @Setter
     private Boolean haPagado;
 
     public Socio(String email, String nombre, String apellidos, Integer telefono, String claveAcceso) {
@@ -20,45 +29,10 @@ public class Socio {
         this.haPagado = false;
     }
 
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public Integer getTelefono() {
-        return telefono;
-    }
-    public void setTelefono(Integer telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getClaveAcceso() {
-        return claveAcceso;
-    }
-    public void setClaveAcceso(String claveAcceso) {
-        this.claveAcceso = claveAcceso;
-    }
-
-    public void crearSolicitud(Actividad actividad, Integer numAcompaniantes){
+    public void crearSolicitud(Actividad actividad, Integer numAcompaniantes) throws Exception {
         Solicitud solicitud_actual = new Solicitud(this,numAcompaniantes,actividad);
         solicitudes.put(solicitud_actual.getActividad().getId(),solicitud_actual);
-        actividad.addSolicitud(solicitud_actual);
+        actividad.nuevaSolicitud(solicitud_actual);
     }
 
     // Verificar si ya existe una solicitud para una actividad específica

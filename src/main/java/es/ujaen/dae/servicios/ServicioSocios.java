@@ -18,12 +18,12 @@ public class ServicioSocios {
 
     public ServicioSocios() {}
 
-    public Solicitud echarSolicitud(Socio socio, Integer temporada, Integer idActividad, Integer invitados){
+    public Solicitud echarSolicitud(Socio socio, Integer temporada, Integer idActividad, Integer invitados) throws Exception {
         Actividad actividad = servicioAdmin.buscarActividad(idActividad);
         if(actividad != null && !socio.existeSolicitud(idActividad)){
-            Solicitud soli=new Solicitud(socio,invitados,actividad);
-            actividad.addSolicitud(soli);
-            return soli;
+            Solicitud solicitud =new Solicitud(socio,invitados,actividad);
+            actividad.nuevaSolicitud(solicitud);
+            return solicitud;
         }
         return null;
     }
