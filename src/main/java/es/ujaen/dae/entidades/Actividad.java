@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Actividad {
     private ArrayList<Solicitud> solicitudes;
@@ -26,7 +27,6 @@ public class Actividad {
     private Date fechaInicioInscripcion;
     @Getter @Setter
     private Date fechaFinInscripcion;
-    @Getter @Setter
     private Integer contadorSolicitudes = 0;
 
     public Actividad(String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion, Temporada temporada) {
@@ -53,8 +53,7 @@ public class Actividad {
      */
     public Integer generarIdSolicitud() {
         // Generar el ID combinando el ID de la actividad y el contador de solicitudes
-        Integer idSolicitud = this.id * 100 + this.contadorSolicitudes;
-        contadorSolicitudes++;
+        Integer idSolicitud = this.id * 100 + solicitudes.size();
         return idSolicitud;
     }
         //funcion auxiliar del constructor de actividad para generar el id dependiendo de la temporada
