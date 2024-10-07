@@ -23,7 +23,6 @@ public class Socio {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -31,7 +30,6 @@ public class Socio {
     public String getNombre() {
         return nombre;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -39,7 +37,6 @@ public class Socio {
     public String getApellidos() {
         return apellidos;
     }
-
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
@@ -47,7 +44,6 @@ public class Socio {
     public Integer getTelefono() {
         return telefono;
     }
-
     public void setTelefono(Integer telefono) {
         this.telefono = telefono;
     }
@@ -55,7 +51,6 @@ public class Socio {
     public String getClaveAcceso() {
         return claveAcceso;
     }
-
     public void setClaveAcceso(String claveAcceso) {
         this.claveAcceso = claveAcceso;
     }
@@ -63,15 +58,44 @@ public class Socio {
     public void crearSolicitud(Actividad actividad, Integer numAcompaniantes){
         Solicitud solicitud_actual = new Solicitud(this,numAcompaniantes,actividad);
         solicitudes.put(solicitud_actual.getActividad().getId(),solicitud_actual);
-        actividad.nuevaSolicitud(solicitud_actual);
+        actividad.addSolicitud(solicitud_actual);
     }
 
-    public Boolean existeSolicitud(Integer id_actividad){
-        if(solicitudes.containsKey(id_actividad)){
-            return true;
-        }else{
-            return false;
+    // Verificar si ya existe una solicitud para una actividad específica
+    public Boolean existeSolicitud(Integer id_actividad) {
+        return solicitudes.containsKey(id_actividad);
+    }
+
+    // Obtener una solicitud específica por el ID de la actividad
+    public Solicitud obtenerSolicitud(Integer idActividad) {
+        return solicitudes.get(idActividad);
+    }
+
+    // Modificar una solicitud existente
+    public Solicitud modificarSolicitud(Integer idActividad, Integer nuevosInvitados) {
+        // Buscar la solicitud existente para la actividad
+        Solicitud solicitud = obtenerSolicitud(idActividad);
+
+        if (solicitud != null) {
+            // Actualizar los datos de la solicitud
+            solicitud.setNumAcompaniantes(nuevosInvitados);
+            return solicitud;  // Retornar la solicitud actualizada
         }
+        return null;  // Retornar null si no existe la solicitud
+    }
+
+    // Cancelar una solicitud existente
+    public Solicitud cancelarSolicitud(Integer idActividad) {
+        // Buscar la solicitud existente para la actividad
+        Solicitud solicitud = obtenerSolicitud(idActividad);
+
+        if (solicitud != null) {
+            // Eliminar la solicitud tanto del socio como de la actividad
+            solicitudes.remove(idActividad);
+            solicitud.getActividad().deleteSolicitud(solicitud);
+            return solicitud;  // Retornar la solicitud cancelada
+        }
+        return null;  // Retornar null si no existe la solicitud
     }
 
 }

@@ -16,11 +16,14 @@ public class Solicitud {
     }
 
     public Integer getIdSolicitud() {return idSolicitud;}
-    public Integer getNumAcompañantes() {return numAcompaniantes;}
-    public void modificarNumAcompañantes(Integer nuevoNumero){
-        numAcompaniantes = nuevoNumero;}
-    public void setNuevoEstado(boolean nuevoEstado){aceptada = nuevoEstado;}
+    public void setIdSolicitud(Integer nuevoIdSolicitud) {idSolicitud=nuevoIdSolicitud;}
+
+    public Integer getNumAcompaniantes() {return numAcompaniantes;}
+    public void setNumAcompaniantes(Integer nuevoNumero){numAcompaniantes = nuevoNumero;}
+
     public Boolean getNuevoEstado(){return aceptada;}
+    public void setNuevoEstado(boolean nuevoEstado){aceptada = nuevoEstado;}
+
     public Actividad getActividad() {return actividad;}
     public Socio getSocio() {return socio;}
 }

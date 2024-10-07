@@ -24,21 +24,17 @@ public class Actividad {
         this.fechaCelebracion = fechaCelebracion;
         this.fechaInicioInscripcion = fechaInicioInscripcion;
         this.fechaFinInscripcion = fechaFinInscripcion;
-        this.crearIdActividad(temporada);
+        id = temporada.getAnio()*1000 + temporada.getIdentificadorActividades();
     }
 
     public Integer getId() {
         return id;
     }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public void setId(Integer id) {this.id = id;}
 
     public String getTitulo() {
         return titulo;
     }
-
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
@@ -46,7 +42,6 @@ public class Actividad {
     public String getDescripcion() {
         return descripcion;
     }
-
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
@@ -54,7 +49,6 @@ public class Actividad {
     public Float getPrecio() {
         return precio;
     }
-
     public void setPrecio(Float precio) {
         this.precio = precio;
     }
@@ -62,7 +56,6 @@ public class Actividad {
     public Integer getPlazas() {
         return plazas;
     }
-
     public void setPlazas(Integer plazas) {
         this.plazas = plazas;
     }
@@ -70,7 +63,6 @@ public class Actividad {
     public Date getFechaCelebracion() {
         return fechaCelebracion;
     }
-
     public void setFechaCelebracion(Date fechaCelebracion) {
         this.fechaCelebracion = fechaCelebracion;
     }
@@ -78,28 +70,18 @@ public class Actividad {
     public Date getFechaInicioInscripcion() {
         return fechaInicioInscripcion;
     }
-
-    public void setFechaInicioInscripcion(Date fechaInicioInscripcion) {
-        this.fechaInicioInscripcion = fechaInicioInscripcion;
-    }
+    public void setFechaInicioInscripcion(Date fechaInicioInscripcion) {this.fechaInicioInscripcion = fechaInicioInscripcion;}
 
     public Date getFechaFinInscripcion() {
         return fechaFinInscripcion;
     }
-
     public void setFechaFinInscripcion(Date fechaFinInscripcion) {
         this.fechaFinInscripcion = fechaFinInscripcion;
     }
 
 
     /**
-     * @brief Genera un ID único para las solicitudes basado en el ID de la actividad y un contador secuencial.
-     *
-     * El ID de la solicitud se genera multiplicando el ID de la actividad por 100, y sumando un contador
-     * de solicitudes que se incrementa con cada nueva solicitud. De esta manera, las solicitudes para
-     * cada actividad tendrán un ID único del tipo "actividadID + número de solicitud".
-     *
-     * @return Un número entero que representa el ID único de la solicitud.
+     * @brief Genera un ID único para la solicitud -> IdActividad*100+numSolicitud
      */
     public Integer generarIdSolicitud() {
         // Generar el ID combinando el ID de la actividad y el contador de solicitudes
@@ -107,19 +89,21 @@ public class Actividad {
         contadorSolicitudes++;
         return idSolicitud;
     }
-        //funcion auxiliar del constructor de actividad para generar el id dependiendo de la temporada
-    public void crearIdActividad(Temporada temporada) {
-        id = temporada.getAnio()*1000 + temporada.getIdentificadorActividades(); // segun la temporada que sea, se genera la actividad teniendo en cuenta la id de la temporada y tras esta el contador de actividades, ej, la temporada 2016 y la actividad 3 seria el id 2016003
-    }
+
 
     /**
-     * @brief Añade una nueva solicitud al conjunto de solicitudes del socio.
-     *
-     * La solicitud se almacena en un array.
-     *
-     * @param solicitud La solicitud a ser añadida.
+     * @brief Añade una nueva solicitud al conjunto de solicitudes de la actividad
      */
-    public void nuevaSolicitud(Solicitud solicitud) {
+    public void addSolicitud(Solicitud solicitud) {
         solicitudes.add(solicitud);
     }
+
+
+    /**
+     * @brief Borra una solicitud del conjunto de solicitudes de la actividad
+     */
+    public void deleteSolicitud(Solicitud solicitud) {
+        solicitudes.remove(solicitud);
+    }
+
 }

@@ -20,12 +20,26 @@ public class ServicioSocios {
 
     public Solicitud echarSolicitud(Socio socio, Integer temporada, Integer idActividad, Integer invitados){
         Actividad actividad = servicioAdmin.buscarActividad(idActividad);
-
         if(actividad != null && !socio.existeSolicitud(idActividad)){
             Solicitud soli=new Solicitud(socio,invitados,actividad);
-            actividad.nuevaSolicitud(soli);
+            actividad.addSolicitud(soli);
             return soli;
         }
         return null;
     }
+
+    public Solicitud modificarSolicitud(Socio socio, Integer idActividad, Integer nuevosInvitados) {
+        // Buscar la solicitud existente para la actividad
+        Solicitud solicitud = socio.obtenerSolicitud(idActividad);
+        modificarSolicitud(socio, idActividad, nuevosInvitados);
+        return solicitud;
+    }
+
+
+    public Solicitud cancelarSolicitud(Socio socio, Integer idActividad) {
+        Solicitud solicitud = socio.obtenerSolicitud(idActividad);
+        cancelarSolicitud(socio, idActividad);
+        return solicitud;
+    }
+
 }
