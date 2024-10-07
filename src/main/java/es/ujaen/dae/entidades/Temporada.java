@@ -6,9 +6,9 @@ import lombok.Setter;
 import java.util.HashMap;
 
 public class Temporada {
+    private HashMap<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
     @Getter @Setter
     private Integer anio;
-    private HashMap<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
     @Getter @Setter
     private Integer numActividades;
 

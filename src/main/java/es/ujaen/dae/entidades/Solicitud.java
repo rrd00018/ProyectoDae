@@ -4,20 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class Solicitud {
-    @Getter
-    @Setter
+    @Getter @Setter
     private Socio socio;
-    @Getter
-    @Setter
+    @Getter @Setter
     private Integer idSolicitud;
-    @Getter
-    @Setter
+    @Getter @Setter
     private Boolean aceptada = false;
-    @Getter
-    @Setter
+    @Getter @Setter
     private Integer numAcompaniantes;
-    @Getter
-    @Setter
+    @Getter @Setter
     private Actividad actividad;
 
     public Solicitud(Socio socio, Integer numAcompaniantes, Actividad actividad) {

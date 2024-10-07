@@ -34,9 +34,30 @@ public class ServiciosAdmin {
             if(fechaCelebracion.before(fechaInicioInscripcion) && fechaCelebracion.before(fechaFinInscripcion)) {
                 if(fechaInicioInscripcion.before(fechaFinInscripcion)){
                     Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion,temporada);
+                    temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
                 }else throw new Exception("La fecha de inicio de inscripcion debe ser anterior a la de fin de inscripcion");
             }else throw new Exception("La fecha de inicio de la inscripcion y de fin de la inscripcion deben ser previas a la celebracion de la actividad");
         }else throw new Exception("La temporada no existe");
+    }
+
+    public Temporada crearTemporada(Integer anio){
+        Temporada t = new Temporada(anio);
+        temporadas.put(anio,t);
+        return t;
+    }
+
+    public void cerrarActividad(Temporada temporada, Integer idActividad){
+
+    }
+
+    /**
+     * @brief comprueba si una actividad existe en su temporada
+     * @param idActividad
+     * @return true o false segun la consulta
+     */
+    public Actividad buscarActividad( Integer idActividad){
+        Integer temporada = idActividad / 1000;
+        return temporadas.get(temporada).buscarActividad(idActividad);
     }
 
     /**
@@ -52,26 +73,5 @@ public class ServiciosAdmin {
                 return Optional.of(s);
         }
         return Optional.empty();
-    }
-
-    public Temporada crearTemporada(Integer anio){
-        Temporada t = new Temporada(anio);
-        temporadas.put(anio,t);
-        return t;
-    }
-
-
-    public void cerrarActividad(Temporada temporada, Integer idActividad){
-
-    }
-
-    /**
-     * @brief comprueba si una actividad existe en su temporada
-     * @param idActividad
-     * @return true o false segun la consulta
-     */
-    public Actividad buscarActividad( Integer idActividad){
-        Integer temporada = idActividad / 1000;
-        return temporadas.get(temporada).buscarActividad(idActividad);
     }
 }

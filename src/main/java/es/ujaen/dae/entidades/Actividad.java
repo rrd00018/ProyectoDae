@@ -11,6 +11,7 @@ public class Actividad {
     private ArrayList<Solicitud> solicitudes;
     private ArrayList<String> plazasAceptadas; //Acepta a los socios que han pagado directamente
     private ArrayList<String> listaEspera; //Almacena los invitados y socios q no han pagado en orden
+    private Integer contadorSolicitudes = 0;
     @Getter @Setter
     private Integer id;
     @Getter @Setter
@@ -27,7 +28,6 @@ public class Actividad {
     private Date fechaInicioInscripcion;
     @Getter @Setter
     private Date fechaFinInscripcion;
-    private Integer contadorSolicitudes = 0;
 
     public Actividad(String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion, Temporada temporada) {
         this.titulo = titulo;
@@ -37,29 +37,24 @@ public class Actividad {
         this.fechaCelebracion = fechaCelebracion;
         this.fechaInicioInscripcion = fechaInicioInscripcion;
         this.fechaFinInscripcion = fechaFinInscripcion;
-        this.crearIdActividad(temporada);
         this.plazasAceptadas = new ArrayList<>();
         this.listaEspera = new ArrayList<>();
+        id = temporada.getAnio()*1000 + temporada.getNumActividades();
     }
 
     /**
-     * @brief Genera un ID único para las solicitudes basado en el ID de la actividad y un contador secuencial.
+     * @brief GENERA UN ID UNICO PARA LA SOLICITUD BASADO EN EL ID DE zzzACTIVIDAD Y EN EL CONTADOR DE SOLICITUDES.
      *
      * El ID de la solicitud se genera multiplicando el ID de la actividad por 100, y sumando un contador
-     * de solicitudes que se incrementa con cada nueva solicitud. De esta manera, las solicitudes para
-     * cada actividad tendrán un ID único del tipo "actividadID + número de solicitud".
+     * de solicitudes que se incrementa con cada nueva solicitud.
      *
      * @return Un número entero que representa el ID único de la solicitud.
      */
     public Integer generarIdSolicitud() {
-        // Generar el ID combinando el ID de la actividad y el contador de solicitudes
         Integer idSolicitud = this.id * 100 + solicitudes.size();
         return idSolicitud;
     }
-        //funcion auxiliar del constructor de actividad para generar el id dependiendo de la temporada
-    public void crearIdActividad(Temporada temporada) {
-        id = temporada.getAnio()*1000 + temporada.getNumActividades(); // segun la temporada que sea, se genera la actividad teniendo en cuenta la id de la temporada y tras esta el contador de actividades, ej, la temporada 2016 y la actividad 3 seria el id 2016003
-    }
+
 
     /**
      * @brief Añade una nueva solicitud al conjunto de solicitudes del socio.
@@ -68,10 +63,11 @@ public class Actividad {
      *
      * @param solicitud La solicitud a ser añadida.
      */
-    public void nuevaSolicitud(Solicitud solicitud) throws Exception {
+    public void addSolicitud(Solicitud solicitud) throws Exception {
         if(plazasAceptadas.size() >= plazas){
             throw new Exception("La actividad esta llena");
         }else{
+            solicitudes.add(solicitud);
             if(solicitud.getSocio().getHaPagado()) {
                 plazasAceptadas.add(solicitud.getSocio().getEmail());
             }else{
