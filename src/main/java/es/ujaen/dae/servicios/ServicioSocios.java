@@ -19,7 +19,7 @@ public class ServicioSocios {
     public ServicioSocios() {}
 
     /**@brief ECHAR SOLICITUD*/
-    public Solicitud echarSolicitud(Socio socio, Integer temporada, Integer idActividad, Integer invitados) throws Exception {
+    public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) throws Exception {
         Actividad actividad = servicioAdmin.buscarActividad(idActividad);
         if(actividad != null && !socio.existeSolicitud(idActividad)){
             Solicitud soli=new Solicitud(socio,invitados,actividad);
@@ -30,12 +30,12 @@ public class ServicioSocios {
     }
 
     /**@brief MODIFICAR SOLICITUD*/
-    public Solicitud modificarSolicitud(Socio socio, Integer idActividad, Integer nuevosInvitados) {
+    public Solicitud modificarSolicitud(Socio socio, int idActividad, int nuevosInvitados) {
         return  socio.modificarSolicitud(idActividad,nuevosInvitados);
     }
 
     /**@brief CANCELAR SOLICITUD*/
-    public Solicitud cancelarSolicitud(Socio socio, Integer idActividad) {
+    public Solicitud cancelarSolicitud(Socio socio, int idActividad) {
         return socio.cancelarSolicitud(idActividad);
     }
 

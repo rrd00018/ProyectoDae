@@ -12,17 +12,16 @@ public class Actividad {
     private ArrayList<Solicitud> solicitudes;
     private ArrayList<String> plazasAceptadas; //Acepta a los socios que han pagado directamente
     private ArrayList<String> listaEspera; //Almacena los invitados y socios q no han pagado en orden
-    private Integer contadorSolicitudes = 0;
     @Getter @Setter
-    private Integer id;
+    private int id;
     @Getter @Setter
     private String titulo;
     @Getter @Setter
     private String descripcion;
     @Getter @Setter
-    private Float precio;
+    private float precio;
     @Getter @Setter
-    private Integer plazas;
+    private int plazas;
     @Getter @Setter
     private LocalDate fechaCelebracion;
     @Getter @Setter
@@ -30,7 +29,7 @@ public class Actividad {
     @Getter @Setter
     private LocalDate fechaFinInscripcion;
 
-    public Actividad(String titulo, String descripcion, Float precio, Integer plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion, Temporada temporada) {
+    public Actividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion, Temporada temporada) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -40,6 +39,7 @@ public class Actividad {
         this.fechaFinInscripcion = fechaFinInscripcion;
         this.plazasAceptadas = new ArrayList<>();
         this.listaEspera = new ArrayList<>();
+        this.solicitudes = new ArrayList<>();
         id = temporada.getAnio()*1000 + temporada.getNumActividades();
     }
 
@@ -51,9 +51,8 @@ public class Actividad {
      *
      * @return Un número entero que representa el ID único de la solicitud.
      */
-    public Integer generarIdSolicitud() {
-        Integer idSolicitud = this.id * 100 + solicitudes.size();
-        return idSolicitud;
+    public int generarIdSolicitud() {
+        return this.id * 100 + solicitudes.size();
     }
 
 
@@ -66,10 +65,13 @@ public class Actividad {
      */
     public void addSolicitud(Solicitud solicitud) throws Exception {
         if(plazasAceptadas.size() >= plazas){
-            throw new Exception("La actividad esta llena");
+            listaEspera.add(solicitud.getSocio().getEmail());
+            for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
+                listaEspera.add(solicitud.getSocio().getEmail());
+            }
         }else{
             solicitudes.add(solicitud);
-            if(solicitud.getSocio().getHaPagado()) {
+            if(solicitud.getSocio().isHaPagado()) {
                 plazasAceptadas.add(solicitud.getSocio().getEmail());
             }else{
                 listaEspera.add(solicitud.getSocio().getEmail());
@@ -95,9 +97,9 @@ public class Actividad {
         solicitudes.remove(solicitud);
     }
 
-    public Integer getNumPlazasAsignadas(){return plazasAceptadas.size();}
+    public int getNumPlazasAsignadas(){return plazasAceptadas.size();}
 
-    public void moverListaEspera(Integer posiciones){
+    public void moverListaEspera(int posiciones){
         for(int i = 0; i < posiciones; i++){
             plazasAceptadas.add(listaEspera.get(i));
         }

@@ -7,18 +7,15 @@ public class Solicitud {
     @Getter @Setter
     private Socio socio;
     @Getter @Setter
-    private Integer idSolicitud;
+    private int idSolicitud;
     @Getter @Setter
-    private Boolean aceptada = false;
-    @Getter @Setter
-    private Integer numAcompaniantes;
+    private int numAcompaniantes;
     @Getter @Setter
     private Actividad actividad;
 
-    public Solicitud(Socio socio, Integer numAcompaniantes, Actividad actividad) {
+    public Solicitud(Socio socio, int numAcompaniantes, Actividad actividad) {
         this.socio = socio;
         this.idSolicitud = actividad.generarIdSolicitud();
-        this.aceptada = false;
         this.numAcompaniantes = numAcompaniantes;
         this.actividad = actividad;
     }

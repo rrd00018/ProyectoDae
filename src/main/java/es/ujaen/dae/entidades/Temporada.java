@@ -8,11 +8,11 @@ import java.util.HashMap;
 public class Temporada {
     private HashMap<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
     @Getter @Setter
-    private Integer anio;
+    private int anio;
     @Getter @Setter
-    private Integer numActividades;
+    private int numActividades;
 
-    public Temporada(Integer anio){
+    public Temporada(int anio){
         this.anio = anio;
         actividades = new HashMap<>();
         numActividades = 0;
@@ -22,7 +22,7 @@ public class Temporada {
         actividades.put(actividad.getId(),actividad);
     }
 
-    public Actividad buscarActividad(Integer actividad){
+    public Actividad buscarActividad(int actividad){
         return actividades.get(actividad);
     }
 }
