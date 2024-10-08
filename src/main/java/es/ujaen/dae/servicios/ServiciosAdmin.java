@@ -21,6 +21,16 @@ public class ServiciosAdmin {
         temporadas = new HashMap<>();
     }
 
+    /**
+     * @brief Crea un socio nuevo con todos sus datos
+     * @param email
+     * @param nombre
+     * @param apellidos
+     * @param telefono
+     * @param claveAcceso
+     * @return
+     * @throws Exception
+     */
     public Socio crearSocio(String email, String nombre, String apellidos, int telefono, String claveAcceso) throws Exception {
         if(socios.containsKey(email))
             throw new Exception("Cliente ya registrado");
@@ -42,10 +52,18 @@ public class ServiciosAdmin {
         }else throw new Exception("La temporada no existe");
     }
 
-    public Temporada crearTemporada(){
-        Temporada t = new Temporada(LocalDate.now().getYear());
-        temporadas.put(LocalDate.now().getYear(),t);
-        return t;
+    /**
+     * @brief Crea una nueva temporada e inicializa el campo pagado de todos los socios a false
+     */
+    public Temporada crearTemporada(int anio){
+        if(LocalDate.now().getYear() < anio) {
+            Temporada t = new Temporada(anio);
+            temporadas.put(anio, t);
+            for (Socio s : socios.values()) {
+                s.setHaPagado(false);
+            }
+            return t;
+        }else return null;
     }
 
     public void cerrarActividad(Temporada temporada, int idActividad) throws Exception {
