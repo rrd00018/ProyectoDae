@@ -31,17 +31,12 @@ public class ServicioSocios {
 
     /**@brief MODIFICAR SOLICITUD*/
     public Solicitud modificarSolicitud(Socio socio, Integer idActividad, Integer nuevosInvitados) {
-        // Buscar la solicitud existente para la actividad
-        Solicitud solicitud = socio.obtenerSolicitud(idActividad);
-        socio.modificarSolicitud(idActividad,nuevosInvitados);
-        return solicitud;
+        return  socio.modificarSolicitud(idActividad,nuevosInvitados);
     }
 
     /**@brief CANCELAR SOLICITUD*/
     public Solicitud cancelarSolicitud(Socio socio, Integer idActividad) {
-        Solicitud solicitud = socio.obtenerSolicitud(idActividad);
-        socio.cancelarSolicitud(idActividad);
-        return solicitud;
+        return socio.cancelarSolicitud(idActividad);
     }
 
 }

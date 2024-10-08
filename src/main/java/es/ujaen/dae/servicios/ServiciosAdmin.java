@@ -5,6 +5,7 @@ import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Temporada;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
@@ -29,10 +30,10 @@ public class ServiciosAdmin {
         }
     }
 
-    public void crearActividad(Temporada temporada, String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion) throws Exception {
+    public void crearActividad(Temporada temporada, String titulo, String descripcion, Float precio, Integer plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) throws Exception {
         if(temporadas.containsValue(temporada)){
-            if(fechaCelebracion.before(fechaInicioInscripcion) && fechaCelebracion.before(fechaFinInscripcion)) {
-                if(fechaInicioInscripcion.before(fechaFinInscripcion)){
+            if(fechaCelebracion.isBefore(fechaInicioInscripcion) && fechaCelebracion.isBefore(fechaFinInscripcion)) {
+                if(fechaInicioInscripcion.isBefore(fechaFinInscripcion)){
                     Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion,temporada);
                     temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
                 }else throw new Exception("La fecha de inicio de inscripcion debe ser anterior a la de fin de inscripcion");
@@ -46,8 +47,14 @@ public class ServiciosAdmin {
         return t;
     }
 
-    public void cerrarActividad(Temporada temporada, Integer idActividad){
-
+    public void cerrarActividad(Temporada temporada, Integer idActividad) throws Exception {
+        Actividad actividad = temporada.buscarActividad(idActividad);
+        if(actividad.getFechaFinInscripcion().isAfter(LocalDate.now())){
+            if(actividad.getPlazas() < actividad.getNumPlazasAsignadas()){
+                Integer plazasDisponibles = actividad.getPlazas() - actividad.getNumPlazasAsignadas();
+                actividad.moverListaEspera(plazasDisponibles);
+            }
+        }else throw new Exception("La fecha de fin de la actividad aun no ha llegado");
     }
 
     /**

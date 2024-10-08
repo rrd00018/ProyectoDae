@@ -3,6 +3,7 @@ package es.ujaen.dae.entidades;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,13 +24,13 @@ public class Actividad {
     @Getter @Setter
     private Integer plazas;
     @Getter @Setter
-    private Date fechaCelebracion;
+    private LocalDate fechaCelebracion;
     @Getter @Setter
-    private Date fechaInicioInscripcion;
+    private LocalDate fechaInicioInscripcion;
     @Getter @Setter
-    private Date fechaFinInscripcion;
+    private LocalDate fechaFinInscripcion;
 
-    public Actividad(String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion, Temporada temporada) {
+    public Actividad(String titulo, String descripcion, Float precio, Integer plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion, Temporada temporada) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -82,9 +83,23 @@ public class Actividad {
 
     /**
      * @brief Borra una solicitud del conjunto de solicitudes de la actividad
+     * Cuando se borra la solicitud, se borran todas las instacias en las listas de espera
      */
     public void deleteSolicitud(Solicitud solicitud) {
+        plazasAceptadas.remove(solicitud.getSocio().getEmail());
+        if(solicitud.getNumAcompaniantes() > 0){
+            for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
+                listaEspera.remove(solicitud.getSocio().getEmail());
+            }
+        }
         solicitudes.remove(solicitud);
     }
 
+    public Integer getNumPlazasAsignadas(){return plazasAceptadas.size();}
+
+    public void moverListaEspera(Integer posiciones){
+        for(int i = 0; i < posiciones; i++){
+            plazasAceptadas.add(listaEspera.get(i));
+        }
+    }
 }
