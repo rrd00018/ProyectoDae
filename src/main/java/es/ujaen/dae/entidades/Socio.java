@@ -2,10 +2,10 @@ package es.ujaen.dae.entidades;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Socio {
-    private HashMap<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
     @Getter @Setter
     private String email;
     @Getter @Setter
@@ -16,6 +16,7 @@ public class Socio {
     private Integer telefono;
     @Getter @Setter
     private String claveAcceso;
+    private HashMap<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
     @Getter @Setter
     private Boolean haPagado;
 
@@ -35,11 +36,12 @@ public class Socio {
      * @param numAcompaniantes
      * @throws Exception
      */
-    public Solicitud crearSolicitud(Actividad actividad, Integer numAcompaniantes) throws Exception {
+    public void crearSolicitud(Actividad actividad, Integer numAcompaniantes) throws Exception {
         Solicitud solicitud_actual = new Solicitud(this,numAcompaniantes,actividad);
-        solicitudes.put(solicitud_actual.getIdSolicitud(),solicitud_actual);
-        return solicitud_actual;
+        solicitudes.put(solicitud_actual.getActividad().getId(),solicitud_actual);
+        actividad.addSolicitud(solicitud_actual);
     }
+
 
     /**
      * @brief MODIFICAR EL NUMERO DE ACOMPAÑANTES DE UNA SOLICITUD DADA SU ID
@@ -47,14 +49,17 @@ public class Socio {
      * @param nuevosInvitados
      * @return
      */
-    public Solicitud modificarSolicitud(Integer idActividad, Integer nuevosInvitados) throws Exception {
-        Solicitud solicitud = buscarSolicitud(idActividad);
+    public Solicitud modificarSolicitud(Integer idActividad, Integer nuevosInvitados) {
+        Solicitud solicitud = obtenerSolicitud(idActividad);
+
         if (solicitud != null) {
+            // Actualizar los datos de la solicitud
             solicitud.setNumAcompaniantes(nuevosInvitados);
-            return solicitud;
+            return solicitud;  // Retornar la solicitud actualizada
         }
-        return null;
+        return null;  // Retornar null si no existe la solicitud
     }
+
 
     /**
      * @brief CANCELAR UNA SOLICITUD DADA SU ID
@@ -62,7 +67,8 @@ public class Socio {
      * @return
      */
     public Solicitud cancelarSolicitud(Integer idActividad) {
-        Solicitud solicitud = buscarSolicitud(idActividad);
+        Solicitud solicitud = obtenerSolicitud(idActividad);
+
         if (solicitud != null) {
             solicitudes.remove(idActividad);
             solicitud.getActividad().deleteSolicitud(solicitud);
@@ -70,6 +76,7 @@ public class Socio {
         }
         return null;
     }
+
 
     /**
      * @brief DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
@@ -80,12 +87,13 @@ public class Socio {
         return solicitudes.containsKey(id_actividad);
     }
 
+
     /**
      * @brief DEVUELVE LA SOLICITUD DADA EL ID DE ACTIVIDAD
      * @param idActividad
      * @return
      */
-    public Solicitud buscarSolicitud(Integer idActividad) {
+    public Solicitud obtenerSolicitud(Integer idActividad) {
         return solicitudes.get(idActividad);
     }
 

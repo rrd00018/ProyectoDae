@@ -8,11 +8,10 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Actividad {
+    private ArrayList<Solicitud> solicitudes;
     private ArrayList<String> plazasAceptadas; //Acepta a los socios que han pagado directamente
     private ArrayList<String> listaEspera; //Almacena los invitados y socios q no han pagado en orden
     private Integer contadorSolicitudes = 0;
-    @Getter @Setter
-    private ArrayList<Solicitud> solicitudes;
     @Getter @Setter
     private Integer id;
     @Getter @Setter
@@ -43,8 +42,6 @@ public class Actividad {
         id = temporada.getAnio()*1000 + temporada.getNumActividades();
     }
 
-//---------
-
     /**
      * @brief GENERA UN ID UNICO PARA LA SOLICITUD BASADO EN EL ID DE zzzACTIVIDAD Y EN EL CONTADOR DE SOLICITUDES.
      *
@@ -57,6 +54,7 @@ public class Actividad {
         Integer idSolicitud = this.id * 100 + solicitudes.size();
         return idSolicitud;
     }
+
 
     /**
      * @brief Añade una nueva solicitud al conjunto de solicitudes del socio.
@@ -81,52 +79,12 @@ public class Actividad {
         }
     }
 
-    /**
-     * @brief MODIFICA LOS ACOMPAÑANTES EN LA LISTA DE ESPERA
-     * @param solicitud La solicitud que se va a modificar
-     * @param nuevosInvitados El nuevo número de acompañantes
-     */
-    public void modificarSolicitud(Solicitud solicitud, Integer nuevosInvitados) throws Exception {
-        int invitadosAnteriores = solicitud.getNumAcompaniantes();
-        solicitud.setNumAcompaniantes(nuevosInvitados);
-        if (nuevosInvitados > invitadosAnteriores) {
-            for (int i = 0; i < (nuevosInvitados - invitadosAnteriores); i++) {
-                listaEspera.add(solicitud.getSocio().getEmail());
-            }
-        } else if (nuevosInvitados < invitadosAnteriores) {
-            for (int i = 0; i < (invitadosAnteriores - nuevosInvitados); i++) {
-                for (int j = listaEspera.size() - 1; j >= 0; j--) {
-                    if (listaEspera.get(j).equals(solicitud.getSocio().getEmail())) {
-                        listaEspera.remove(j);
-                        break;
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * @brief Borra una solicitud del conjunto de solicitudes de la actividad
      */
     public void deleteSolicitud(Solicitud solicitud) {
         solicitudes.remove(solicitud);
-        for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
-            listaEspera.remove(solicitud.getSocio().getEmail());
-        }
-    }
-
-    /**
-     * @brief RESETEA Y BORRA LAS SOLICITUDES DE USUARIOS Y DE ACTIVIDAD
-     * @throws Exception
-     */
-    public void destroy() throws Exception {
-        for (Solicitud solicitud : solicitudes) {
-            Socio socio = solicitud.getSocio();
-            if (socio != null) {
-                socio.cancelarSolicitud(this.getId());
-            }
-        }
-        solicitudes.clear();
     }
 
 }

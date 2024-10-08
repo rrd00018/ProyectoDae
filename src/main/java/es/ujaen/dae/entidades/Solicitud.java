@@ -11,20 +11,15 @@ public class Solicitud {
     @Getter @Setter
     private Boolean aceptada = false;
     @Getter @Setter
-    private Actividad actividad;
-    @Getter
     private Integer numAcompaniantes;
+    @Getter @Setter
+    private Actividad actividad;
 
     public Solicitud(Socio socio, Integer numAcompaniantes, Actividad actividad) {
         this.socio = socio;
+        this.idSolicitud = actividad.generarIdSolicitud();
         this.aceptada = false;
         this.numAcompaniantes = numAcompaniantes;
         this.actividad = actividad;
-        this.idSolicitud = actividad.generarIdSolicitud();
-    }
-
-    public void setNumAcompaniantes(Integer numAcompaniantes) throws Exception {
-        this.numAcompaniantes = numAcompaniantes;
-        actividad.modificarSolicitud(this, numAcompaniantes);
     }
 }

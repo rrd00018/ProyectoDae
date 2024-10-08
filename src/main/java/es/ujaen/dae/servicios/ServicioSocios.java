@@ -18,19 +18,30 @@ public class ServicioSocios {
 
     public ServicioSocios() {}
 
-    /** @brief ECHAR SOLICITUD */
-    public void echarSolicitud(String mailSocio, Integer idActividad, Integer invitados) throws Exception {
-        servicioAdmin.crearSolicitud(mailSocio, idActividad, invitados);
+    /**@brief ECHAR SOLICITUD*/
+    public Solicitud echarSolicitud(Socio socio, Integer temporada, Integer idActividad, Integer invitados) throws Exception {
+        Actividad actividad = servicioAdmin.buscarActividad(idActividad);
+        if(actividad != null && !socio.existeSolicitud(idActividad)){
+            Solicitud soli=new Solicitud(socio,invitados,actividad);
+            actividad.addSolicitud(soli);
+            return soli;
+        }
+        return null;
     }
 
-    /** @brief MODIFICAR SOLICITUD */
-    public void modificarSolicitud(String mailSocio, Integer idActividad, Integer nuevosInvitados) throws Exception {
-        servicioAdmin.modificarSolicitud(mailSocio, idActividad, nuevosInvitados);
+    /**@brief MODIFICAR SOLICITUD*/
+    public Solicitud modificarSolicitud(Socio socio, Integer idActividad, Integer nuevosInvitados) {
+        // Buscar la solicitud existente para la actividad
+        Solicitud solicitud = socio.obtenerSolicitud(idActividad);
+        socio.modificarSolicitud(idActividad,nuevosInvitados);
+        return solicitud;
     }
 
-    /** @brief CANCELAR SOLICITUD */
-    public void cancelarSolicitud(String mailSocio, Integer idActividad) throws Exception {
-        servicioAdmin.cancelarSolicitud(mailSocio, idActividad);
+    /**@brief CANCELAR SOLICITUD*/
+    public Solicitud cancelarSolicitud(Socio socio, Integer idActividad) {
+        Solicitud solicitud = socio.obtenerSolicitud(idActividad);
+        socio.cancelarSolicitud(idActividad);
+        return solicitud;
     }
+
 }
-

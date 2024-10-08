@@ -2,7 +2,6 @@ package es.ujaen.dae.servicios;
 
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Socio;
-import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Temporada;
 import org.springframework.stereotype.Service;
 
@@ -20,18 +19,6 @@ public class ServiciosAdmin {
         temporadas = new HashMap<>();
     }
 
-//---------
-
-    /**
-     * @brief METODO PARA CREAR UN NUEVO SOCIO
-     * @param email
-     * @param nombre
-     * @param apellidos
-     * @param telefono
-     * @param claveAcceso
-     * @return
-     * @throws Exception
-     */
     public Socio crearSocio(String email, String nombre, String apellidos, Integer telefono, String claveAcceso) throws Exception {
         if(socios.containsKey(email))
             throw new Exception("Cliente ya registrado");
@@ -42,142 +29,35 @@ public class ServiciosAdmin {
         }
     }
 
-    /**
-     * @brief METODO PARA BUSCAR UN SOCIO
-     * @param email
-     * @return
-     */
-    public Socio buscarSocio(String email) {
-        return socios.get(email);
-    }
-
-//---------
-
-    /**
-     * @brief METODO QUE CREA UNA ACTIVIDAD A TRAVES DE TEMPORADA
-     * @param temporada
-     * @param titulo
-     * @param descripcion
-     * @param precio
-     * @param plazas
-     * @param fechaCelebracion
-     * @param fechaInicioInscripcion
-     * @param fechaFinInscripcion
-     * @throws Exception
-     */
     public void crearActividad(Temporada temporada, String titulo, String descripcion, Float precio, Integer plazas, Date fechaCelebracion, Date fechaInicioInscripcion, Date fechaFinInscripcion) throws Exception {
         if(temporadas.containsValue(temporada)){
             if(fechaCelebracion.before(fechaInicioInscripcion) && fechaCelebracion.before(fechaFinInscripcion)) {
                 if(fechaInicioInscripcion.before(fechaFinInscripcion)){
-                    temporadas.get(fechaCelebracion.getYear()).crearActividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
+                    Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion,temporada);
+                    temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
                 }else throw new Exception("La fecha de inicio de inscripcion debe ser anterior a la de fin de inscripcion");
             }else throw new Exception("La fecha de inicio de la inscripcion y de fin de la inscripcion deben ser previas a la celebracion de la actividad");
         }else throw new Exception("La temporada no existe");
     }
 
-    /**
-     * @brief METODO QUE DEVUELVE UNA ACTIVIDAD SEGUN SU ID
-     * @param idActividad
-     * @return
-     */
-    public Actividad buscarActividad( Integer idActividad){
-        Integer temporada = idActividad / 1000;
-        return temporadas.get(temporada).buscarActividad(idActividad);
-    }
-
-    public void cerrarActividad( Integer idActividad) throws Exception {
-        Actividad actividad = buscarActividad(idActividad);
-        actividad.destroy();
-        Integer anioTemporada = actividad.getFechaFinInscripcion().getYear();
-        temporadas.get(anioTemporada).cerrarActividad(idActividad);
-    }
-
-//---------
-
-    /**
-     * @brief METODO PARA CREAR SOLICITUD
-     * @param mailSocio
-     * @param idActividad
-     * @param invitados
-     * @return
-     * @throws Exception
-     */
-    public void crearSolicitud(String mailSocio, Integer idActividad, Integer invitados) throws Exception {
-        Socio socio = buscarSocio(mailSocio);
-        Actividad actividad = buscarActividad(idActividad);
-        if (socio == null) {
-            throw new Exception("Socio no encontrado");
-        }
-        if (actividad == null) {
-            throw new Exception("Actividad no encontrada");
-        }
-        if (socio.existeSolicitud(idActividad)) {
-            throw new Exception("El socio ya tiene una solicitud para esta actividad");
-        }
-        Solicitud solicitud = socio.crearSolicitud(actividad, invitados);
-        actividad.addSolicitud(solicitud);
-    }
-
-    /**
-     * @brief METODO PARA MODIFICAR UNA SOLICITUD
-     * @param mailSocio Correo del socio
-     * @param idActividad ID de la actividad
-     * @param nuevosInvitados Número de nuevos invitados
-     * @throws Exception Si el socio o la solicitud no son encontrados
-     */
-    public void modificarSolicitud(String mailSocio, Integer idActividad, Integer nuevosInvitados) throws Exception {
-        Socio socio = buscarSocio(mailSocio);
-        if (socio == null) {
-            throw new Exception("Socio no encontrado");
-        }
-        try {
-            socio.modificarSolicitud(idActividad, nuevosInvitados);
-        } catch (Exception e) {
-            throw new Exception("Error al modificar la solicitud: " + e.getMessage());
-        }
-    }
-
-    /**
-     * @brief METODO PARA CANCELAR UNA SOLICITUD
-     * @param mailSocio
-     * @param idActividad
-     * @return
-     */
-    public void cancelarSolicitud(String mailSocio, Integer idActividad) throws Exception {
-        Socio socio = buscarSocio(mailSocio);
-        if (socio != null) {
-            Solicitud solicitud = socio.buscarSolicitud(idActividad); // Obtenemos la solicitud antes de eliminarla
-            if (solicitud != null) {
-                socio.cancelarSolicitud(idActividad); // Eliminar del socio
-                solicitud.getActividad().deleteSolicitud(solicitud); // Eliminar de la actividad
-            } else {
-                throw new Exception("Solicitud no encontrada para la actividad");
-            }
-        } else {
-            throw new Exception("Socio no encontrado");
-        }
-    }
-
-//---------
-
-    /**
-     * @brief METODO PARA CREAR UNA TEMPORADA
-     * @param anio
-     * @return
-     */
     public Temporada crearTemporada(Integer anio){
         Temporada t = new Temporada(anio);
         temporadas.put(anio,t);
         return t;
     }
 
+    public void cerrarActividad(Temporada temporada, Integer idActividad){
+
+    }
+
     /**
-     * @brief METODO PARA BUSCAR UNA TEMPORADA
-     * @param idTemporada
-     * @return
+     * @brief comprueba si una actividad existe en su temporada
+     * @param idActividad
+     * @return true o false segun la consulta
      */
-    public Temporada buscarTemporada(Integer idTemporada) {
-        return temporadas.get(idTemporada);
+    public Actividad buscarActividad( Integer idActividad){
+        Integer temporada = idActividad / 1000;
+        return temporadas.get(temporada).buscarActividad(idActividad);
     }
 
     /**
