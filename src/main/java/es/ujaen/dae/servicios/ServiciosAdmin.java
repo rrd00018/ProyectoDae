@@ -3,6 +3,10 @@ package es.ujaen.dae.servicios;
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Temporada;
+import es.ujaen.dae.excepciones.ClienteRegistrado;
+import es.ujaen.dae.excepciones.FechaIncorrecta;
+import es.ujaen.dae.excepciones.FechaNoAlcanzada;
+import es.ujaen.dae.excepciones.TemporadaNoExiste;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +35,9 @@ public class ServiciosAdmin {
      * @return
      * @throws Exception
      */
-    public Socio crearSocio(String email, String nombre, String apellidos, int telefono, String claveAcceso) throws Exception {
+    public Socio crearSocio(String email, String nombre, String apellidos, int telefono, String claveAcceso) {
         if(socios.containsKey(email))
-            throw new Exception("Cliente ya registrado");
+            throw new ClienteRegistrado();
         else{
             Socio s = new Socio(email,nombre,apellidos,telefono,claveAcceso);
             socios.put(email,s);
@@ -41,15 +45,15 @@ public class ServiciosAdmin {
         }
     }
 
-    public void crearActividad(Temporada temporada, String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) throws Exception {
+    public void crearActividad(Temporada temporada, String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
         if(temporadas.containsValue(temporada)){
             if(fechaCelebracion.isBefore(fechaInicioInscripcion) && fechaCelebracion.isBefore(fechaFinInscripcion)) {
                 if(fechaInicioInscripcion.isBefore(fechaFinInscripcion)){
                     Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion,temporada);
                     temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
-                }else throw new Exception("La fecha de inicio de inscripcion debe ser anterior a la de fin de inscripcion");
-            }else throw new Exception("La fecha de inicio de la inscripcion y de fin de la inscripcion deben ser previas a la celebracion de la actividad");
-        }else throw new Exception("La temporada no existe");
+                }else throw new FechaNoAlcanzada();
+            }else throw new FechaNoAlcanzada();
+        }else throw new TemporadaNoExiste();
     }
 
     /**
@@ -66,14 +70,14 @@ public class ServiciosAdmin {
         }else return null;
     }
 
-    public void cerrarActividad(Temporada temporada, int idActividad) throws Exception {
+    public void cerrarActividad(Temporada temporada, int idActividad) {
         Actividad actividad = temporada.buscarActividad(idActividad);
         if(actividad.getFechaFinInscripcion().isAfter(LocalDate.now())){
             if(actividad.getPlazas() < actividad.getNumPlazasAsignadas()){
                 int plazasDisponibles = actividad.getPlazas() - actividad.getNumPlazasAsignadas();
                 actividad.moverListaEspera(plazasDisponibles);
             }
-        }else throw new Exception("La fecha de fin de la actividad aun no ha llegado");
+        }else throw new FechaNoAlcanzada();
     }
 
     /**

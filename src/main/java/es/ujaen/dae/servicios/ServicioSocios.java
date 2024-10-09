@@ -19,7 +19,7 @@ public class ServicioSocios {
     public ServicioSocios() {}
 
     /**@brief ECHAR SOLICITUD*/
-    public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) throws Exception {
+    public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) {
         Actividad actividad = servicioAdmin.buscarActividad(idActividad);
         if(actividad != null && !socio.existeSolicitud(idActividad)){
             Solicitud soli=new Solicitud(socio,invitados,actividad);

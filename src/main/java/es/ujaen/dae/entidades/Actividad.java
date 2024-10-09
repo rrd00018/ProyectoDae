@@ -63,7 +63,7 @@ public class Actividad {
      *
      * @param solicitud La solicitud a ser añadida.
      */
-    public void addSolicitud(Solicitud solicitud) throws Exception {
+    public void addSolicitud(Solicitud solicitud) {
         if(plazasAceptadas.size() >= plazas){
             listaEspera.add(solicitud.getSocio().getEmail());
             for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
