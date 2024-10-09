@@ -3,7 +3,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.HashMap;
 
