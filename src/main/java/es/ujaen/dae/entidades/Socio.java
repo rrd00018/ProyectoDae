@@ -1,18 +1,21 @@
 package es.ujaen.dae.entidades;
 import lombok.Getter;
 import lombok.Setter;
-
+import org.hibernate.validator.constraints.Email;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@Validated
 public class Socio {
-    @Getter @Setter
+    @Getter @Setter @Email
     private String email;
     @Getter @Setter
     private String nombre;
     @Getter @Setter
     private String apellidos;
-    @Getter @Setter
+    @Getter @Setter @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$")
     private int telefono;
     @Getter @Setter
     private String claveAcceso;

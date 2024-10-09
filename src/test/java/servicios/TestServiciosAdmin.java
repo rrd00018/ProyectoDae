@@ -16,7 +16,8 @@ public class TestServiciosAdmin {
 
     @Test
     @DirtiesContext
-    void testNuevoSocio(){
-        var socio
+    public void testNuevoSocio(){
+        var socio = serviciosAdmin.crearSocio("asdf","Juan","Torres",45,"1234");
+
     }
 }
