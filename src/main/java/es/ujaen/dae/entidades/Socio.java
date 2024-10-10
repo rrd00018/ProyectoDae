@@ -30,19 +30,19 @@ public class Socio {
         this.apellidos = apellidos;
         this.telefono = telefono;
         this.claveAcceso = claveAcceso;
+        solicitudes = new HashMap<Integer,Solicitud>();
         this.haPagado = false;
     }
 
     /**
      * @brief CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
+     * @param soli
      * @param actividad
-     * @param numAcompaniantes
      * @throws Exception
      */
-    public void crearSolicitud(Actividad actividad, int numAcompaniantes) throws Exception {
-        Solicitud solicitud_actual = new Solicitud(this,numAcompaniantes,actividad);
-        solicitudes.put(solicitud_actual.getActividad().getId(),solicitud_actual);
-        actividad.addSolicitud(solicitud_actual);
+    public void crearSolicitud(Solicitud soli, Actividad actividad) {
+        solicitudes.put(soli.getIdSolicitud()/100,soli);
+        actividad.addSolicitud(soli);
     }
 
 

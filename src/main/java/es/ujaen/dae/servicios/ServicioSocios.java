@@ -24,6 +24,7 @@ public class ServicioSocios {
         if(actividad != null && !socio.existeSolicitud(idActividad)){
             Solicitud soli=new Solicitud(socio,invitados,actividad);
             actividad.addSolicitud(soli);
+            socio.crearSolicitud(soli,actividad);
             return soli;
         }
         return null;
