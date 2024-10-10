@@ -47,7 +47,7 @@ public class ServiciosAdmin {
 
     public void crearActividad(Temporada temporada, String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
         if(temporadas.containsValue(temporada)){
-            if(fechaCelebracion.isBefore(fechaInicioInscripcion) && fechaCelebracion.isBefore(fechaFinInscripcion)) {
+            if(!fechaCelebracion.isBefore(fechaInicioInscripcion) && !fechaCelebracion.isBefore(fechaFinInscripcion)) {
                 if(fechaInicioInscripcion.isBefore(fechaFinInscripcion)){
                     Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion,temporada);
                     temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
@@ -87,6 +87,7 @@ public class ServiciosAdmin {
      */
     public Actividad buscarActividad(int idActividad){
         int temporada = idActividad / 1000;
+
         return temporadas.get(temporada).buscarActividad(idActividad);
     }
 
