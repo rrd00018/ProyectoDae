@@ -16,9 +16,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = ServiciosAdmin.class)
 public class TestServiciosAdmin {
-
     @Autowired
-    private ServiciosAdmin serviciosAdmin;
+    ServiciosAdmin serviciosAdmin;
 
     @Test
     @DirtiesContext

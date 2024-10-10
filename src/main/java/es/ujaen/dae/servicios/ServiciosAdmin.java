@@ -45,12 +45,13 @@ public class ServiciosAdmin {
         }
     }
 
-    public void crearActividad(Temporada temporada, String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
+    public Actividad crearActividad(Temporada temporada, String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
         if(temporadas.containsValue(temporada)){
-            if(!fechaCelebracion.isBefore(fechaInicioInscripcion) && !fechaCelebracion.isBefore(fechaFinInscripcion)) {
+            if(fechaCelebracion.isAfter(fechaInicioInscripcion) && fechaCelebracion.isAfter(fechaFinInscripcion)) {
                 if(fechaInicioInscripcion.isBefore(fechaFinInscripcion)){
                     Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion,temporada);
                     temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
+                    return actividad;
                 }else throw new FechaNoAlcanzada();
             }else throw new FechaNoAlcanzada();
         }else throw new TemporadaNoExiste();
@@ -60,13 +61,13 @@ public class ServiciosAdmin {
      * @brief Crea una nueva temporada e inicializa el campo pagado de todos los socios a false
      */
     public Temporada crearTemporada(int anio){
-        if(LocalDate.now().getYear() < anio) {
+        if(LocalDate.now().getYear() <= anio) {
             Temporada t = new Temporada(anio);
             temporadas.put(anio, t);
             for (Socio s : socios.values()) {
                 s.setHaPagado(false);
             }
-            return t;
+            return temporadas.get(anio);
         }else return null;
     }
 
@@ -87,7 +88,6 @@ public class ServiciosAdmin {
      */
     public Actividad buscarActividad(int idActividad){
         int temporada = idActividad / 1000;
-
         return temporadas.get(temporada).buscarActividad(idActividad);
     }
 

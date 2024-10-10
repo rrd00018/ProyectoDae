@@ -58,11 +58,11 @@ public class TestServicioSocios {
         LocalDate fechaFinInscripcion = LocalDate.of(2024, 6, 1);
 
         Temporada temporada = servicioAdmin.crearTemporada(2024);
-        servicioAdmin.crearActividad(temporada, "Curso de Fotografía", "Aprende a manejar tu cámara", 100.0f, 10,
+        Actividad actividad = servicioAdmin.crearActividad(temporada, "Curso de Fotografía", "Aprende a manejar tu cámara", 100.0f, 10,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
-        servicioSocios.echarSolicitud(socio, 2, 1);
-        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socio, 2, 2);
+        servicioSocios.echarSolicitud(socio, actividad.getId(), 1);
+        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socio, actividad.getId(), 2);
 
         assertNotNull(solicitudModificada);
         assertEquals(2, solicitudModificada.getNumAcompaniantes());
