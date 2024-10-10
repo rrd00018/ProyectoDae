@@ -3,12 +3,11 @@ package es.ujaen.dae.servicios;
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Temporada;
-import es.ujaen.dae.excepciones.ClienteRegistrado;
-import es.ujaen.dae.excepciones.FechaIncorrecta;
-import es.ujaen.dae.excepciones.FechaNoAlcanzada;
-import es.ujaen.dae.excepciones.TemporadaNoExiste;
+import es.ujaen.dae.excepciones.*;
+import jakarta.validation.constraints.Email;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -16,6 +15,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 @Service
+@Validated
 public class ServiciosAdmin {
     private HashMap<String,Socio> socios; //Usa el email como clave
     private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
@@ -35,7 +35,7 @@ public class ServiciosAdmin {
      * @return
      * @throws Exception
      */
-    public Socio crearSocio(String email, String nombre, String apellidos, int telefono, String claveAcceso) {
+    public Socio crearSocio(@Email String email, String nombre, String apellidos, int telefono, String claveAcceso) {
         if(socios.containsKey(email))
             throw new ClienteRegistrado();
         else{
@@ -62,12 +62,16 @@ public class ServiciosAdmin {
      */
     public Temporada crearTemporada(int anio){
         if(LocalDate.now().getYear() <= anio) {
-            Temporada t = new Temporada(anio);
-            temporadas.put(anio, t);
-            for (Socio s : socios.values()) {
-                s.setHaPagado(false);
+            if(temporadas.containsKey(anio)){
+                throw new TemporadaYaCreada();
+            }else {
+                Temporada t = new Temporada(anio);
+                temporadas.put(anio, t);
+                for (Socio s : socios.values()) {
+                    s.setHaPagado(false);
+                }
+                return t;
             }
-            return temporadas.get(anio);
         }else return null;
     }
 

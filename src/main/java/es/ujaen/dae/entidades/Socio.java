@@ -1,9 +1,9 @@
 package es.ujaen.dae.entidades;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Email;
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.validation.annotation.Validated;
 import java.util.ArrayList;
 import java.util.HashMap;
 

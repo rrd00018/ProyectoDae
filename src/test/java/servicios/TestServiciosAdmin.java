@@ -1,9 +1,12 @@
 package servicios;
 
 import es.ujaen.dae.entidades.Temporada;
+import es.ujaen.dae.excepciones.ClienteRegistrado;
+import es.ujaen.dae.excepciones.TemporadaYaCreada;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import es.ujaen.dae.excepciones.FechaNoAlcanzada;
 import es.ujaen.dae.excepciones.TemporadaNoExiste;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +21,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class TestServiciosAdmin {
     @Autowired
     ServiciosAdmin serviciosAdmin;
+
+    @Test
+    @DirtiesContext
+    public void testNuevoSocio(){
+        var socio = serviciosAdmin.crearSocio("juan@gmail.com", "Juan","Torres",684190546,"1234");
+        assertThat(socio).isNotNull();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNuevoSocioDuplicado(){
+        var socio = serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres",684190546,"1234");
+        assertThatThrownBy(() -> serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres",684190546,"1234")).isInstanceOf(ClienteRegistrado.class);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNuevoSocioSinEmail(){
+        assertThatThrownBy(() -> serviciosAdmin.crearSocio("","","",1,"")).isInstanceOf(ConstraintViolationException.class);
+    }
 
     @Test
     @DirtiesContext
@@ -51,6 +74,7 @@ public class TestServiciosAdmin {
         // Crear una temporada primero para asociar la actividad
         int anioTemporada = LocalDate.now().getYear() + 1;
         Temporada temporada = serviciosAdmin.crearTemporada(anioTemporada);
+
 
         // Datos de la actividad con fechas incorrectas
         String titulo = "Clase";
@@ -86,4 +110,26 @@ public class TestServiciosAdmin {
                 serviciosAdmin.crearActividad(temporadaInexistente, titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion)
         ).isInstanceOf(TemporadaNoExiste.class);
     }
+
+    @Test
+    @DirtiesContext
+    public void testCrearTemporadaExistente(){
+        var temporada = serviciosAdmin.crearTemporada(2024);
+        assertThatThrownBy(() -> serviciosAdmin.crearTemporada(2024)).isInstanceOf(TemporadaYaCreada.class);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCrearTemporadaPasada(){
+        var temporada = serviciosAdmin.crearTemporada(2000);
+        assertThat(temporada).isNull();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCrearTemporada () {
+        var temporada = serviciosAdmin.crearTemporada(2025);
+        assertThat(temporada).isNotNull();
+    }
+
 }

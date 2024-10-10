@@ -9,6 +9,7 @@ import es.ujaen.dae.servicios.ServiciosAdmin;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 
@@ -42,6 +43,7 @@ public class TestServicioSocios {
     }
 
     @Test
+    @DirtiesContext
     public void testEcharSolicitud_ActividadNoExistente() {
         Socio socio = new Socio("pedro@example.com", "Pedro", "Lopez", 987654321, "clavePedro456");
 
@@ -51,6 +53,7 @@ public class TestServicioSocios {
     }
 
     @Test
+    @DirtiesContext
     public void testModificarSolicitud() {
         Socio socio = new Socio("ana@example.com", "Ana", "Martinez", 555555555, "claveAna789");
         LocalDate fechaCelebracion = LocalDate.of(2024, 6, 10);
