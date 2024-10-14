@@ -51,32 +51,21 @@ public class ServiciosAdmin {
 
     public Actividad crearActividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
         if(temporadas.containsKey(LocalDate.now().getYear())){
-            if(fechaCelebracion.isAfter(fechaInicioInscripcion) && fechaCelebracion.isAfter(fechaFinInscripcion)) {
-                if(fechaInicioInscripcion.isBefore(fechaFinInscripcion)){
-                    Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
-                    temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
-                    return actividad;
-                }else throw new FechaNoAlcanzada();
-            }else throw new FechaNoAlcanzada();
+            Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
+            temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
+            return actividad;
         }else throw new TemporadaNoExiste();
     }
 
     /**
      * @brief Crea una nueva temporada e inicializa el campo pagado de todos los socios a false
      */
-    public Temporada crearTemporada(int anio){
-        if(LocalDate.now().getYear() <= anio) {
-            if(temporadas.containsKey(anio)){
-                throw new TemporadaYaCreada();
-            }else {
-                Temporada t = new Temporada(anio);
-                temporadas.put(anio, t);
-                for (Socio s : socios.values()) {
-                    s.setHaPagado(false);
-                }
-                return t;
-            }
-        }else return null;
+    public Temporada crearTemporada(){
+        if(!temporadas.containsKey(LocalDate.now().getYear())){
+            Temporada t = new Temporada(LocalDate.now().getYear());
+            temporadas.put(LocalDate.now().getYear(),t);
+            return temporadas.get(LocalDate.now().getYear());
+        }else throw new TemporadaYaCreada();
     }
 
     public void cerrarActividad(int idActividad) {

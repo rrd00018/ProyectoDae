@@ -49,7 +49,7 @@ public class TestServiciosAdmin {
     @DirtiesContext
     public void testCrearActividad() {
         int anioTemporada = LocalDate.now().getYear() + 1;
-        Temporada temporada = serviciosAdmin.crearTemporada(anioTemporada);
+        Temporada temporada = serviciosAdmin.crearTemporada();
 
 
         String titulo = "Yoga";
@@ -61,7 +61,7 @@ public class TestServiciosAdmin {
         LocalDate fechaFinInscripcion = LocalDate.of(anioTemporada, 9, 30);
 
         // Test: Crear la actividad y verificar que se haya registrado sin errores
-        serviciosAdmin.crearActividad(temporada, titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
+        serviciosAdmin.crearActividad(titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         // Verificación: Buscar la actividad en la temporada
         var actividad = serviciosAdmin.buscarActividad(fechaCelebracion.getYear() * 1000 );
@@ -76,7 +76,7 @@ public class TestServiciosAdmin {
     public void testCrearActividadConFechasIncorrectas() {
         // Crear una temporada primero para asociar la actividad
         int anioTemporada = LocalDate.now().getYear();
-        Temporada temporada = serviciosAdmin.crearTemporada(anioTemporada);
+        Temporada temporada = serviciosAdmin.crearTemporada();
 
 
         // Datos de la actividad con fechas incorrectas
@@ -90,7 +90,7 @@ public class TestServiciosAdmin {
 
         // Verificación: Debe lanzar una excepción de FechaNoAlcanzada
         assertThatThrownBy(() ->
-                serviciosAdmin.crearActividad(temporada, titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion)
+                serviciosAdmin.crearActividad(titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion)
         ).isInstanceOf(FechaNoAlcanzada.class);
     }
 
@@ -110,28 +110,22 @@ public class TestServiciosAdmin {
 
         // Verificación: Debe lanzar una excepción de TemporadaNoExiste
         assertThatThrownBy(() ->
-                serviciosAdmin.crearActividad(temporadaInexistente, titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion)
+                serviciosAdmin.crearActividad(titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion)
         ).isInstanceOf(TemporadaNoExiste.class);
     }
 
     @Test
     @DirtiesContext
     public void testCrearTemporadaExistente(){
-        var temporada = serviciosAdmin.crearTemporada(2024);
-        assertThatThrownBy(() -> serviciosAdmin.crearTemporada(2024)).isInstanceOf(TemporadaYaCreada.class);
+        var temporada = serviciosAdmin.crearTemporada();
+        assertThatThrownBy(() -> serviciosAdmin.crearTemporada()).isInstanceOf(TemporadaYaCreada.class);
     }
 
-    @Test
-    @DirtiesContext
-    public void testCrearTemporadaPasada(){
-        var temporada = serviciosAdmin.crearTemporada(2000);
-        assertThat(temporada).isNull();
-    }
 
     @Test
     @DirtiesContext
     public void testCrearTemporada () {
-        var temporada = serviciosAdmin.crearTemporada(2025);
+        var temporada = serviciosAdmin.crearTemporada();
         assertThat(temporada).isNotNull();
     }
 

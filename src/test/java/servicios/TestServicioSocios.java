@@ -32,8 +32,8 @@ public class TestServicioSocios {
         LocalDate fechaInicioInscripcion = LocalDate.of(2024, 3, 1);
         LocalDate fechaFinInscripcion = LocalDate.of(2024, 5, 10);
 
-        Temporada temporada = servicioAdmin.crearTemporada(2024);
-        servicioAdmin.crearActividad(temporada, "Yoga en el Parque", "Clases de yoga al aire libre", 30.0f, 15,
+        Temporada temporada = servicioAdmin.crearTemporada();
+        servicioAdmin.crearActividad( "Yoga en el Parque", "Clases de yoga al aire libre", 30.0f, 15,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
 
@@ -64,8 +64,8 @@ public class TestServicioSocios {
         LocalDate fechaInicioInscripcion = LocalDate.of(2024, 4, 5);
         LocalDate fechaFinInscripcion = LocalDate.of(2024, 6, 1);
 
-        Temporada temporada = servicioAdmin.crearTemporada(2024);
-        Actividad actividad = servicioAdmin.crearActividad(temporada, "Curso de Fotografía", "Aprende a manejar tu cámara", 100.0f, 10,
+        Temporada temporada = servicioAdmin.crearTemporada();
+        Actividad actividad = servicioAdmin.crearActividad( "Curso de Fotografía", "Aprende a manejar tu cámara", 100.0f, 10,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         servicioSocios.echarSolicitud(socio, actividad.getId(), 1);
@@ -82,8 +82,8 @@ public class TestServicioSocios {
         LocalDate fechaInicioInscripcion = LocalDate.of(2024, 5, 15);
         LocalDate fechaFinInscripcion = LocalDate.of(2024, 7, 20);
 
-        Temporada temporada = servicioAdmin.crearTemporada(2024);
-        servicioAdmin.crearActividad(temporada, "Taller de Cocina", "Aprende recetas tradicionales", 75.0f, 12,
+        Temporada temporada = servicioAdmin.crearTemporada();
+        servicioAdmin.crearActividad( "Taller de Cocina", "Aprende recetas tradicionales", 75.0f, 12,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         servicioSocios.echarSolicitud(socio, 3, 1);

@@ -1,5 +1,6 @@
 package es.ujaen.dae.entidades;
 
+import es.ujaen.dae.excepciones.FechaIncorrecta;
 import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,17 +34,21 @@ public class Actividad {
     private LocalDate fechaFinInscripcion;
 
     public Actividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.precio = precio;
-        this.plazas = plazas;
-        this.fechaCelebracion = fechaCelebracion;
-        this.fechaInicioInscripcion = fechaInicioInscripcion;
-        this.fechaFinInscripcion = fechaFinInscripcion;
-        this.plazasAceptadas = new ArrayList<>();
-        this.listaEspera = new ArrayList<>();
-        this.solicitudes = new ArrayList<>();
-        id = generadorId++;
+        if(fechaInicioInscripcion.isAfter(fechaFinInscripcion) || fechaInicioInscripcion.isAfter(fechaCelebracion) || fechaFinInscripcion.isAfter(fechaCelebracion)){
+            throw new FechaIncorrecta();
+        }else {
+            this.titulo = titulo;
+            this.descripcion = descripcion;
+            this.precio = precio;
+            this.plazas = plazas;
+            this.fechaCelebracion = fechaCelebracion;
+            this.fechaInicioInscripcion = fechaInicioInscripcion;
+            this.fechaFinInscripcion = fechaFinInscripcion;
+            this.plazasAceptadas = new ArrayList<>();
+            this.listaEspera = new ArrayList<>();
+            this.solicitudes = new ArrayList<>();
+            id = generadorId++;
+        }
     }
 
     /**
