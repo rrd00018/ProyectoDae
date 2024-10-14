@@ -78,6 +78,13 @@ public class ServiciosAdmin {
         }else throw new FechaNoAlcanzada();
     }
 
+    public void cerrarActividadCorregido(int idActividad){
+        Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
+        if(a.getFechaFinInscripcion().isBefore(LocalDate.now())) {
+            a.moverListaEspera2();
+        }
+    }
+
     /**
      * @brief comprueba si una actividad existe en su temporada
      * @param idActividad

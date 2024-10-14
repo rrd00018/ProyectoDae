@@ -90,6 +90,10 @@ public class Actividad {
         }
     }
 
+    public void addSolicitudCorregida(Solicitud solicitud) {
+        solicitudes.add(solicitud);
+    }
+
     /**
      * @brief Borra una solicitud del conjunto de solicitudes de la actividad
      * Cuando se borra la solicitud, se borran todas las instacias en las listas de espera
@@ -117,6 +121,49 @@ public class Actividad {
             for (int i = 0; i < posiciones; i++) {
                 plazasAceptadas.add(listaEspera.get(0));
                 listaEspera.remove(0);
+            }
+        }
+    }
+
+    public void moverListaEspera2(){
+        int plazasAsignadas = 0;
+        for(Solicitud solicitud : solicitudes){ //recorre asignandole la plaza a los socios que han pagado
+            if(plazasAsignadas == plazas) break;
+            if(solicitud.getSocio().isHaPagado()){
+                plazasAsignadas++;
+                solicitud.aceptarSolicitud();
+            }
+        }
+        if(plazasAsignadas < plazas) {
+            for (Solicitud solicitud : solicitudes) { //vuelve a recorrer ahora asignando  plaza a los que quedan dando prioridad a los acompañantes que a los socios que no han pagado porque los acompañantes tienen "pagada su parte po el socio invitador"
+                if(plazasAsignadas == plazas) break;
+                if (solicitud.isAceptada() && solicitud.getNumAcompaniantes() != solicitud.getAcompaniantesAceptados()) {
+                    if (plazasAsignadas + solicitud.getNumAcompaniantes() <= plazas) {
+                        solicitud.setAcompaniantesAceptados(solicitud.getNumAcompaniantes());
+                        plazasAsignadas += solicitud.getNumAcompaniantes();
+                    } else {
+                        int aceptados = solicitud.getNumAcompaniantes() - (plazasAsignadas + solicitud.getNumAcompaniantes() - plazas);
+                        solicitud.setAcompaniantesAceptados(aceptados);
+                        plazasAsignadas += aceptados;
+                    }
+                }
+            }
+            if(plazasAsignadas < plazas){ //en caso de que ni con los invitados de los socios que han pagado se llene se pasaria a los socios que no han pagado y a sus acompañantes tratandolos a todos por igual
+                for(Solicitud solicitud : solicitudes){
+                    if(plazasAsignadas == plazas) break;
+                    if(!solicitud.isAceptada()){
+                        if (plazasAsignadas + solicitud.getNumAcompaniantes() <= plazas) { //si se pueden asignar directamente se asignan todas las plazas que haya y se acepta la solicitud
+                            solicitud.setAcompaniantesAceptados(solicitud.getNumAcompaniantes());
+                            plazasAsignadas += solicitud.getNumAcompaniantes();
+                            solicitud.aceptarSolicitud();
+                        } else { //si solo se pudiesen aceptar unos pocos se acpetan esos y se acepta la solicitud y se le pasa el numero de aceptados
+                            int aceptados = solicitud.getNumAcompaniantes() - (plazasAsignadas + solicitud.getNumAcompaniantes() - plazas);
+                            solicitud.setAcompaniantesAceptados(aceptados);
+                            plazasAsignadas += aceptados;
+                            solicitud.aceptarSolicitud();
+                        }
+                    }
+                }
             }
         }
     }
