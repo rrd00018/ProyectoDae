@@ -101,4 +101,10 @@ public class Socio {
         return solicitudes.get(idActividad);
     }
 
+    /**
+     * @brief DEVUELVE LAS SOLICITUDES DE ESTE SOCIO EN ARRAYLIST
+     * @return
+     */
+    public ArrayList<Solicitud> obtenerSolicitudes() {return new ArrayList<Solicitud>(solicitudes.values());}
+
 }

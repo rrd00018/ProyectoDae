@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
@@ -39,5 +40,8 @@ public class ServicioSocios {
     public Solicitud cancelarSolicitud(Socio socio, int idActividad) {
         return socio.cancelarSolicitud(idActividad);
     }
+
+    /**@brief OBTIENE EL LISTADO DE SUS SOLICITUDES*/
+    public ArrayList<Solicitud> obtenerSolicitudes(Socio socio) {return socio.obtenerSolicitudes();}
 
 }

@@ -31,11 +31,9 @@ public class TestServicioSocios {
         LocalDate fechaCelebracion = LocalDate.of(2024, 5, 20);
         LocalDate fechaInicioInscripcion = LocalDate.of(2024, 3, 1);
         LocalDate fechaFinInscripcion = LocalDate.of(2024, 5, 10);
-
-        Temporada temporada = servicioAdmin.crearTemporada();
+        servicioAdmin.crearTemporada();
         servicioAdmin.crearActividad( "Yoga en el Parque", "Clases de yoga al aire libre", 30.0f, 15,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
-
 
         ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
 
@@ -63,13 +61,17 @@ public class TestServicioSocios {
         LocalDate fechaCelebracion = LocalDate.of(2024, 6, 10);
         LocalDate fechaInicioInscripcion = LocalDate.of(2024, 4, 5);
         LocalDate fechaFinInscripcion = LocalDate.of(2024, 6, 1);
-
-        Temporada temporada = servicioAdmin.crearTemporada();
-        Actividad actividad = servicioAdmin.crearActividad( "Curso de Fotografía", "Aprende a manejar tu cámara", 100.0f, 10,
+        servicioAdmin.crearTemporada();
+        servicioAdmin.crearActividad( "Curso de Fotografía", "Aprende a manejar tu cámara", 100.0f, 10,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
-
-        servicioSocios.echarSolicitud(socio, actividad.getId(), 1);
-        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socio, actividad.getId(), 2);
+        //mira las abiertas
+        ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
+        //echa solicitud
+        servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 1);
+        //listar solicitudes
+        ArrayList<Solicitud> solicitudesSocio = socio.obtenerSolicitudes();
+        //modificar solicitudes
+        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socio, solicitudesSocio.get(0).getIdActividad(), 2);
 
         assertNotNull(solicitudModificada);
         assertEquals(2, solicitudModificada.getNumAcompaniantes());
@@ -81,13 +83,17 @@ public class TestServicioSocios {
         LocalDate fechaCelebracion = LocalDate.of(2024, 7, 25);
         LocalDate fechaInicioInscripcion = LocalDate.of(2024, 5, 15);
         LocalDate fechaFinInscripcion = LocalDate.of(2024, 7, 20);
-
-        Temporada temporada = servicioAdmin.crearTemporada();
+        servicioAdmin.crearTemporada();
         servicioAdmin.crearActividad( "Taller de Cocina", "Aprende recetas tradicionales", 75.0f, 12,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
-
-        servicioSocios.echarSolicitud(socio, 3, 1);
-        Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socio, 3);
+        //mira las abiertas
+        ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
+        //echa solicitud
+        servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 1);
+        //listar solicitudes
+        ArrayList<Solicitud> solicitudesSocio = socio.obtenerSolicitudes();
+        //eliminar solicitud
+        Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socio, solicitudesSocio.get(0).getIdActividad());
 
         assertNotNull(solicitudCancelada);
     }

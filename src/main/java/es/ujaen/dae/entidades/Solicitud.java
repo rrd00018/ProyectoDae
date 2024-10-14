@@ -19,4 +19,6 @@ public class Solicitud {
         this.numAcompaniantes = numAcompaniantes;
         this.actividad = actividad;
     }
+
+    public int getIdActividad(){return actividad.getId();}
 }
