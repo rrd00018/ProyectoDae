@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +36,10 @@ public class TestServicioSocios {
         servicioAdmin.crearActividad(temporada, "Yoga en el Parque", "Clases de yoga al aire libre", 30.0f, 15,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
-        Solicitud solicitud = servicioSocios.echarSolicitud(socio, 1, 3);
+
+        ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
+
+        Solicitud solicitud = servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 3);
 
         assertNotNull(solicitud);
         assertEquals(3, solicitud.getNumAcompaniantes());

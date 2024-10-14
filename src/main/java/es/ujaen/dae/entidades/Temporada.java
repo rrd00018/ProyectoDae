@@ -3,6 +3,8 @@ package es.ujaen.dae.entidades;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Temporada {
@@ -24,5 +26,15 @@ public class Temporada {
 
     public Actividad buscarActividad(int actividad){
         return actividades.get(actividad);
+    }
+
+    public ArrayList<Actividad> listarActividadesEnCurso(){
+        ArrayList<Actividad> actividadesEnCurso = new ArrayList<>();
+        for(Actividad actividad : actividades.values()){
+            if(actividad.getFechaFinInscripcion().isBefore(LocalDate.now())){
+                actividadesEnCurso.add(actividad);
+            }
+        }
+        return actividadesEnCurso;
     }
 }

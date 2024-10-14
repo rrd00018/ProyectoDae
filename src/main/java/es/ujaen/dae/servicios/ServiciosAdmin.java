@@ -4,12 +4,15 @@ import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
@@ -35,7 +38,8 @@ public class ServiciosAdmin {
      * @return
      * @throws Exception
      */
-    public Socio crearSocio(@Email String email, String nombre, String apellidos, int telefono, String claveAcceso) {
+
+    public Socio crearSocio(@Email @Valid String email, String nombre, String apellidos, int telefono, String claveAcceso) {
         if(socios.containsKey(email))
             throw new ClienteRegistrado();
         else{
@@ -45,11 +49,11 @@ public class ServiciosAdmin {
         }
     }
 
-    public Actividad crearActividad(Temporada temporada, String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
-        if(temporadas.containsValue(temporada)){
+    public Actividad crearActividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
+        if(temporadas.containsKey(LocalDate.now().getYear())){
             if(fechaCelebracion.isAfter(fechaInicioInscripcion) && fechaCelebracion.isAfter(fechaFinInscripcion)) {
                 if(fechaInicioInscripcion.isBefore(fechaFinInscripcion)){
-                    Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion,temporada);
+                    Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
                     temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
                     return actividad;
                 }else throw new FechaNoAlcanzada();
@@ -75,8 +79,8 @@ public class ServiciosAdmin {
         }else return null;
     }
 
-    public void cerrarActividad(Temporada temporada, int idActividad) {
-        Actividad actividad = temporada.buscarActividad(idActividad);
+    public void cerrarActividad(int idActividad) {
+        Actividad actividad = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
         if(actividad.getFechaFinInscripcion().isAfter(LocalDate.now())){
             if(actividad.getPlazas() < actividad.getNumPlazasAsignadas()){
                 int plazasDisponibles = actividad.getPlazas() - actividad.getNumPlazasAsignadas();
@@ -91,8 +95,7 @@ public class ServiciosAdmin {
      * @return true o false segun la consulta
      */
     public Actividad buscarActividad(int idActividad){
-        int temporada = idActividad / 1000;
-        return temporadas.get(temporada).buscarActividad(idActividad);
+        return temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
     }
 
     /**
@@ -108,5 +111,13 @@ public class ServiciosAdmin {
                 return Optional.of(s);
         }
         return Optional.empty();
+    }
+
+    /**
+     * @brief Lista todas las actividades disponibles para apuntarse de la temporada actual
+     * @return arraylist con las actividades
+     */
+    public ArrayList<Actividad> listarActividadesDisponibles(){
+        return temporadas.get(LocalDate.now().getYear()).listarActividadesEnCurso();
     }
 }

@@ -7,10 +7,12 @@ import es.ujaen.dae.servicios.ServiciosAdmin;
 import es.ujaen.dae.excepciones.FechaNoAlcanzada;
 import es.ujaen.dae.excepciones.TemporadaNoExiste;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 
@@ -18,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = ServiciosAdmin.class)
+@Validated
 public class TestServiciosAdmin {
     @Autowired
     ServiciosAdmin serviciosAdmin;
@@ -72,7 +75,7 @@ public class TestServiciosAdmin {
     @Test
     public void testCrearActividadConFechasIncorrectas() {
         // Crear una temporada primero para asociar la actividad
-        int anioTemporada = LocalDate.now().getYear() + 1;
+        int anioTemporada = LocalDate.now().getYear();
         Temporada temporada = serviciosAdmin.crearTemporada(anioTemporada);
 
 

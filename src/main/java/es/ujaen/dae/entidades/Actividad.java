@@ -1,5 +1,6 @@
 package es.ujaen.dae.entidades;
 
+import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,9 @@ public class Actividad {
     private ArrayList<Solicitud> solicitudes;
     private ArrayList<String> plazasAceptadas; //Acepta a los socios que han pagado directamente
     private ArrayList<String> listaEspera; //Almacena los invitados y socios q no han pagado en orden
-    @Getter @Setter
+    static private int generadorId = 0;
+
+    @Getter
     private int id;
     @Getter @Setter
     private String titulo;
@@ -29,7 +32,7 @@ public class Actividad {
     @Getter @Setter
     private LocalDate fechaFinInscripcion;
 
-    public Actividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion, Temporada temporada) {
+    public Actividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -40,7 +43,7 @@ public class Actividad {
         this.plazasAceptadas = new ArrayList<>();
         this.listaEspera = new ArrayList<>();
         this.solicitudes = new ArrayList<>();
-        id = temporada.getAnio()*1000 + temporada.getNumActividades();
+        id = generadorId++;
     }
 
     /**
@@ -64,13 +67,13 @@ public class Actividad {
      * @param solicitud La solicitud a ser añadida.
      */
     public void addSolicitud(Solicitud solicitud) {
+        solicitudes.add(solicitud);
         if(plazasAceptadas.size() >= plazas){
             listaEspera.add(solicitud.getSocio().getEmail());
             for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
                 listaEspera.add(solicitud.getSocio().getEmail());
             }
         }else{
-            solicitudes.add(solicitud);
             if(solicitud.getSocio().isHaPagado()) {
                 plazasAceptadas.add(solicitud.getSocio().getEmail());
             }else{
@@ -81,7 +84,6 @@ public class Actividad {
             }
         }
     }
-
 
     /**
      * @brief Borra una solicitud del conjunto de solicitudes de la actividad
@@ -99,9 +101,18 @@ public class Actividad {
 
     public int getNumPlazasAsignadas(){return plazasAceptadas.size();}
 
+    /**
+     * @brief mueve la lista de espera n posiciones y las elimina de la misma
+     * @param posiciones
+     */
     public void moverListaEspera(int posiciones){
-        for(int i = 0; i < posiciones; i++){
-            plazasAceptadas.add(listaEspera.get(i));
+        if(posiciones > plazas - plazasAceptadas.size() ){
+            throw new NumeroDePlazasIncorrecto();
+        }else {
+            for (int i = 0; i < posiciones; i++) {
+                plazasAceptadas.add(listaEspera.get(0));
+                listaEspera.remove(0);
+            }
         }
     }
 }

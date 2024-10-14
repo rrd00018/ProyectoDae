@@ -1,4 +1,5 @@
 package es.ujaen.dae.entidades;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.Email;
@@ -11,13 +12,13 @@ import java.util.HashMap;
 public class Socio {
     @Getter @Setter @Email
     private String email;
-    @Getter @Setter
+    @Getter @Setter @NotNull
     private String nombre;
-    @Getter @Setter
+    @Getter @Setter @NotNull
     private String apellidos;
     @Getter @Setter @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$")
     private int telefono;
-    @Getter @Setter
+    @Getter @Setter @NotNull
     private String claveAcceso;
     private HashMap<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
     @Getter @Setter
