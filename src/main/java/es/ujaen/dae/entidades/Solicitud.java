@@ -1,5 +1,6 @@
 package es.ujaen.dae.entidades;
 
+import jakarta.validation.constraints.Max;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ public class Solicitud {
     private Socio socio;
     @Getter @Setter
     private int idSolicitud;
-    @Getter @Setter
+    @Getter @Setter @Max(5)
     private int numAcompaniantes;
     @Getter @Setter
     private Actividad actividad;

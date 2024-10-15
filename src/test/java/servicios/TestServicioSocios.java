@@ -69,7 +69,7 @@ public class TestServicioSocios {
         //echa solicitud
         servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 1);
         //listar solicitudes
-        ArrayList<Solicitud> solicitudesSocio = socio.obtenerSolicitudes();
+        ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socio);
         //modificar solicitudes
         Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socio, solicitudesSocio.get(0).getIdActividad(), 2);
 
@@ -91,7 +91,7 @@ public class TestServicioSocios {
         //echa solicitud
         servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 1);
         //listar solicitudes
-        ArrayList<Solicitud> solicitudesSocio = socio.obtenerSolicitudes();
+        ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socio);
         //eliminar solicitud
         Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socio, solicitudesSocio.get(0).getIdActividad());
 

@@ -8,11 +8,13 @@ import es.ujaen.dae.entidades.Temporada;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import jakarta.validation.constraints.Max;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
+@Validated
 public class ServicioSocios {
     @Autowired
     private ServiciosAdmin servicioAdmin;
@@ -20,20 +22,20 @@ public class ServicioSocios {
     public ServicioSocios() {}
 
     /**@brief ECHAR SOLICITUD*/
-    public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) {
+    public Solicitud echarSolicitud(Socio socio, int idActividad, @Max(5) int invitados) {
         Actividad actividad = servicioAdmin.buscarActividad(idActividad);
-        if(actividad != null && !socio.existeSolicitud(idActividad)){
-            Solicitud soli=new Solicitud(socio,invitados,actividad);
+        if (actividad != null && !socio.existeSolicitud(idActividad)) {
+            Solicitud soli = new Solicitud(socio, invitados, actividad);
             actividad.addSolicitud(soli);
-            socio.crearSolicitud(soli,actividad);
+            socio.crearSolicitud(soli, actividad);
             return soli;
         }
         return null;
     }
 
     /**@brief MODIFICAR SOLICITUD*/
-    public Solicitud modificarSolicitud(Socio socio, int idActividad, int nuevosInvitados) {
-        return  socio.modificarSolicitud(idActividad,nuevosInvitados);
+    public Solicitud modificarSolicitud(Socio socio, int idActividad, @Max(5) int nuevosInvitados) {
+        return socio.modificarSolicitud(idActividad, nuevosInvitados);
     }
 
     /**@brief CANCELAR SOLICITUD*/
@@ -42,6 +44,7 @@ public class ServicioSocios {
     }
 
     /**@brief OBTIENE EL LISTADO DE SUS SOLICITUDES*/
-    public ArrayList<Solicitud> obtenerSolicitudes(Socio socio) {return socio.obtenerSolicitudes();}
-
+    public ArrayList<Solicitud> obtenerSolicitudes(Socio socio) {
+        return socio.obtenerSolicitudes();
+    }
 }
