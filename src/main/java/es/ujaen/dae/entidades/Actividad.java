@@ -1,6 +1,9 @@
 package es.ujaen.dae.entidades;
 
 import es.ujaen.dae.excepciones.FechaIncorrecta;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,22 +16,22 @@ public class Actividad {
 
     @Getter
     private int id;
-    @Getter @Setter
+    @Getter @NotBlank
     private String titulo;
-    @Getter @Setter
+    @Getter
     private String descripcion;
-    @Getter @Setter
+    @Getter @PositiveOrZero
     private float precio;
-    @Getter @Setter
+    @Getter @Positive
     private int plazas;
-    @Getter @Setter
+    @Getter @Setter @NotBlank
     private LocalDate fechaCelebracion;
-    @Getter @Setter
+    @Getter @Setter @NotBlank
     private LocalDate fechaInicioInscripcion;
-    @Getter @Setter
+    @Getter @Setter @NotBlank
     private LocalDate fechaFinInscripcion;
 
-    public Actividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
+    public Actividad(@NotBlank String titulo, String descripcion, @PositiveOrZero float precio, @Positive int plazas,@NotBlank LocalDate fechaCelebracion,@NotBlank LocalDate fechaInicioInscripcion,@NotBlank LocalDate fechaFinInscripcion) {
         if(fechaInicioInscripcion.isAfter(fechaFinInscripcion) || fechaInicioInscripcion.isAfter(fechaCelebracion) || fechaFinInscripcion.isAfter(fechaCelebracion)){
             throw new FechaIncorrecta();
         }else {
@@ -45,8 +48,7 @@ public class Actividad {
     }
 
     /**
-     * @brief GENERA UN ID UNICO PARA LA SOLICITUD BASADO EN EL ID DE zzzACTIVIDAD Y EN EL CONTADOR DE SOLICITUDES.
-     *
+     *  GENERA UN ID UNICO PARA LA SOLICITUD BASADO EN EL ID DE zzzACTIVIDAD Y EN EL CONTADOR DE SOLICITUDES.
      * El ID de la solicitud se genera multiplicando el ID de la actividad por 100, y sumando un contador
      * de solicitudes que se incrementa con cada nueva solicitud.
      *
@@ -61,8 +63,7 @@ public class Actividad {
     }
 
     /**
-     * @brief Borra una solicitud del conjunto de solicitudes de la actividad
-     * Cuando se borra la solicitud, se borran todas las instacias en las listas de espera
+     * Borra una solicitud del conjunto de solicitudes de la actividad
      */
     public void deleteSolicitud(Solicitud solicitud) {
         solicitudes.remove(solicitud);

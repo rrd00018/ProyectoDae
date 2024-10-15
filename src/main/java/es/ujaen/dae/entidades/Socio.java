@@ -1,5 +1,5 @@
 package es.ujaen.dae.entidades;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.Email;
@@ -12,45 +12,39 @@ import java.util.HashMap;
 public class Socio {
     @Getter @Setter @Email
     private String email;
-    @Getter @Setter @NotNull
+    @Getter @Setter @NotBlank
     private String nombre;
-    @Getter @Setter @NotNull
+    @Getter @Setter @NotBlank
     private String apellidos;
     @Getter @Setter @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$")
-    private int telefono;
-    @Getter @Setter @NotNull
+    private String telefono;
+    @Getter @Setter @NotBlank
     private String claveAcceso;
     private HashMap<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
     @Getter @Setter
     private boolean haPagado;
 
 
-    public Socio(String email, String nombre, String apellidos, int telefono, String claveAcceso) {
+    public Socio(@NotBlank @Email String email,@NotBlank String nombre, @NotBlank String apellidos, @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
         this.email = email;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.telefono = telefono;
         this.claveAcceso = claveAcceso;
-        solicitudes = new HashMap<Integer,Solicitud>();
+        solicitudes = new HashMap<>();
         this.haPagado = false;
     }
 
     /**
-     * @brief CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
-     * @param soli
-     * @param actividad
-     * @throws Exception
+     *  CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
      */
     public void crearSolicitud(Solicitud soli, Actividad actividad) {
-        solicitudes.put(soli.getIdSolicitud()/100,soli);
+        solicitudes.put(actividad.getId(),soli);
     }
 
 
     /**
-     * @brief MODIFICAR EL NUMERO DE ACOMPAÑANTES DE UNA SOLICITUD DADA SU ID
-     * @param idActividad
-     * @param nuevosInvitados
-     * @return
+     *  MODIFICAR EL NUMERO DE ACOMPAÑANTES DE UNA SOLICITUD DADA SU ID
      */
     public Solicitud modificarSolicitud(int idActividad, int nuevosInvitados) {
         Solicitud solicitud = obtenerSolicitud(idActividad);
@@ -65,9 +59,7 @@ public class Socio {
 
 
     /**
-     * @brief CANCELAR UNA SOLICITUD DADA SU ID
-     * @param idActividad
-     * @return
+     *  CANCELAR UNA SOLICITUD DADA SU ID
      */
     public Solicitud cancelarSolicitud(int idActividad) {
         Solicitud solicitud = obtenerSolicitud(idActividad);
@@ -82,9 +74,7 @@ public class Socio {
 
 
     /**
-     * @brief DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
-     * @param id_actividad
-     * @return
+     *  DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
      */
     public Boolean existeSolicitud(int id_actividad) {
         return solicitudes.containsKey(id_actividad);
@@ -92,18 +82,15 @@ public class Socio {
 
 
     /**
-     * @brief DEVUELVE LA SOLICITUD DADA EL ID DE ACTIVIDAD
-     * @param idActividad
-     * @return
+     *  DEVUELVE LA SOLICITUD DADA EL ID DE ACTIVIDAD
      */
     public Solicitud obtenerSolicitud(int idActividad) {
         return solicitudes.get(idActividad);
     }
 
     /**
-     * @brief DEVUELVE LAS SOLICITUDES DE ESTE SOCIO EN ARRAYLIST
-     * @return
+     *  DEVUELVE LAS SOLICITUDES DE ESTE SOCIO EN ARRAYLIST
      */
-    public ArrayList<Solicitud> obtenerSolicitudes() {return new ArrayList<Solicitud>(solicitudes.values());}
+    public ArrayList<Solicitud> obtenerSolicitudes() {return new ArrayList<>(solicitudes.values());}
 
 }

@@ -31,7 +31,7 @@ public class Temporada {
     public ArrayList<Actividad> listarActividadesEnCurso(){
         ArrayList<Actividad> actividadesEnCurso = new ArrayList<>();
         for(Actividad actividad : actividades.values()){
-            if(actividad.getFechaFinInscripcion().isBefore(LocalDate.now())){
+            if(actividad.getFechaFinInscripcion().isAfter(LocalDate.now())){
                 actividadesEnCurso.add(actividad);
             }
         }

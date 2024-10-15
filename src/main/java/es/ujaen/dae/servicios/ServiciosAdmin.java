@@ -6,6 +6,8 @@ import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,17 +28,10 @@ public class ServiciosAdmin {
     }
 
     /**
-     * @brief Crea un socio nuevo con todos sus datos
-     * @param email
-     * @param nombre
-     * @param apellidos
-     * @param telefono
-     * @param claveAcceso
-     * @return
-     * @throws Exception
+     *  Crea un socio nuevo con todos sus datos
      */
 
-    public Socio crearSocio(@Email @Valid String email, String nombre, String apellidos, int telefono, String claveAcceso) {
+    public Socio crearSocio(@Email @NotBlank String email, @NotBlank String nombre, @NotBlank String apellidos, @NotBlank @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
         if(socios.containsKey(email))
             throw new ClienteRegistrado();
         else{
@@ -71,16 +66,17 @@ public class ServiciosAdmin {
         Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
         if(a.getFechaFinInscripcion().isBefore(LocalDate.now())) {
             a.moverListaEspera();
-        }
+        }else throw new FechaNoAlcanzada();
     }
 
     /**
-     * @brief comprueba si una actividad existe en su temporada
-     * @param idActividad
+     * comprueba si una actividad existe en esta temporada
      * @return true o false segun la consulta
      */
     public Actividad buscarActividad(int idActividad){
-        return temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
+        Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
+        if(a == null) throw new ActividadNoExistente();
+        else return a;
     }
 
     /**
@@ -99,14 +95,14 @@ public class ServiciosAdmin {
     }
 
     /**
-     * @brief Lista todas las actividades disponibles para apuntarse de la temporada actual
+     * Lista todas las actividades disponibles para apuntarse de la temporada actual
      * @return arraylist con las actividades
      */
     public ArrayList<Actividad> listarActividadesDisponibles(){
         return temporadas.get(LocalDate.now().getYear()).listarActividadesEnCurso();
     }
 
-    public void pagar(Socio socio){
+    public void pagar(@Valid Socio socio){
         socio.setHaPagado(true);
     }
 }
