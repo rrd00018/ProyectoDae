@@ -56,6 +56,11 @@ public class ServiciosAdmin {
         if(!temporadas.containsKey(LocalDate.now().getYear())){
             Temporada t = new Temporada(LocalDate.now().getYear());
             temporadas.put(LocalDate.now().getYear(),t);
+
+            for(Socio s : socios.values()){
+                s.setHaPagado(false);
+            }
+
             return temporadas.get(LocalDate.now().getYear());
         }else throw new TemporadaYaCreada();
     }

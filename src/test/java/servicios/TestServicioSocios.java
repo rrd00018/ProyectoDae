@@ -50,7 +50,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testEcharSolicitud_ActividadNoExistente() {
         Socio socio = new Socio("pedro@example.com", "Pedro", "Lopez", "987654321", "clavePedro456");
-        var temporada = servicioAdmin.crearTemporada();
+        servicioAdmin.crearTemporada();
         assertThatThrownBy(() -> servicioSocios.echarSolicitud(socio, 999, 2)).isInstanceOf(ActividadNoExistente.class);
     }
 
