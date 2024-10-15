@@ -43,7 +43,6 @@ public class Socio {
      */
     public void crearSolicitud(Solicitud soli, Actividad actividad) {
         solicitudes.put(soli.getIdSolicitud()/100,soli);
-        actividad.addSolicitud(soli);
     }
 
 

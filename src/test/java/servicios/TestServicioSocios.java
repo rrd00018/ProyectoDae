@@ -3,7 +3,6 @@ package servicios;
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Socio;
-import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import org.junit.jupiter.api.Test;
@@ -96,5 +95,27 @@ public class TestServicioSocios {
         Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socio, solicitudesSocio.get(0).getIdActividad());
 
         assertNotNull(solicitudCancelada);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCerrarActividad(){
+        var temporada = servicioAdmin.crearTemporada();
+        var actividad = servicioAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,10,LocalDate.of(2024,10,20),LocalDate.of(2024,10,9),LocalDate.of(2024,10,14));
+        var usuario1 = servicioAdmin.crearSocio("paco@gmail.com","Paco","Ruiz Lopez",684190546,"1234");
+        var usuario2 = servicioAdmin.crearSocio("juan@gmail.com","Juan","Torres",658986256,"1234");
+        var usuario3 = servicioAdmin.crearSocio("maria@example.com", "Maria", "Garcia", 123456789, "claveMaria123");
+
+        servicioAdmin.pagar(usuario1);
+        servicioAdmin.pagar(usuario3);
+
+        var actividades = servicioAdmin.listarActividadesDisponibles();
+
+        servicioSocios.echarSolicitud(usuario1, actividades.get(0).getId(), 2);
+        servicioSocios.echarSolicitud(usuario2, actividades.get(0).getId(),5);
+        servicioSocios.echarSolicitud(usuario3, actividades.get(0).getId(),4);
+
+        servicioAdmin.cerrarActividad(actividades.get(0).getId());
+
     }
 }

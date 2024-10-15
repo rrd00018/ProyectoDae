@@ -1,19 +1,14 @@
 package es.ujaen.dae.entidades;
 
 import es.ujaen.dae.excepciones.FechaIncorrecta;
-import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 
 public class Actividad {
     private ArrayList<Solicitud> solicitudes;
-    private ArrayList<String> plazasAceptadas; //Acepta a los socios que han pagado directamente
-    private ArrayList<String> listaEspera; //Almacena los invitados y socios q no han pagado en orden
     static private int generadorId = 0;
 
     @Getter
@@ -44,8 +39,6 @@ public class Actividad {
             this.fechaCelebracion = fechaCelebracion;
             this.fechaInicioInscripcion = fechaInicioInscripcion;
             this.fechaFinInscripcion = fechaFinInscripcion;
-            this.plazasAceptadas = new ArrayList<>();
-            this.listaEspera = new ArrayList<>();
             this.solicitudes = new ArrayList<>();
             id = generadorId++;
         }
@@ -63,34 +56,7 @@ public class Actividad {
         return this.id * 100 + solicitudes.size();
     }
 
-
-    /**
-     * @brief Añade una nueva solicitud al conjunto de solicitudes del socio.
-     *
-     * La solicitud se almacena en un array.
-     *
-     * @param solicitud La solicitud a ser añadida.
-     */
     public void addSolicitud(Solicitud solicitud) {
-        solicitudes.add(solicitud);
-        if(plazasAceptadas.size() >= plazas){
-            listaEspera.add(solicitud.getSocio().getEmail());
-            for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
-                listaEspera.add(solicitud.getSocio().getEmail());
-            }
-        }else{
-            if(solicitud.getSocio().isHaPagado()) {
-                plazasAceptadas.add(solicitud.getSocio().getEmail());
-            }else{
-                listaEspera.add(solicitud.getSocio().getEmail());
-            }
-            for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
-                listaEspera.add(solicitud.getSocio().getEmail());
-            }
-        }
-    }
-
-    public void addSolicitudCorregida(Solicitud solicitud) {
         solicitudes.add(solicitud);
     }
 
@@ -99,33 +65,14 @@ public class Actividad {
      * Cuando se borra la solicitud, se borran todas las instacias en las listas de espera
      */
     public void deleteSolicitud(Solicitud solicitud) {
-        plazasAceptadas.remove(solicitud.getSocio().getEmail());
-        if(solicitud.getNumAcompaniantes() > 0){
-            for(int i = 0; i < solicitud.getNumAcompaniantes(); i++){
-                listaEspera.remove(solicitud.getSocio().getEmail());
-            }
-        }
         solicitudes.remove(solicitud);
     }
 
-    public int getNumPlazasAsignadas(){return plazasAceptadas.size();}
-
     /**
-     * @brief mueve la lista de espera n posiciones y las elimina de la misma
-     * @param posiciones
+     * Maneja el fin de la actividad, se aceptan las solicitudes para cumplir las plazas y se informan de cuantas plazas de invitado se han concedido a esa solicitud.
+     * En general usa una cola FIFO para aceptar las solicitudes pero matiene el siguiente orden de prioridad: miembros que han pagado -> acompañantes de miembros que han pagado -> miembros que no han pagado y sus acompañanates
      */
-    public void moverListaEspera(int posiciones){
-        if(posiciones > plazas - plazasAceptadas.size() ){
-            throw new NumeroDePlazasIncorrecto();
-        }else {
-            for (int i = 0; i < posiciones; i++) {
-                plazasAceptadas.add(listaEspera.get(0));
-                listaEspera.remove(0);
-            }
-        }
-    }
-
-    public void moverListaEspera2(){
+    public void moverListaEspera(){
         int plazasAsignadas = 0;
         for(Solicitud solicitud : solicitudes){ //recorre asignandole la plaza a los socios que han pagado
             if(plazasAsignadas == plazas) break;
@@ -152,14 +99,14 @@ public class Actividad {
                 for(Solicitud solicitud : solicitudes){
                     if(plazasAsignadas == plazas) break;
                     if(!solicitud.isAceptada()){
-                        if (plazasAsignadas + solicitud.getNumAcompaniantes() <= plazas) { //si se pueden asignar directamente se asignan todas las plazas que haya y se acepta la solicitud
+                        if (plazasAsignadas + solicitud.getNumAcompaniantes() + 1 <= plazas) { //si se pueden asignar directamente se asignan todas las plazas que haya y se acepta la solicitud. El +1 representa al socio en cuestion
                             solicitud.setAcompaniantesAceptados(solicitud.getNumAcompaniantes());
-                            plazasAsignadas += solicitud.getNumAcompaniantes();
+                            plazasAsignadas += solicitud.getNumAcompaniantes() +1;
                             solicitud.aceptarSolicitud();
-                        } else { //si solo se pudiesen aceptar unos pocos se acpetan esos y se acepta la solicitud y se le pasa el numero de aceptados
-                            int aceptados = solicitud.getNumAcompaniantes() - (plazasAsignadas + solicitud.getNumAcompaniantes() - plazas);
+                        } else { //si solo se pudiesen aceptar unos pocos se acpetan esos y se acepta la solicitud y se le pasa el numero de aceptados. El -1 representa al socio en cuestion
+                            int aceptados = solicitud.getNumAcompaniantes() - (plazasAsignadas + solicitud.getNumAcompaniantes() - plazas) -1;
                             solicitud.setAcompaniantesAceptados(aceptados);
-                            plazasAsignadas += aceptados;
+                            plazasAsignadas += aceptados + 1; //Aqui se mete el socio para tenerlo en cuenta en el total de plazas
                             solicitud.aceptarSolicitud();
                         }
                     }

@@ -6,14 +6,11 @@ import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -68,20 +65,12 @@ public class ServiciosAdmin {
         }else throw new TemporadaYaCreada();
     }
 
-    public void cerrarActividad(int idActividad) {
-        Actividad actividad = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
-        if(actividad.getFechaFinInscripcion().isAfter(LocalDate.now())){
-            if(actividad.getPlazas() < actividad.getNumPlazasAsignadas()){
-                int plazasDisponibles = actividad.getPlazas() - actividad.getNumPlazasAsignadas();
-                actividad.moverListaEspera(plazasDisponibles);
-            }
-        }else throw new FechaNoAlcanzada();
-    }
 
-    public void cerrarActividadCorregido(int idActividad){
+
+    public void cerrarActividad(int idActividad){
         Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
         if(a.getFechaFinInscripcion().isBefore(LocalDate.now())) {
-            a.moverListaEspera2();
+            a.moverListaEspera();
         }
     }
 
@@ -115,5 +104,9 @@ public class ServiciosAdmin {
      */
     public ArrayList<Actividad> listarActividadesDisponibles(){
         return temporadas.get(LocalDate.now().getYear()).listarActividadesEnCurso();
+    }
+
+    public void pagar(Socio socio){
+        socio.setHaPagado(true);
     }
 }
