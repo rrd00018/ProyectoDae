@@ -38,8 +38,9 @@ public class Socio {
         this.haPagado = false;
     }
 
+
     /**
-     *  CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
+     *  @brief CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
      */
     public void crearSolicitud(Solicitud soli, Actividad actividad) {
         solicitudes.put(actividad.getId(),soli);
@@ -47,13 +48,13 @@ public class Socio {
 
 
     /**
-     *  MODIFICAR EL NUMERO DE ACOMPAÑANTES DE UNA SOLICITUD DADA SU ID
+     *  @brief MODIFICAR EL NUMERO DE ACOMPAÑANTES DE UNA SOLICITUD DADA SU ID
      */
     public Solicitud modificarSolicitud(int idActividad, int nuevosInvitados) {
         Solicitud solicitud = obtenerSolicitud(idActividad);
 
         if (solicitud != null) {
-            if(solicitud.getActividad().getFechaFinInscripcion().isBefore(LocalDate.now()))
+            if(solicitud.getActividad().getFechaFinInscripcion().isAfter(LocalDate.now()))
                 throw new SolicitudFueraDePlazo();
             else {
                 // Actualizar los datos de la solicitud
@@ -66,13 +67,13 @@ public class Socio {
 
 
     /**
-     *  CANCELAR UNA SOLICITUD DADA SU ID
+     *  @brief CANCELAR UNA SOLICITUD DADA SU ID
      */
     public Solicitud cancelarSolicitud(int idActividad) {
         Solicitud solicitud = obtenerSolicitud(idActividad);
 
         if (solicitud != null) {
-            if(solicitud.getActividad().getFechaFinInscripcion().isBefore(LocalDate.now()))
+            if(solicitud.getActividad().getFechaFinInscripcion().isAfter(LocalDate.now()))
                 throw new SolicitudFueraDePlazo();
             else {
                 solicitudes.remove(idActividad);
@@ -85,7 +86,7 @@ public class Socio {
 
 
     /**
-     *  DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
+     *  @brief DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
      */
     public Boolean existeSolicitud(int id_actividad) {
         return solicitudes.containsKey(id_actividad);
@@ -93,15 +94,17 @@ public class Socio {
 
 
     /**
-     *  DEVUELVE LA SOLICITUD DADA EL ID DE ACTIVIDAD
+     *  @brief DEVUELVE LA SOLICITUD DADA EL ID DE ACTIVIDAD
      */
     public Solicitud obtenerSolicitud(int idActividad) {
         return solicitudes.get(idActividad);
     }
 
-    /**
-     *  DEVUELVE LAS SOLICITUDES DE ESTE SOCIO EN ARRAYLIST
-     */
-    public ArrayList<Solicitud> obtenerSolicitudes() {return new ArrayList<>(solicitudes.values());}
 
+    /**
+     *  @brief DEVUELVE LAS SOLICITUDES DE ESTE SOCIO EN ARRAYLIST
+     */
+    public ArrayList<Solicitud> obtenerSolicitudes() {
+        return new ArrayList<>(solicitudes.values());
+    }
 }

@@ -36,9 +36,9 @@ public class TestServicioSocios {
         servicioAdmin.crearTemporada();
         servicioAdmin.crearActividad( "Yoga en el Parque", "Clases de yoga al aire libre", 30.0f, 15,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
-
+        //mira las abiertas
         ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
-
+        //echa solicitud
         Solicitud solicitud = servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 3);
 
         assertNotNull(solicitud);
