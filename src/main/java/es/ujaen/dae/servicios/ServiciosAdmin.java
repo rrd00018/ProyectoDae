@@ -133,8 +133,8 @@ public class ServiciosAdmin {
      * Procesa una solicitud manualmente
      * @param s soliciutd a procesar
      */
-    public void procesarSolicitudManualmente(@Valid Solicitud s){
-        s.getActividad().procesarSolicitudManualmente(s);
+    public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
+        s.getActividad().procesarSolicitudManualmente(s, nPlazas);
     }
 
 
