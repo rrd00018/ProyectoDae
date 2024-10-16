@@ -54,7 +54,7 @@ public class Socio {
         Solicitud solicitud = obtenerSolicitud(idActividad);
 
         if (solicitud != null) {
-            if(solicitud.getActividad().getFechaFinInscripcion().isAfter(LocalDate.now()))
+            if(solicitud.getActividad().getFechaFinInscripcion().isBefore(LocalDate.now()))
                 throw new SolicitudFueraDePlazo();
             else {
                 // Actualizar los datos de la solicitud
@@ -73,7 +73,7 @@ public class Socio {
         Solicitud solicitud = obtenerSolicitud(idActividad);
 
         if (solicitud != null) {
-            if(solicitud.getActividad().getFechaFinInscripcion().isAfter(LocalDate.now()))
+            if(solicitud.getActividad().getFechaFinInscripcion().isBefore(LocalDate.now()))
                 throw new SolicitudFueraDePlazo();
             else {
                 solicitudes.remove(idActividad);
