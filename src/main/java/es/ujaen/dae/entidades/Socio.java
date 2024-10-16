@@ -1,10 +1,13 @@
 package es.ujaen.dae.entidades;
+import es.ujaen.dae.excepciones.SolicitudFueraDePlazo;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.validation.annotation.Validated;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,9 +53,13 @@ public class Socio {
         Solicitud solicitud = obtenerSolicitud(idActividad);
 
         if (solicitud != null) {
-            // Actualizar los datos de la solicitud
-            solicitud.setNumAcompaniantes(nuevosInvitados);
-            return solicitud;  // Retornar la solicitud actualizada
+            if(solicitud.getActividad().getFechaFinInscripcion().isBefore(LocalDate.now()))
+                throw new SolicitudFueraDePlazo();
+            else {
+                // Actualizar los datos de la solicitud
+                solicitud.setNumAcompaniantes(nuevosInvitados);
+                return solicitud;  // Retornar la solicitud actualizada
+            }
         }
         return null;  // Retornar null si no existe la solicitud
     }
@@ -65,9 +72,13 @@ public class Socio {
         Solicitud solicitud = obtenerSolicitud(idActividad);
 
         if (solicitud != null) {
-            solicitudes.remove(idActividad);
-            solicitud.getActividad().deleteSolicitud(solicitud);
-            return solicitud;
+            if(solicitud.getActividad().getFechaFinInscripcion().isBefore(LocalDate.now()))
+                throw new SolicitudFueraDePlazo();
+            else {
+                solicitudes.remove(idActividad);
+                solicitud.getActividad().deleteSolicitud(solicitud);
+                return solicitud;
+            }
         }
         return null;
     }

@@ -1,6 +1,9 @@
 package es.ujaen.dae.entidades;
 
 import es.ujaen.dae.excepciones.FechaIncorrecta;
+import es.ujaen.dae.excepciones.FechaNoAlcanzada;
+import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
+import es.ujaen.dae.excepciones.SolicitudIncorrecta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -31,6 +34,9 @@ public class Actividad {
     @Getter @Setter @NotBlank
     private LocalDate fechaFinInscripcion;
 
+    private int plazasAsignadas;
+    private boolean sociosAsignados;
+
     public Actividad(@NotBlank String titulo, String descripcion, @PositiveOrZero float precio, @Positive int plazas,@NotBlank LocalDate fechaCelebracion,@NotBlank LocalDate fechaInicioInscripcion,@NotBlank LocalDate fechaFinInscripcion) {
         if(fechaInicioInscripcion.isAfter(fechaFinInscripcion) || fechaInicioInscripcion.isAfter(fechaCelebracion) || fechaFinInscripcion.isAfter(fechaCelebracion)){
             throw new FechaIncorrecta();
@@ -44,6 +50,8 @@ public class Actividad {
             this.fechaFinInscripcion = fechaFinInscripcion;
             this.solicitudes = new ArrayList<>();
             id = generadorId++;
+            plazasAsignadas = 0;
+            sociosAsignados = false;
         }
     }
 
@@ -74,14 +82,11 @@ public class Actividad {
      * En general usa una cola FIFO para aceptar las solicitudes pero matiene el siguiente orden de prioridad: miembros que han pagado -> acompañantes de miembros que han pagado -> miembros que no han pagado y sus acompañanates
      */
     public void moverListaEspera(){
-        int plazasAsignadas = 0;
-        for(Solicitud solicitud : solicitudes){ //recorre asignandole la plaza a los socios que han pagado
-            if(plazasAsignadas == plazas) break;
-            if(solicitud.getSocio().isHaPagado()){
-                plazasAsignadas++;
-                solicitud.aceptarSolicitud();
-            }
+
+        if(!sociosAsignados){ //Si se ha hecho el procesamiento de los socios por algun ajuste manual de solicitudes no se vuelve a repetir
+            asignarSociosQueHanPagado();
         }
+
         if(plazasAsignadas < plazas) {
             for (Solicitud solicitud : solicitudes) { //vuelve a recorrer ahora asignando  plaza a los que quedan dando prioridad a los acompañantes que a los socios que no han pagado porque los acompañantes tienen "pagada su parte po el socio invitador"
                 if(plazasAsignadas == plazas) break;
@@ -115,4 +120,52 @@ public class Actividad {
             }
         }
     }
+
+    /**
+     * Simula el procesamiento manual, se intentan asignar las plazas de la solicitud, si no se puede se asignan las maximas posibles.
+     * Se aceptan automaticamente todas las solicitudes de los socios que han pagado para evitar que haya fallos en el sistema
+     * @param s solicitud a procesar
+     */
+    public void procesarSolicitudManualmente(Solicitud s) {
+        if(solicitudes.contains(s)){
+            if(fechaFinInscripcion.isBefore(LocalDate.now())){
+                if(!sociosAsignados)
+                    asignarSociosQueHanPagado();
+                int nPlazas = s.getNumAcompaniantes();
+
+                if(!s.getSocio().isHaPagado()){ //Si el socio no ha pagado no se le ha tenido en cuenta al asignarSocios, sin embargo si ha pagado su plaza ya est asignada
+                    nPlazas++;
+                }
+                if(plazasAsignadas + nPlazas <= plazas){ //Si se pueden asignar todos los asigno
+                    s.aceptarSolicitud();
+                    s.setAcompaniantesAceptados(nPlazas);
+                    plazasAsignadas += nPlazas;
+
+                }else { //Si no se pueden todos se asignan todos los posibles y se devuelve en una excepcion los restantes
+                    s.aceptarSolicitud();
+                    int aceptados = nPlazas - (plazasAsignadas + nPlazas - plazas) - 1; //Se resta el socio a la hora de guardar los acompañanantes
+                    s.setAcompaniantesAceptados(aceptados);
+                    plazasAsignadas += aceptados;
+                }
+            }else throw new FechaNoAlcanzada();
+        }else throw new SolicitudIncorrecta();
+    }
+
+    /**
+     * Recorre todas las solicitudes y asigna los socios que han pagado.
+     * Se debe ejecutar solo una vez al cerrar la actividad por lo que existe la flag sociosAsignados que evita la repeticion de este metodo
+     * Esta acción debe ejecutarse independientemente de la forma de gestion de las solicitudes puesto que los socios que han pagado siempre tienen plazas si hay huecos
+     */
+    public void asignarSociosQueHanPagado(){
+        for(Solicitud solicitud : solicitudes){
+            if(plazasAsignadas == plazas) break;
+            if(solicitud.getSocio().isHaPagado() && !solicitud.isAceptada()){
+                solicitud.aceptarSolicitud();
+                plazasAsignadas++;
+            }
+        }
+        sociosAsignados = true;
+    }
+
+    public ArrayList<Solicitud> getSolicitudes(){return solicitudes;}
 }

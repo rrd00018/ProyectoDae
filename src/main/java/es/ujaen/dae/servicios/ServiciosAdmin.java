@@ -2,12 +2,14 @@ package es.ujaen.dae.servicios;
 
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Socio;
+import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -109,5 +111,22 @@ public class ServiciosAdmin {
 
     public void pagar(@Valid Socio socio){
         socio.setHaPagado(true);
+    }
+
+    /**
+     * Procesa una solicitud manualmente
+     * @param s soliciutd a procesar
+     */
+    public void procesarSolicitudManualmente(@Valid Solicitud s){
+        s.getActividad().procesarSolicitudManualmente(s);
+    }
+
+    /**
+     * Lista todas las solicitudes de una actividad, se usa para cuando la direccion quiere cerrar manualmente  una actividad pueda acceder desde el front a todas las solicitudes
+     */
+    public ArrayList<Solicitud> listarSolicitudesActividad(Actividad a){
+        if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
+            return a.getSolicitudes();
+        }else throw new ActividadNoExistente();
     }
 }
