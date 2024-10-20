@@ -22,7 +22,9 @@ public class ServicioSocios {
 
     public ServicioSocios() {}
 
-    /** ECHAR SOLICITUD*/
+    /**
+     * @brief ECHAR SOLICITUD
+     */
     public Solicitud echarSolicitud(@Valid Socio socio, int idActividad, int invitados) {
         Actividad actividad = servicioAdmin.buscarActividad(idActividad);
         if(actividad == null){
@@ -43,7 +45,10 @@ public class ServicioSocios {
         return null;
     }
 
-    /** MODIFICAR SOLICITUD*/
+
+    /**
+     * @brief MODIFICAR SOLICITUD
+     */
     public Solicitud modificarSolicitud(@Valid Socio socio, int idActividad, int nuevosInvitados) {
         if(nuevosInvitados < 0 || nuevosInvitados > 5){
             throw new NumeroDeInvitadosIncorrecto();
@@ -51,12 +56,18 @@ public class ServicioSocios {
         return  socio.modificarSolicitud(idActividad,nuevosInvitados);
     }
 
-    /** CANCELAR SOLICITUD*/
+
+    /**
+     * @brief CANCESAR SOLICITUD
+     */
     public Solicitud cancelarSolicitud(@Valid Socio socio, int idActividad) {
         return socio.cancelarSolicitud(idActividad);
     }
 
-    /** OBTIENE EL LISTADO DE SUS SOLICITUDES*/
+
+    /**
+     * @brief OBTIENE LAS SOLICITUDES
+     */
     public ArrayList<Solicitud> obtenerSolicitudes(@Valid Socio socio) {
         return socio.obtenerSolicitudes();
     }

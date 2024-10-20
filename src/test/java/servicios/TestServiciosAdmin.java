@@ -159,10 +159,11 @@ public class TestServiciosAdmin {
 
         var solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
 
-        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2));
-        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1));
-        serviciosAdmin.cerrarActividad(actividades.get(0).getId());
+        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2),3);
+        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1),2);
 
-        assertEquals(7,usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+        assertEquals(4,usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+
+        assertThatThrownBy(() ->serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0),-5)).isInstanceOf(NumeroDePlazasIncorrecto.class);
     }
 }

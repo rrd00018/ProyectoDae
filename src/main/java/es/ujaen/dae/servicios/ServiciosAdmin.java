@@ -29,10 +29,10 @@ public class ServiciosAdmin {
         temporadas = new HashMap<>();
     }
 
-    /**
-     *  Crea un socio nuevo con todos sus datos
-     */
 
+    /**
+     * @brief REGISTRA A UN NUEVO SOCIO
+     */
     public Socio crearSocio(@Email @NotBlank String email, @NotBlank String nombre, @NotBlank String apellidos, @NotBlank @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
         if(socios.containsKey(email))
             throw new ClienteRegistrado();
@@ -43,6 +43,10 @@ public class ServiciosAdmin {
         }
     }
 
+
+    /**
+     * @brief CREA UNA NUEVA ACTIVIDAD
+     */
     public Actividad crearActividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
         if(temporadas.containsKey(LocalDate.now().getYear())){
             Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
@@ -51,8 +55,9 @@ public class ServiciosAdmin {
         }else throw new TemporadaNoExiste();
     }
 
+
     /**
-     * @brief Crea una nueva temporada e inicializa el campo pagado de todos los socios a false
+     * @brief CREA NUEVA TEMPORADA Y ASIGNA NO-PAGADO A TODOS LOS SOCIOS
      */
     public Temporada crearTemporada(){
         if(!temporadas.containsKey(LocalDate.now().getYear())){
@@ -68,7 +73,10 @@ public class ServiciosAdmin {
     }
 
 
-
+    /**
+     * @brief ASIGNA LAS PLAZAS DE IDACTIVIDAD AUTOMATICAMENTE
+     * @param idActividad
+     */
     public void cerrarActividad(int idActividad){
         Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
         if(a.getFechaFinInscripcion().isBefore(LocalDate.now())) {
@@ -76,8 +84,9 @@ public class ServiciosAdmin {
         }else throw new FechaNoAlcanzada();
     }
 
+
     /**
-     * comprueba si una actividad existe en esta temporada
+     * @brief DEVUELVE UNA ACTIVIDAD DADO SU ID SI SE ENCUENTRA O NULL
      * @return true o false segun la consulta
      */
     public Actividad buscarActividad(int idActividad){
@@ -85,6 +94,7 @@ public class ServiciosAdmin {
         if(a == null) throw new ActividadNoExistente();
         else return a;
     }
+
 
     /**
      * @brief Devuelve el objeto socio para logearse
@@ -101,28 +111,36 @@ public class ServiciosAdmin {
         return Optional.empty();
     }
 
+
     /**
-     * Lista todas las actividades disponibles para apuntarse de la temporada actual
+     * @brief LISTA LAS ACTIVIDADES DISPONIBLES DE LA TEMPORADA ACTUAL
      * @return arraylist con las actividades
      */
     public ArrayList<Actividad> listarActividadesDisponibles(){
         return temporadas.get(LocalDate.now().getYear()).listarActividadesEnCurso();
     }
 
+
+    /**
+     * @brief REGISTRA QUE UN SOCIO HA PAGADO SU CUOTA
+     */
     public void pagar(@Valid Socio socio){
         socio.setHaPagado(true);
     }
+
 
     /**
      * Procesa una solicitud manualmente
      * @param s soliciutd a procesar
      */
-    public void procesarSolicitudManualmente(@Valid Solicitud s){
-        s.getActividad().procesarSolicitudManualmente(s);
+    public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
+        s.getActividad().procesarSolicitudManualmente(s, nPlazas);
     }
 
+
     /**
-     * Lista todas las solicitudes de una actividad, se usa para cuando la direccion quiere cerrar manualmente  una actividad pueda acceder desde el front a todas las solicitudes
+     * @brief LISTA LAS SOLICITUDES DE UNA ACTIVIDAD
+     * (para que el administrador proceda con la asignacion manual)
      */
     public ArrayList<Solicitud> listarSolicitudesActividad(Actividad a){
         if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
