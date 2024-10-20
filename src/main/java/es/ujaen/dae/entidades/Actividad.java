@@ -151,6 +151,51 @@ public class Actividad {
         }else throw new SolicitudIncorrecta();
     }
 
+
+    /**
+     * Asigna las plazas restantes de una actividad de manera automática siguiendo el siguiente esquema. Si por borrados de ultima hora hay socios que han pagado sin plaza se les da.
+     * Luego mientras queden plazas y haya solicitudes incompletas, se asignan a los acompañantes de los socios que han pagado primero.
+     * Cada dos turnos se permite la asignacion a las solicitudes de socios que no han pagado de una plaza. La primera plaza siempre es la del socio.
+     * Al permitir que los socios que no han pagado y sus acompañantes entren en el sistema pero cada dos turnos se premia a los socios que pagan y por consiguiente a sus acompañanates
+     */
+    public void asignarAutoJusto(){
+        if(!sociosAsignados){
+            asignarSociosQueHanPagado();
+        }
+        if(plazasAsignadas < plazas){
+            int nVueltas = 0; //Este valor marca si los socios que no han pagado pueden entrar en la asignaciond e plazas o no, si es par acceden al sistem
+            int solicitudesCompletas = 0; //Contador para controlar el numero de solicitudes que tienen cumplido su requerimiento de plaza
+            while(plazasAsignadas < plazas) {
+                if(solicitudesCompletas >=  solicitudes.size()) break; //Si todas las solicitudes han sido completadas se termina el metodo
+                System.out.println("Vuelta: " + nVueltas + " solicitudes completas: " + solicitudesCompletas);
+                for (Solicitud solicitud : solicitudes) {
+                    if(plazasAsignadas == plazas) break;
+                    if(solicitudesCompletas == solicitudes.size()) break;
+
+                    if (solicitud.getSocio().isHaPagado()) {
+                        if(solicitud.getNumAcompaniantes() > solicitud.getAcompaniantesAceptados()) { //Si el socio ha pagao le doy plaza a un acompañante
+                            solicitud.setAcompaniantesAceptados(solicitud.getAcompaniantesAceptados() + 1);
+                            plazasAsignadas++;
+                            if(solicitud.getNumAcompaniantes() == solicitud.getAcompaniantesAceptados()) solicitudesCompletas++; //Si se alcanza el numero de acompañantes doy por cerrada la actividad
+                        }
+                    }else if(nVueltas % 2 == 1){ //Se elige en las vueltas impares para premiar a los socios que pagan en la primera ronda por si hubiese pocas plazas y se asignasen en un solo ciclo
+                        if(solicitud.isAceptada()){
+                            if(solicitud.getNumAcompaniantes() > solicitud.getAcompaniantesAceptados()) { //Si la solicitud estuviese aceptada le doy plaza al acompañante
+                                solicitud.setAcompaniantesAceptados(solicitud.getAcompaniantesAceptados() + 1);
+                                plazasAsignadas++;
+                                if(solicitud.getNumAcompaniantes() == solicitud.getAcompaniantesAceptados()) solicitudesCompletas++;
+                            }
+                        }else{ //Si la solicitud no esta aceptada le doy la plaza al socio q no ha pagado
+                            solicitud.aceptarSolicitud();
+                            plazasAsignadas++;
+                            if(solicitud.getNumAcompaniantes() == 0) solicitudesCompletas++; //Si no tiene peticion de acompañantes doy por cerrada la solicitud
+                        }
+                    }
+                }
+                nVueltas++;
+            }
+        }
+    }
     /**
      * Recorre todas las solicitudes y asigna los socios que han pagado.
      * Se debe ejecutar solo una vez al cerrar la actividad por lo que existe la flag sociosAsignados que evita la repeticion de este metodo

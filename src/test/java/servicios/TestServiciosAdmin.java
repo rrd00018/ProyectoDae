@@ -117,7 +117,7 @@ public class TestServiciosAdmin {
     @DirtiesContext
     public void testCerrarActividad(){
         var temporada = serviciosAdmin.crearTemporada();
-        var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,30,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
+        var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,5,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
         var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com","Paco","Ruiz Lopez","684190546","1234");
         var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","658986256","1234");
         var usuario3 = serviciosAdmin.crearSocio("maria@example.com", "Maria", "Garcia", "658986258", "claveMaria123");

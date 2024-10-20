@@ -72,7 +72,7 @@ public class ServiciosAdmin {
     public void cerrarActividad(int idActividad){
         Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
         if(a.getFechaFinInscripcion().isBefore(LocalDate.now())) {
-            a.moverListaEspera();
+            a.asignarAutoJusto();
         }else throw new FechaNoAlcanzada();
     }
 
