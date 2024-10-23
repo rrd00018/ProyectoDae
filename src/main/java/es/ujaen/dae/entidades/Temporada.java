@@ -1,5 +1,6 @@
 package es.ujaen.dae.entidades;
 
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@Entity
 public class Temporada {
     private HashMap<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
     @Getter @Setter

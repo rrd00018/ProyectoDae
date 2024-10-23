@@ -4,6 +4,7 @@ import es.ujaen.dae.excepciones.FechaIncorrecta;
 import es.ujaen.dae.excepciones.FechaNoAlcanzada;
 import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import es.ujaen.dae.excepciones.SolicitudIncorrecta;
+import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -13,6 +14,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+@Entity
 public class Actividad {
     private ArrayList<Solicitud> solicitudes;
     static private int generadorId = 0;

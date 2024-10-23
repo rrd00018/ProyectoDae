@@ -1,18 +1,24 @@
 package es.ujaen.dae.entidades;
 import es.ujaen.dae.excepciones.SolicitudFueraDePlazo;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+@Entity
 @Validated
 public class Socio {
+    @Id @Getter @Setter
+    private Long idSocio;
     @Getter @Setter @Email
     private String email;
     @Getter @Setter @NotBlank
@@ -23,9 +29,12 @@ public class Socio {
     private String telefono;
     @Getter @Setter @NotBlank
     private String claveAcceso;
-    private HashMap<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
     @Getter @Setter
     private boolean haPagado;
+
+    @OneToMany(mappedBy="socio")
+    @MapKeyColumn(name = "idActividad")
+    private Map<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
 
 
     public Socio(@NotBlank @Email String email,@NotBlank String nombre, @NotBlank String apellidos, @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
@@ -34,8 +43,13 @@ public class Socio {
         this.apellidos = apellidos;
         this.telefono = telefono;
         this.claveAcceso = claveAcceso;
-        solicitudes = new HashMap<>();
+        this.solicitudes = new HashMap<>();
         this.haPagado = false;
+    }
+
+
+    public Socio() {
+        this.solicitudes = new HashMap<>();
     }
 
 
@@ -107,4 +121,5 @@ public class Socio {
     public ArrayList<Solicitud> obtenerSolicitudes() {
         return new ArrayList<>(solicitudes.values());
     }
+
 }
