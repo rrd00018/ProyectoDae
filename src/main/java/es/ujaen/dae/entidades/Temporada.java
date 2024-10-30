@@ -1,21 +1,30 @@
 package es.ujaen.dae.entidades;
-
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 public class Temporada {
-    private HashMap<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
-    @Getter @Setter
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "temporada") //TODO revisar si el ALL debe estar
+    @MapKey(name = "anio")
+    private Map<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
+    @Getter @Setter @Id
     private int anio;
     @Getter @Setter
     private int numActividades;
 
+
+    public Temporada() {
+        actividades = new HashMap<>();
+        numActividades = 0;
+    }
 
     public Temporada(int anio){
         this.anio = anio;
