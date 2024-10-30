@@ -166,4 +166,5 @@ public class TestServiciosAdmin {
 
         assertThatThrownBy(() ->serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0),-5)).isInstanceOf(NumeroDePlazasIncorrecto.class);
     }
+
 }

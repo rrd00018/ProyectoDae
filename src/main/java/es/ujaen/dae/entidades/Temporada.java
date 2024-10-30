@@ -1,26 +1,31 @@
 package es.ujaen.dae.entidades;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 public class Temporada {
-    private HashMap<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
+    @OneToMany
+    private Map<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
+    @Id
     @Getter @Setter
     private int anio;
     @Getter @Setter
     private int numActividades;
 
+    public Temporada(){}
 
     public Temporada(int anio){
         this.anio = anio;
         actividades = new HashMap<>();
-        numActividades = 0;
     }
 
 
@@ -28,7 +33,6 @@ public class Temporada {
      * @brief AÑADE LA ACTIVIDAD AL MAPA
      */
     public void crearActividad(Actividad actividad) {
-        numActividades++;
         actividades.put(actividad.getId(),actividad);
     }
 

@@ -1,6 +1,10 @@
 package es.ujaen.dae.entidades;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -10,7 +14,8 @@ import lombok.Setter;
 
 @Entity
 public class Solicitud {
-    @Getter @Setter @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter @Setter
     private int idSolicitud;
     @Getter @Setter @Max(5)
     private int numAcompaniantes;
@@ -20,29 +25,24 @@ public class Solicitud {
     private int acompaniantesAceptados;
 
     @ManyToOne @JoinColumn(name="idSocio")
+    @Getter @Setter
     private Socio socio;
 
     @Getter @Setter
     @ManyToOne @JoinColumn(name="idActividad")
     private Actividad actividad;
 
+    public Solicitud(){}
 
     public Solicitud(Socio socio, int numAcompaniantes, Actividad actividad) {
         this.socio = socio;
-        this.idSolicitud = actividad.generarIdSolicitud();
         this.numAcompaniantes = numAcompaniantes;
         this.actividad = actividad;
         aceptada = false;
         acompaniantesAceptados = 0;
     }
 
-
-    public Solicitud() {}
-
-
     public void aceptarSolicitud(){aceptada = true;}
 
-
     public int getIdActividad(){return actividad.getId();}
-
 }

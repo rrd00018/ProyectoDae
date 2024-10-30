@@ -5,22 +5,28 @@ import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
+import es.ujaen.dae.repositorios.RepositorioActividad;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Validated
 public class ServiciosAdmin {
+    @Autowired
+    RepositorioActividad repositorioActividad;
+
     private HashMap<String,Socio> socios; //Usa el email como clave
     private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
 
@@ -48,11 +54,17 @@ public class ServiciosAdmin {
      * @brief CREA UNA NUEVA ACTIVIDAD
      */
     public Actividad crearActividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
-        if(temporadas.containsKey(LocalDate.now().getYear())){
+       /** if(temporadas.containsKey(LocalDate.now().getYear())){
             Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
             temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
             return actividad;
-        }else throw new TemporadaNoExiste();
+        }else throw new TemporadaNoExiste();*/
+       if(temporadas.containsKey(LocalDate.now().getYear())){
+           Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
+           temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
+           repositorioActividad.guardar(actividad);
+           return actividad; //TODO Comprobar que la actividad esta bien devuelta
+       }else throw new TemporadaNoExiste();
     }
 
 
@@ -90,9 +102,15 @@ public class ServiciosAdmin {
      * @return true o false segun la consulta
      */
     public Actividad buscarActividad(int idActividad){
+        /**
         Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
         if(a == null) throw new ActividadNoExistente();
         else return a;
+         */
+        Optional<Actividad> a = repositorioActividad.buscar(idActividad);
+        if(a.isPresent()){
+            return a.get();
+        }else throw new ActividadNoExistente();
     }
 
 
@@ -142,7 +160,7 @@ public class ServiciosAdmin {
      * @brief LISTA LAS SOLICITUDES DE UNA ACTIVIDAD
      * (para que el administrador proceda con la asignacion manual)
      */
-    public ArrayList<Solicitud> listarSolicitudesActividad(Actividad a){
+    public List<Solicitud> listarSolicitudesActividad(Actividad a){
         if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
             return a.getSolicitudes();
         }else throw new ActividadNoExistente();
