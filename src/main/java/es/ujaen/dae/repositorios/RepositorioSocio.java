@@ -2,7 +2,6 @@ package es.ujaen.dae.repositorios;
 
 import es.ujaen.dae.entidades.Socio;
 import jakarta.persistence.EntityManager;
-
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
