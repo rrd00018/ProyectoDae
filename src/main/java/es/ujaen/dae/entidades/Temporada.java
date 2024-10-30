@@ -11,14 +11,14 @@ import java.util.Map;
 
 @Entity
 public class Temporada {
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "temporada") //TODO revisar si el ALL debe estar
-    @MapKey(name = "anio")
-    private Map<Integer,Actividad> actividades;//Contiene el id de la actividad como clave
     @Getter @Setter @Id
     private int anio;
     @Getter @Setter
     private int numActividades;
+
+    @OneToMany
+    @JoinColumn(name = "anio") // Crea una columna de clave externa en Actividad
+    private Map<Integer, Actividad> actividades = new HashMap<>();
 
 
     public Temporada() {
