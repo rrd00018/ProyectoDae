@@ -4,7 +4,7 @@ import es.ujaen.dae.excepciones.FechaIncorrecta;
 import es.ujaen.dae.excepciones.FechaNoAlcanzada;
 import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import es.ujaen.dae.excepciones.SolicitudIncorrecta;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -13,31 +13,43 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Actividad {
-    private ArrayList<Solicitud> solicitudes;
-    static private int generadorId = 0;
-
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     private int id;
+
     @Getter @NotBlank
     private String titulo;
+
     @Getter
     private String descripcion;
+
     @Getter @PositiveOrZero
     private float precio;
+
     @Getter @Positive
     private int plazas;
+
     @Getter @Setter @NotBlank
     private LocalDate fechaCelebracion;
+
     @Getter @Setter @NotBlank
     private LocalDate fechaInicioInscripcion;
+
     @Getter @Setter @NotBlank
     private LocalDate fechaFinInscripcion;
 
     private int plazasAsignadas;
     private boolean sociosAsignados;
+
+    @OneToMany(mappedBy = "actividad", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Solicitud> solicitudes;
+
+
+    public Actividad() {}
 
     public Actividad(@NotBlank String titulo, String descripcion, @PositiveOrZero float precio, @Positive int plazas,@NotBlank LocalDate fechaCelebracion,@NotBlank LocalDate fechaInicioInscripcion,@NotBlank LocalDate fechaFinInscripcion) {
         if(fechaInicioInscripcion.isAfter(fechaFinInscripcion) || fechaInicioInscripcion.isAfter(fechaCelebracion) || fechaFinInscripcion.isAfter(fechaCelebracion)){
@@ -51,23 +63,14 @@ public class Actividad {
             this.fechaInicioInscripcion = fechaInicioInscripcion;
             this.fechaFinInscripcion = fechaFinInscripcion;
             this.solicitudes = new ArrayList<>();
-            id = generadorId++;
             plazasAsignadas = 0;
             sociosAsignados = false;
         }
     }
 
     /**
-     *  GENERA UN ID UNICO PARA LA SOLICITUD BASADO EN EL ID DE zzzACTIVIDAD Y EN EL CONTADOR DE SOLICITUDES.
-     * El ID de la solicitud se genera multiplicando el ID de la actividad por 100, y sumando un contador
-     * de solicitudes que se incrementa con cada nueva solicitud.
-     *
-     * @return Un número entero que representa el ID único de la solicitud.
+     * Añade una nueva solicitud a la actividad, si el socio ha pagado y hay hueco se le asigna directamente la plaza
      */
-    public int generarIdSolicitud() {
-        return this.id * 100 + solicitudes.size();
-    }
-
     public void addSolicitud(Solicitud solicitud) {
         solicitudes.add(solicitud);
         if(plazasAsignadas < plazas && solicitud.getSocio().isHaPagado()){ //Si el socio ha pagado se le confirma directamente su plaza
@@ -235,5 +238,5 @@ public class Actividad {
         sociosAsignados = true;
     }
 
-    public ArrayList<Solicitud> getSolicitudes(){return solicitudes;}
+    public  List<Solicitud> getSolicitudes(){return solicitudes;}
 }
