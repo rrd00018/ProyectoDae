@@ -6,6 +6,7 @@ import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.repositorios.RepositorioActividad;
+import es.ujaen.dae.repositorios.RepositorioSocio;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,14 +26,14 @@ import java.util.Optional;
 @Validated
 public class ServiciosAdmin {
     @Autowired
-    RepositorioActividad repositorioActividad;
+    private RepositorioSocio socios; //Usa el email como clave
+    @Autowired
+    private RepositorioActividad repositorioActividad;
 
-    private HashMap<String,Socio> socios; //Usa el email como clave
+    //private HashMap<String,Socio> socios; //Usa el email como clave
     private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
 
     public ServiciosAdmin(){
-        socios = new HashMap<>();
-        temporadas = new HashMap<>();
     }
 
 
@@ -40,11 +41,11 @@ public class ServiciosAdmin {
      * @brief REGISTRA A UN NUEVO SOCIO
      */
     public Socio crearSocio(@Email @NotBlank String email, @NotBlank String nombre, @NotBlank String apellidos, @NotBlank @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
-        if(socios.containsKey(email))
+        if(socios.existePorEmail(email))
             throw new ClienteRegistrado();
         else{
             Socio s = new Socio(email,nombre,apellidos,telefono,claveAcceso);
-            socios.put(email,s);
+            socios.guardar(s);
             return s;
         }
     }
@@ -76,7 +77,7 @@ public class ServiciosAdmin {
             Temporada t = new Temporada(LocalDate.now().getYear());
             temporadas.put(LocalDate.now().getYear(),t);
 
-            for(Socio s : socios.values()){
+            for(Socio s : socios.getSocios()){
                 s.setHaPagado(false);
             }
 
@@ -120,11 +121,10 @@ public class ServiciosAdmin {
      * @param clave clave de acceso del socio
      * @return Optional.empty si el login es correcto o Optional.of(Socio) si existe
      */
-    public Optional<Socio> login(String email, String clave){
-        Socio s = socios.get(email);
-        if(s != null){
-            if(s.getClaveAcceso().equals(clave))
-                return Optional.of(s);
+    public Optional<Socio> login(String email, String clave) {
+        Optional<Socio> s = socios.buscarPorEmail(email);
+        if (s.isPresent() && s.get().getClaveAcceso().equals(clave)) {
+            return s;
         }
         return Optional.empty();
     }

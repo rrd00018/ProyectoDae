@@ -24,8 +24,8 @@ public class Solicitud {
     @Getter @Setter
     private int acompaniantesAceptados;
 
-    @ManyToOne @JoinColumn(name="idSocio")
     @Getter @Setter
+    @ManyToOne @JoinColumn(name="idSocio")
     private Socio socio;
 
     @Getter @Setter

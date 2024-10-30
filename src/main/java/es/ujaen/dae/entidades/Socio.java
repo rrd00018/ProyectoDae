@@ -18,8 +18,10 @@ import java.util.Map;
 @Validated
 public class Socio {
     @Id @Getter @Setter
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSocio;
     @Getter @Setter @Email
+    @Column(unique = true)
     private String email;
     @Getter @Setter @NotBlank
     private String nombre;
@@ -33,7 +35,6 @@ public class Socio {
     private boolean haPagado;
 
     @OneToMany(mappedBy="socio")
-    @MapKeyColumn(name = "idActividad")
     private Map<Integer,Solicitud> solicitudes; //Guarda el id de la actividad y la solicitud a la misma
 
 
