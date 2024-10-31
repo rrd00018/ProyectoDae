@@ -13,23 +13,18 @@ import java.util.Map;
 public class Temporada {
     @Getter @Setter @Id
     private int anio;
-    @Getter @Setter
-    private int numActividades;
 
     @OneToMany
-    @JoinColumn(name = "anio") // Crea una columna de clave externa en Actividad
-    private Map<Integer, Actividad> actividades = new HashMap<>();
+    private Map<Integer, Actividad> actividades;
 
 
     public Temporada() {
         actividades = new HashMap<>();
-        numActividades = 0;
     }
 
     public Temporada(int anio){
         this.anio = anio;
         actividades = new HashMap<>();
-        numActividades = 0;
     }
 
 
@@ -37,7 +32,6 @@ public class Temporada {
      * @brief AÑADE LA ACTIVIDAD AL MAPA
      */
     public void crearActividad(Actividad actividad) {
-        numActividades++;
         actividades.put(actividad.getId(),actividad);
     }
 

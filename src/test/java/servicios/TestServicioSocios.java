@@ -10,14 +10,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = es.ujaen.dae.app.ClubDeSocios.class)
+@ActiveProfiles("test")
+
 public class TestServicioSocios {
 
     @Autowired
@@ -37,7 +41,7 @@ public class TestServicioSocios {
         servicioAdmin.crearActividad( "Yoga en el Parque", "Clases de yoga al aire libre", 30.0f, 15,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
         //mira las abiertas
-        ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
+        List<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
         //echa solicitud
         Solicitud solicitud = servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 3);
 
@@ -65,7 +69,7 @@ public class TestServicioSocios {
         servicioAdmin.crearActividad( "Curso de Fotografía", "Aprende a manejar tu cámara", 100.0f, 10,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
         //mira las abiertas
-        ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
+        List<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
         //echa solicitud
         servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 1);
         //listar solicitudes
@@ -88,7 +92,7 @@ public class TestServicioSocios {
         servicioAdmin.crearActividad( "Taller de Cocina", "Aprende recetas tradicionales", 75.0f, 12,
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
         //mira las abiertas
-        ArrayList<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
+        List<Actividad> actividadesAbiertas = servicioAdmin.listarActividadesDisponibles();
         //echa solicitud
         servicioSocios.echarSolicitud(socio, actividadesAbiertas.get(0).getId(), 1);
         //listar solicitudes

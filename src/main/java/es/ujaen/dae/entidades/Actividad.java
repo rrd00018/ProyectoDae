@@ -6,6 +6,7 @@ import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import es.ujaen.dae.excepciones.SolicitudIncorrecta;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
@@ -33,13 +34,13 @@ public class Actividad {
     @Getter @Positive
     private int plazas;
 
-    @Getter @Setter @NotBlank
+    @Getter @Setter @NotNull
     private LocalDate fechaCelebracion;
 
-    @Getter @Setter @NotBlank
+    @Getter @Setter @NotNull
     private LocalDate fechaInicioInscripcion;
 
-    @Getter @Setter @NotBlank
+    @Getter @Setter @NotNull
     private LocalDate fechaFinInscripcion;
 
     private int plazasAsignadas;

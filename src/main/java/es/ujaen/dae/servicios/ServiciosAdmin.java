@@ -7,6 +7,7 @@ import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.repositorios.RepositorioActividad;
 import es.ujaen.dae.repositorios.RepositorioSocio;
+import es.ujaen.dae.repositorios.RepositorioTemporada;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -29,9 +30,11 @@ public class ServiciosAdmin {
     private RepositorioSocio socios; //Usa el email como clave
     @Autowired
     private RepositorioActividad repositorioActividad;
+    @Autowired
+    private RepositorioTemporada repositorioTemporada;
 
     //private HashMap<String,Socio> socios; //Usa el email como clave
-    private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
+    //private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
 
     public ServiciosAdmin(){
     }
@@ -60,12 +63,14 @@ public class ServiciosAdmin {
             temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
             return actividad;
         }else throw new TemporadaNoExiste();*/
-       if(temporadas.containsKey(LocalDate.now().getYear())){
+       Temporada temporada = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear()).get();
+       if (temporada != null){
            Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
-           temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
-           repositorioActividad.guardar(actividad);
-           return actividad; //TODO Comprobar que la actividad esta bien devuelta
+           temporada.crearActividad(actividad);
+           repositorioTemporada.actualizar(temporada);
+           return actividad;
        }else throw new TemporadaNoExiste();
+
     }
 
 
@@ -73,16 +78,18 @@ public class ServiciosAdmin {
      * @brief CREA NUEVA TEMPORADA Y ASIGNA NO-PAGADO A TODOS LOS SOCIOS
      */
     public Temporada crearTemporada(){
-        if(!temporadas.containsKey(LocalDate.now().getYear())){
-            Temporada t = new Temporada(LocalDate.now().getYear());
-            temporadas.put(LocalDate.now().getYear(),t);
-
+        Optional<Temporada> t  = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear());
+        if(t.isPresent()){
+            throw new TemporadaYaCreada();
+        }
+        Temporada temporada = new Temporada(LocalDate.now().getYear());
+        repositorioTemporada.guardar(temporada);
+        //TODO asignar todos los socios como no pagados
+           /*
             for(Socio s : socios.getSocios()){
                 s.setHaPagado(false);
-            }
-
-            return temporadas.get(LocalDate.now().getYear());
-        }else throw new TemporadaYaCreada();
+            }*/
+        return temporada;
     }
 
 
@@ -91,10 +98,14 @@ public class ServiciosAdmin {
      * @param idActividad
      */
     public void cerrarActividad(int idActividad){
-        Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
-        if(a.getFechaFinInscripcion().isBefore(LocalDate.now())) {
-            a.asignarAutoJusto();
-        }else throw new FechaNoAlcanzada();
+        Optional<Actividad> a = repositorioActividad.buscar(idActividad);
+        if(a.isPresent()) {
+            Actividad actividad = a.get();
+            if (actividad.getFechaFinInscripcion().isBefore(LocalDate.now())) {
+                actividad.asignarAutoJusto();
+            } else throw new FechaNoAlcanzada();
+            repositorioActividad.actualizar(actividad);
+        }else throw new ActividadNoExistente();
     }
 
 
@@ -134,8 +145,8 @@ public class ServiciosAdmin {
      * @brief LISTA LAS ACTIVIDADES DISPONIBLES DE LA TEMPORADA ACTUAL
      * @return arraylist con las actividades
      */
-    public ArrayList<Actividad> listarActividadesDisponibles(){
-        return temporadas.get(LocalDate.now().getYear()).listarActividadesEnCurso();
+    public List<Actividad> listarActividadesDisponibles(){
+        return repositorioActividad.buscarActividadesAbiertas();
     }
 
 
@@ -161,8 +172,10 @@ public class ServiciosAdmin {
      * (para que el administrador proceda con la asignacion manual)
      */
     public List<Solicitud> listarSolicitudesActividad(Actividad a){
-        if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
+       /* if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
             return a.getSolicitudes();
-        }else throw new ActividadNoExistente();
+        }else throw new ActividadNoExistente();*/
+        List<Solicitud> l = new ArrayList<>();
+        return l;
     }
 }

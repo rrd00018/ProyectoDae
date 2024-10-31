@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = es.ujaen.dae.app.ClubDeSocios.class)
 @Validated
+@ActiveProfiles("test")
 public class TestServiciosAdmin {
     @Autowired
     ServiciosAdmin serviciosAdmin;

@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -26,5 +27,13 @@ public class RepositorioActividad {
             em.persist(actividad);
             em.flush();
         }
+    }
+
+    public Actividad actualizar(Actividad actividad){
+        return em.merge(actividad);
+    }
+
+    public List<Actividad> buscarActividadesAbiertas(){
+        return em.createQuery("SELECT a FROM Actividad a WHERE a.fechaFinInscripcion > CURRENT_DATE", Actividad.class).getResultList();
     }
 }
