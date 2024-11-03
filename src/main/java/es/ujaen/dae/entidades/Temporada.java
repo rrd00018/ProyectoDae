@@ -14,7 +14,8 @@ public class Temporada {
     @Getter @Setter @Id
     private int anio;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //TODO revisar si el ALL debe estar y el uso de la carga EAGER
+    @MapKey(name = "id")
     private Map<Integer, Actividad> actividades;
 
 

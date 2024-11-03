@@ -6,6 +6,7 @@ import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.excepciones.ActividadNoExistente;
 import es.ujaen.dae.excepciones.NumeroDeInvitadosIncorrecto;
 import es.ujaen.dae.excepciones.SolicitudFueraDePlazo;
+import es.ujaen.dae.repositorios.RepositorioSolicitud;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 public class ServicioSocios {
     @Autowired
     private ServiciosAdmin servicioAdmin;
+    @Autowired
+    private RepositorioSolicitud repositorioSolicitud;
 
     public ServicioSocios() {}
 
@@ -36,10 +39,12 @@ public class ServicioSocios {
         if(invitados < 0 || invitados > 5){
             throw new NumeroDeInvitadosIncorrecto();
         }
+        
         if(!socio.existeSolicitud(idActividad)){
             Solicitud soli=new Solicitud(socio,invitados,actividad);
             actividad.addSolicitud(soli);
             socio.crearSolicitud(soli,actividad);
+
             return soli;
         }
         return null;
@@ -53,7 +58,9 @@ public class ServicioSocios {
         if(nuevosInvitados < 0 || nuevosInvitados > 5){
             throw new NumeroDeInvitadosIncorrecto();
         }
-        return  socio.modificarSolicitud(idActividad,nuevosInvitados);
+        Solicitud s = socio.modificarSolicitud(idActividad,nuevosInvitados);
+        return repositorioSolicitud.actualizar(s);
+
     }
 
 

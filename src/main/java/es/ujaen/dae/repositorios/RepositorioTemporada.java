@@ -16,7 +16,6 @@ public class RepositorioTemporada {
         @PersistenceContext
         private EntityManager em;
 
-
         public void guardar(Temporada temporada) {em.persist(temporada);}
 
 

@@ -4,6 +4,7 @@ import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,5 +169,19 @@ public class TestServiciosAdmin {
 
         assertThatThrownBy(() ->serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0),-5)).isInstanceOf(NumeroDePlazasIncorrecto.class);
     }
+    @Test
+    @DirtiesContext
+    public void test1(){
+        serviciosAdmin.crearTemporada();
+        var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,10,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
+        var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com","Paco","Ruiz Lopez","684190546","1234");
+        var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","658986256","1234");
+        var usuario3 = serviciosAdmin.crearSocio("maria@example.com", "Maria", "Garcia", "658986258", "claveMaria123");
 
+        serviciosAdmin.pagar(usuario1);
+        serviciosAdmin.pagar(usuario3);
+
+        var actividades = serviciosAdmin.listarActividadesDisponibles();
+        assertThat(actividades.size()).isGreaterThan(0);
+    }
 }

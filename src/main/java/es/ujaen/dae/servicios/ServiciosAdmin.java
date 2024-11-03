@@ -7,6 +7,7 @@ import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.repositorios.RepositorioActividad;
 import es.ujaen.dae.repositorios.RepositorioSocio;
+import es.ujaen.dae.repositorios.RepositorioSolicitud;
 import es.ujaen.dae.repositorios.RepositorioTemporada;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -15,6 +16,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
@@ -27,11 +29,15 @@ import java.util.Optional;
 @Validated
 public class ServiciosAdmin {
     @Autowired
-    private RepositorioSocio socios; //Usa el email como clave
+    private RepositorioSocio socios;
     @Autowired
     private RepositorioActividad repositorioActividad;
     @Autowired
     private RepositorioTemporada repositorioTemporada;
+    @Autowired
+    private RepositorioSocio repositorioSocio;
+    @Autowired
+    private RepositorioSolicitud repositorioSolicitud;
 
     //private HashMap<String,Socio> socios; //Usa el email como clave
     //private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
@@ -57,17 +63,19 @@ public class ServiciosAdmin {
     /**
      * @brief CREA UNA NUEVA ACTIVIDAD
      */
+    @Transactional
     public Actividad crearActividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
        /** if(temporadas.containsKey(LocalDate.now().getYear())){
             Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
             temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
             return actividad;
         }else throw new TemporadaNoExiste();*/
-       Temporada temporada = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear()).get();
-       if (temporada != null){
+       Optional<Temporada> t = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear());
+       if(t.isPresent()){
+           Temporada temporada = t.get();
            Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
            temporada.crearActividad(actividad);
-           repositorioTemporada.actualizar(temporada);
+           repositorioActividad.guardar(actividad);
            return actividad;
        }else throw new TemporadaNoExiste();
 
@@ -155,6 +163,7 @@ public class ServiciosAdmin {
      */
     public void pagar(@Valid Socio socio){
         socio.setHaPagado(true);
+        repositorioSocio.actualizar(socio);
     }
 
 
@@ -164,6 +173,7 @@ public class ServiciosAdmin {
      */
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
         s.getActividad().procesarSolicitudManualmente(s, nPlazas);
+        repositorioSolicitud.actualizar(s);
     }
 
 
@@ -175,7 +185,6 @@ public class ServiciosAdmin {
        /* if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
             return a.getSolicitudes();
         }else throw new ActividadNoExistente();*/
-        List<Solicitud> l = new ArrayList<>();
-        return l;
+        return a.getSolicitudes();
     }
 }

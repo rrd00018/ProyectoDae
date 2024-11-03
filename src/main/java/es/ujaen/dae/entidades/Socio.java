@@ -103,8 +103,8 @@ public class Socio {
     /**
      *  @brief DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
      */
-    public Boolean existeSolicitud(int id_actividad) {
-        return solicitudes.containsKey(id_actividad);
+    public Boolean existeSolicitud(int idActividad) {
+        return solicitudes.containsKey(idActividad);
     }
 
 
