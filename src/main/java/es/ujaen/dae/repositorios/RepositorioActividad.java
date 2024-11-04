@@ -16,6 +16,8 @@ public class RepositorioActividad {
     @PersistenceContext
     EntityManager em;
 
+    public RepositorioActividad() {}
+
     public Optional<Actividad> buscar(int idActividad){
         return Optional.ofNullable(em.find(Actividad.class, idActividad));
     }

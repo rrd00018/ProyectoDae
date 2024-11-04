@@ -27,7 +27,7 @@ public class RepositorioSolicitud {
             throw new SolicitudIncorrecta();
         }
         if (em.find(Solicitud.class, solicitud.getIdActividad()) != null) {
-            throw new SolicitudIncorrecta();  // Lanza excepción si ya existe
+            throw new SolicitudIncorrecta();
         } else {
             em.persist(solicitud);
             em.flush();

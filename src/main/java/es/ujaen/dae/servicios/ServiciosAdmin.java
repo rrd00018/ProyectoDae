@@ -86,17 +86,19 @@ public class ServiciosAdmin {
      * @brief CREA NUEVA TEMPORADA Y ASIGNA NO-PAGADO A TODOS LOS SOCIOS
      */
     public Temporada crearTemporada(){
-        Optional<Temporada> t  = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear());
-        if(t.isPresent()){
+
+        Optional<Temporada> t = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear());
+        if (t.isPresent()) {
             throw new TemporadaYaCreada();
         }
         Temporada temporada = new Temporada(LocalDate.now().getYear());
         repositorioTemporada.guardar(temporada);
-        //TODO asignar todos los socios como no pagados
-           /*
-            for(Socio s : socios.getSocios()){
-                s.setHaPagado(false);
-            }*/
+
+        List<Socio> listaSocios = repositorioSocio.getSocios();
+        for (Socio s : listaSocios) {
+            s.setHaPagado(false);
+            repositorioSocio.actualizar(s);
+        }
         return temporada;
     }
 
@@ -105,8 +107,9 @@ public class ServiciosAdmin {
      * @brief ASIGNA LAS PLAZAS DE IDACTIVIDAD AUTOMATICAMENTE
      * @param idActividad
      */
+    @Transactional
     public void cerrarActividad(int idActividad){
-        Optional<Actividad> a = repositorioActividad.buscar(idActividad);
+       /* Optional<Actividad> a = repositorioActividad.buscar(idActividad);
         if(a.isPresent()) {
             Actividad actividad = a.get();
             if (actividad.getFechaFinInscripcion().isBefore(LocalDate.now())) {
@@ -114,6 +117,22 @@ public class ServiciosAdmin {
             } else throw new FechaNoAlcanzada();
             repositorioActividad.actualizar(actividad);
         }else throw new ActividadNoExistente();
+
+
+        */
+
+        Optional<Actividad> a = repositorioActividad.buscar(idActividad);
+
+        if (a.isPresent()) {
+            Actividad actividad = a.get();
+            if (actividad.getFechaFinInscripcion().isBefore(LocalDate.now())) {
+                actividad.asignarAutoJusto();
+                repositorioActividad.actualizar(actividad);
+            } else {
+                throw new FechaNoAlcanzada();
+            }
+        } else throw new ActividadNoExistente();
+
     }
 
 
@@ -128,9 +147,11 @@ public class ServiciosAdmin {
         else return a;
          */
         Optional<Actividad> a = repositorioActividad.buscar(idActividad);
-        if(a.isPresent()){
+        if (a.isPresent()) {
             return a.get();
-        }else throw new ActividadNoExistente();
+        } else {
+            throw new ActividadNoExistente();
+        }
     }
 
 
@@ -161,6 +182,8 @@ public class ServiciosAdmin {
     /**
      * @brief REGISTRA QUE UN SOCIO HA PAGADO SU CUOTA
      */
+    @Transactional
+
     public void pagar(@Valid Socio socio){
         socio.setHaPagado(true);
         repositorioSocio.actualizar(socio);
@@ -171,6 +194,7 @@ public class ServiciosAdmin {
      * Procesa una solicitud manualmente
      * @param s soliciutd a procesar
      */
+    @Transactional
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
         s.getActividad().procesarSolicitudManualmente(s, nPlazas);
         repositorioSolicitud.actualizar(s);
@@ -185,6 +209,17 @@ public class ServiciosAdmin {
        /* if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
             return a.getSolicitudes();
         }else throw new ActividadNoExistente();*/
+        a.getSolicitudes().size();
         return a.getSolicitudes();
+
+
+    }
+
+    /**
+     * Se usa para poder actualiar las fechas de las actividades en los test
+     * @param a
+     */
+    public void actualizarActividad(Actividad a){
+        repositorioActividad.actualizar(a);
     }
 }
