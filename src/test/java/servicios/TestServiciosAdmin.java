@@ -145,11 +145,11 @@ public class TestServiciosAdmin {
 
     @Test
     @DirtiesContext
-    public void testCerrarActividadManualmente(){
+    public void testCerrarActividadManualmente() {
         serviciosAdmin.crearTemporada();
-        var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,10,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
-        var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com","Paco","Ruiz Lopez","684190546","1234");
-        var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","658986256","1234");
+        var actividad = serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
+        var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com", "Paco", "Ruiz Lopez", "684190546", "1234");
+        var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com", "Juan", "Torres", "658986256", "1234");
         var usuario3 = serviciosAdmin.crearSocio("maria@example.com", "Maria", "Garcia", "658986258", "claveMaria123");
 
         serviciosAdmin.pagar(usuario1);
@@ -158,19 +158,31 @@ public class TestServiciosAdmin {
         var actividades = serviciosAdmin.listarActividadesDisponibles();
 
         servicioSocios.echarSolicitud(Optional.of(usuario1), actividades.get(0).getId(), 2);
-        servicioSocios.echarSolicitud(Optional.ofNullable(usuario2), actividades.get(0).getId(),5);
-        servicioSocios.echarSolicitud(Optional.of(usuario3), actividades.get(0).getId(),5);
+        servicioSocios.echarSolicitud(Optional.ofNullable(usuario2), actividades.get(0).getId(), 5);
+        servicioSocios.echarSolicitud(Optional.of(usuario3), actividades.get(0).getId(), 5);
 
         actividades.get(0).setFechaFinInscripcion(LocalDate.now().minusDays(1));
         serviciosAdmin.actualizarActividad(actividades.get(0));
         var solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
 
-        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2),3);
-        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1),2);
+        // Imprime el tamaño de la lista para depuración
+        System.out.println("Total solicitudes: " + solicitudes.size());
 
-        assertEquals(4,usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+        // Verifica que hay al menos 3 solicitudes antes de acceder a índices específicos
+        if (solicitudes.size() >= 3) {
+            serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
+            serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);
 
-        assertThatThrownBy(() ->serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0),-5)).isInstanceOf(NumeroDePlazasIncorrecto.class);
+            assertEquals(4, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+
+            assertThatThrownBy(() -> serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), -5))
+                    .isInstanceOf(NumeroDePlazasIncorrecto.class);
+        } else {
+            throw new RuntimeException("No hay suficientes solicitudes en la lista para realizar el test");
+        }
     }
+
+
+
 
 }
