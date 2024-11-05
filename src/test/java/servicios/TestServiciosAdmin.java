@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -131,9 +132,9 @@ public class TestServiciosAdmin {
 
         var actividades = serviciosAdmin.listarActividadesDisponibles();
 
-        servicioSocios.echarSolicitud(usuario1, actividades.get(0).getId(), 2);
-        servicioSocios.echarSolicitud(usuario2, actividades.get(0).getId(),5);
-        servicioSocios.echarSolicitud(usuario3, actividades.get(0).getId(),4);
+        servicioSocios.echarSolicitud(Optional.of(usuario1), actividades.get(0).getId(), 2);
+        servicioSocios.echarSolicitud(Optional.ofNullable(usuario2), actividades.get(0).getId(),5);
+        servicioSocios.echarSolicitud(Optional.of(usuario3), actividades.get(0).getId(),4);
 
         actividades.get(0).setFechaFinInscripcion(LocalDate.now().minusDays(1));
         serviciosAdmin.actualizarActividad(actividades.get(0));
@@ -156,9 +157,9 @@ public class TestServiciosAdmin {
 
         var actividades = serviciosAdmin.listarActividadesDisponibles();
 
-        servicioSocios.echarSolicitud(usuario1, actividades.get(0).getId(), 2);
-        servicioSocios.echarSolicitud(usuario2, actividades.get(0).getId(),5);
-        servicioSocios.echarSolicitud(usuario3, actividades.get(0).getId(),5);
+        servicioSocios.echarSolicitud(Optional.of(usuario1), actividades.get(0).getId(), 2);
+        servicioSocios.echarSolicitud(Optional.ofNullable(usuario2), actividades.get(0).getId(),5);
+        servicioSocios.echarSolicitud(Optional.of(usuario3), actividades.get(0).getId(),5);
 
         actividades.get(0).setFechaFinInscripcion(LocalDate.now().minusDays(1));
         serviciosAdmin.actualizarActividad(actividades.get(0));

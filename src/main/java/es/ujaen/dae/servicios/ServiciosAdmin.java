@@ -29,13 +29,11 @@ import java.util.Optional;
 @Validated
 public class ServiciosAdmin {
     @Autowired
-    private RepositorioSocio socios;
+    private RepositorioSocio repositorioSocio;
     @Autowired
     private RepositorioActividad repositorioActividad;
     @Autowired
     private RepositorioTemporada repositorioTemporada;
-    @Autowired
-    private RepositorioSocio repositorioSocio;
     @Autowired
     private RepositorioSolicitud repositorioSolicitud;
 
@@ -50,11 +48,11 @@ public class ServiciosAdmin {
      * @brief REGISTRA A UN NUEVO SOCIO
      */
     public Socio crearSocio(@Email @NotBlank String email, @NotBlank String nombre, @NotBlank String apellidos, @NotBlank @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
-        if(socios.existePorEmail(email))
+        if(repositorioSocio.existePorEmail(email))
             throw new ClienteRegistrado();
         else{
             Socio s = new Socio(email,nombre,apellidos,telefono,claveAcceso);
-            socios.guardar(s);
+            repositorioSocio.guardar(s);
             return s;
         }
     }
@@ -162,7 +160,7 @@ public class ServiciosAdmin {
      * @return Optional.empty si el login es correcto o Optional.of(Socio) si existe
      */
     public Optional<Socio> login(String email, String clave) {
-        Optional<Socio> s = socios.buscarPorEmail(email);
+        Optional<Socio> s = repositorioSocio.buscarPorEmail(email);
         if (s.isPresent() && s.get().getClaveAcceso().equals(clave)) {
             return s;
         }

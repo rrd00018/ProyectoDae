@@ -1,5 +1,6 @@
 package es.ujaen.dae.repositorios;
 
+import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.excepciones.SolicitudIncorrecta;
@@ -53,5 +54,22 @@ public class RepositorioSolicitud {
         return em.createQuery("SELECT s FROM Solicitud s WHERE s.actividad = :actividad AND s.aceptada = true", Solicitud.class)
                 .setParameter("actividad", actividad)
                 .getResultList();
+    }
+    public Solicitud borrarSolicitud(Socio socio, int idActividad) {
+        if (socio.getIdSocio() == null || em.find(Socio.class, socio.getIdSocio()) == null) {
+            throw new SolicitudIncorrecta();
+        }
+        Solicitud solicitud = em.createQuery("SELECT s FROM Solicitud s WHERE s.socio = :socio AND s.actividad.id = :idActividad", Solicitud.class)
+                .setParameter("socio", socio)
+                .setParameter("idActividad", idActividad)
+                .getSingleResult();
+
+        if (solicitud != null) {
+            em.remove(solicitud);
+            em.flush();
+            return solicitud;
+        } else {
+            throw new SolicitudIncorrecta();
+        }
     }
 }
