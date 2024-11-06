@@ -4,6 +4,7 @@ import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.excepciones.ActividadNoExistente;
+import es.ujaen.dae.repositorios.RepositorioActividad;
 import es.ujaen.dae.repositorios.RepositorioSocio;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
@@ -31,21 +32,23 @@ public class TestServicioSocios {
 
     @Autowired
     private ServicioSocios servicioSocios;
+    @Autowired
+    private RepositorioActividad repositorioActividad;
 
     @BeforeEach
     public void setUp() {
         // Registra los socios en el repositorio (simula un registro)
-        repositorioSocio.guardar(new Socio("carlos@example.com", "Carlos", "Perez", "600000001", "claveCarlos123"));
-        repositorioSocio.guardar(new Socio("elena@example.com", "Elena", "Gomez", "600000002", "claveElena456"));
-        repositorioSocio.guardar(new Socio("raul@example.com", "Raul", "Martinez", "600000003", "claveRaul789"));
-        repositorioSocio.guardar(new Socio("laura@example.com", "Laura", "Sanchez", "600000004", "claveLaura321"));
+        serviciosAdmin.crearSocio("carlos@example.com", "Carlos", "Perez", "600000001", "claveCarlos123");
+        serviciosAdmin.crearSocio("elena@example.com", "Elena", "Gomez", "600000002", "claveElena456");
+        serviciosAdmin.crearSocio("raul@example.com", "Raul", "Martinez", "600000003", "claveRaul789");
+        serviciosAdmin.crearSocio("laura@example.com", "Laura", "Sanchez", "600000004", "claveLaura321");
     }
 
     @Test
     @DirtiesContext
     public void testEcharSolicitud_ActividadExistente() {
         // Simulación de login para Carlos
-        Optional<Socio> socioCarlos = serviciosAdmin.login("carlos@example.com", "claveCarlos123");
+        var socioCarlos = serviciosAdmin.login("carlos@example.com", "claveCarlos123");
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
@@ -55,7 +58,7 @@ public class TestServicioSocios {
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
-        Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos.get(), actividadesAbiertas.get(0).getId(), 2);
+        Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos, actividadesAbiertas.get(0).getId(), 2);
 
         assertNotNull(solicitud);
         assertEquals(2, solicitud.getNumAcompaniantes());
@@ -66,17 +69,17 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testEcharSolicitud_ActividadNoExistente() {
         // Simulación de login para Elena
-        Optional<Socio> socioElena = serviciosAdmin.login("elena@example.com", "claveElena456");
+        var socioElena = serviciosAdmin.login("elena@example.com", "claveElena456");
 
         serviciosAdmin.crearTemporada();
-        assertThatThrownBy(() -> servicioSocios.echarSolicitud(socioElena.get(), 999, 1)).isInstanceOf(ActividadNoExistente.class);
+        assertThatThrownBy(() -> servicioSocios.echarSolicitud(socioElena, 999, 1)).isInstanceOf(ActividadNoExistente.class);
     }
 
     @Test
     @DirtiesContext
     public void testModificarSolicitud() {
         // Simulación de login para Raul
-        Optional<Socio> socioRaul = serviciosAdmin.login("raul@example.com", "claveRaul789");
+        var socioRaul = serviciosAdmin.login("raul@example.com", "claveRaul789");
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
@@ -86,9 +89,9 @@ public class TestServicioSocios {
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
-        servicioSocios.echarSolicitud(socioRaul.get(), actividadesAbiertas.get(0).getId(), 1);
-        ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(Optional.ofNullable(socioRaul.orElse(null)));
-        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(Optional.of(socioRaul.orElse(null)), solicitudesSocio.get(0).getIdActividad(), 3);
+        servicioSocios.echarSolicitud(socioRaul, actividadesAbiertas.get(0).getId(), 1);
+        ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioRaul);
+        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socioRaul, solicitudesSocio.get(0).getIdActividad(), 3);
 
         assertNotNull(solicitudModificada);
         assertEquals(3, solicitudModificada.getNumAcompaniantes());
@@ -98,7 +101,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testCancelarSolicitud() {
         // Simulación de login para Laura
-        Optional<Socio> socioLaura = serviciosAdmin.login("laura@example.com", "claveLaura321");
+        var socioLaura = serviciosAdmin.login("laura@example.com", "claveLaura321");
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
@@ -108,10 +111,11 @@ public class TestServicioSocios {
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
-        servicioSocios.echarSolicitud(socioLaura.get(), actividadesAbiertas.get(0).getId(), 1);
+        servicioSocios.echarSolicitud(socioLaura, actividadesAbiertas.get(0).getId(), 1);
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioLaura);
         Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socioLaura, solicitudesSocio.get(0).getIdActividad());
-
+        var a = serviciosAdmin.buscarActividad(solicitudCancelada.getActividad().getId());
+        assertEquals(0,a.getSolicitudes().size());
         assertNotNull(solicitudCancelada);
     }
 }

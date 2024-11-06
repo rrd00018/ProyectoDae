@@ -24,22 +24,12 @@ public class RepositorioSolicitud {
     }
 
     public void guardar(Solicitud solicitud) {
-        if (solicitud == null || solicitud.getIdActividad() == 0) {
-            throw new SolicitudIncorrecta();
-        }
-        if (em.find(Solicitud.class, solicitud.getIdActividad()) != null) {
-            throw new SolicitudIncorrecta();
-        } else {
-            em.persist(solicitud);
-            em.flush();
-        }
+        em.persist(solicitud);
+        em.flush();
     }
 
 
     public Solicitud actualizar(Solicitud solicitud) {
-        if (solicitud == null || solicitud.getIdActividad() == 0) {
-            throw new SolicitudIncorrecta();
-        }
         return em.merge(solicitud);
     }
 
@@ -55,21 +45,7 @@ public class RepositorioSolicitud {
                 .setParameter("actividad", actividad)
                 .getResultList();
     }
-    public Solicitud borrarSolicitud(Socio socio, int idActividad) {
-        if (socio.getIdSocio() == null || em.find(Socio.class, socio.getIdSocio()) == null) {
-            throw new SolicitudIncorrecta();
-        }
-        Solicitud solicitud = em.createQuery("SELECT s FROM Solicitud s WHERE s.socio = :socio AND s.actividad.id = :idActividad", Solicitud.class)
-                .setParameter("socio", socio)
-                .setParameter("idActividad", idActividad)
-                .getSingleResult();
-
-        if (solicitud != null) {
-            em.remove(solicitud);
-            em.flush();
-            return solicitud;
-        } else {
-            throw new SolicitudIncorrecta();
-        }
+    public void borrarSolicitud(Solicitud solicitud) {
+        em.remove(solicitud);
     }
 }

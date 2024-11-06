@@ -173,18 +173,13 @@ public class TestServiciosAdmin {
         // Imprime el tamaño de la lista para depuración
         System.out.println("Total solicitudes: " + solicitudes.size());
 
-        // Verifica que hay al menos 3 solicitudes antes de acceder a índices específicos
-        if (solicitudes.size() >= 3) {
-            serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
-            serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);
-                            //4
-            assertEquals(5, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
+        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);
 
-            assertThatThrownBy(() -> serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), -5))
-                    .isInstanceOf(NumeroDePlazasIncorrecto.class);
-        } else {
-            throw new RuntimeException("No hay suficientes solicitudes en la lista para realizar el test");
-        }
+        assertEquals(5, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+
+        assertThatThrownBy(() -> serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), -5))
+                .isInstanceOf(NumeroDePlazasIncorrecto.class);
     }
 
 

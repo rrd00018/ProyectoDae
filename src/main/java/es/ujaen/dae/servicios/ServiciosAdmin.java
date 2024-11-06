@@ -159,12 +159,11 @@ public class ServiciosAdmin {
      * @param clave clave de acceso del socio
      * @return Optional.empty si el login es correcto o Optional.of(Socio) si existe
      */
-    public Optional<Socio> login(String email, String clave) {
+    public Socio login(String email, String clave) {
         Optional<Socio> s = repositorioSocio.buscarPorEmail(email);
         if (s.isPresent() && s.get().getClaveAcceso().equals(clave)) {
-            return s;
-        }
-        return Optional.empty();
+            return s.get();
+        }else throw new LoginIncorrecto();
     }
 
 
@@ -194,8 +193,10 @@ public class ServiciosAdmin {
      */
     @Transactional
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
+        Actividad a = s.getActividad();
         s.getActividad().procesarSolicitudManualmente(s, nPlazas);
         repositorioSolicitud.actualizar(s);
+        repositorioActividad.actualizar(a);
     }
 
 
@@ -219,6 +220,5 @@ public class ServiciosAdmin {
      */
     public void actualizarActividad(Actividad a){
         repositorioActividad.actualizar(a);
-
     }
 }
