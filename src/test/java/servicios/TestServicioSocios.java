@@ -32,9 +32,6 @@ public class TestServicioSocios {
     @Autowired
     private ServicioSocios servicioSocios;
 
-    @Autowired
-    private RepositorioSocio repositorioSocio;
-
     @BeforeEach
     public void setUp() {
         // Registra los socios en el repositorio (simula un registro)
@@ -58,7 +55,7 @@ public class TestServicioSocios {
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
-        Solicitud solicitud = servicioSocios.echarSolicitud(Optional.ofNullable(socioCarlos.orElse(null)), actividadesAbiertas.get(0).getId(), 2);
+        Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos.get(), actividadesAbiertas.get(0).getId(), 2);
 
         assertNotNull(solicitud);
         assertEquals(2, solicitud.getNumAcompaniantes());
@@ -72,7 +69,7 @@ public class TestServicioSocios {
         Optional<Socio> socioElena = serviciosAdmin.login("elena@example.com", "claveElena456");
 
         serviciosAdmin.crearTemporada();
-        assertThatThrownBy(() -> servicioSocios.echarSolicitud(Optional.ofNullable(socioElena.orElse(null)), 999, 1)).isInstanceOf(ActividadNoExistente.class);
+        assertThatThrownBy(() -> servicioSocios.echarSolicitud(socioElena.get(), 999, 1)).isInstanceOf(ActividadNoExistente.class);
     }
 
     @Test
@@ -89,7 +86,7 @@ public class TestServicioSocios {
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
-        servicioSocios.echarSolicitud(Optional.ofNullable(socioRaul.orElse(null)), actividadesAbiertas.get(0).getId(), 1);
+        servicioSocios.echarSolicitud(socioRaul.get(), actividadesAbiertas.get(0).getId(), 1);
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(Optional.ofNullable(socioRaul.orElse(null)));
         Solicitud solicitudModificada = servicioSocios.modificarSolicitud(Optional.of(socioRaul.orElse(null)), solicitudesSocio.get(0).getIdActividad(), 3);
 
@@ -111,7 +108,7 @@ public class TestServicioSocios {
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
-        servicioSocios.echarSolicitud(socioLaura, actividadesAbiertas.get(0).getId(), 1);
+        servicioSocios.echarSolicitud(socioLaura.get(), actividadesAbiertas.get(0).getId(), 1);
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioLaura);
         Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socioLaura, solicitudesSocio.get(0).getIdActividad());
 

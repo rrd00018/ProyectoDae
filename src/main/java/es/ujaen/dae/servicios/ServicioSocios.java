@@ -35,7 +35,7 @@ public class ServicioSocios {
      * @brief ECHAR SOLICITUD
      */
     @Transactional
-    public Solicitud echarSolicitud(Optional<Socio> socio, int idActividad, int invitados) {
+    public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) {
         Actividad actividad = repositorioActividad.buscar(idActividad)
                 .orElseThrow(ActividadNoExistente::new);
 
@@ -47,14 +47,14 @@ public class ServicioSocios {
             throw new NumeroDeInvitadosIncorrecto();
         }
 
-        if (!socio.isPresent()) {
+        if (socio!=null) {
             throw new IllegalArgumentException("El socio no puede estar vacío");
         }
 
-        if (!socio.get().existeSolicitud(idActividad)) {
-            Solicitud soli = new Solicitud(socio.get(), invitados, actividad);
+        if (!socio.existeSolicitud(idActividad)) {
+            Solicitud soli = new Solicitud(socio, invitados, actividad);
             actividad.addSolicitud(soli);
-            socio.get().crearSolicitud(soli, actividad);
+            socio.crearSolicitud(soli, actividad);
 
             return soli;
         }
