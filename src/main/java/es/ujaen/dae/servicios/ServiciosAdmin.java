@@ -219,5 +219,6 @@ public class ServiciosAdmin {
      */
     public void actualizarActividad(Actividad a){
         repositorioActividad.actualizar(a);
+
     }
 }

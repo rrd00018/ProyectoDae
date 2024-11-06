@@ -38,7 +38,7 @@ public class ServicioSocios {
     public Solicitud echarSolicitud(Optional<Socio> socio, int idActividad, int invitados) {
         Actividad actividad = repositorioActividad.buscar(idActividad)
                 .orElseThrow(ActividadNoExistente::new);
-
+        actividad.getId();
         if (actividad.getFechaFinInscripcion().isBefore(LocalDate.now())) {
             throw new SolicitudFueraDePlazo();
         }
@@ -55,6 +55,7 @@ public class ServicioSocios {
             Solicitud soli = new Solicitud(socio.get(), invitados, actividad);
             actividad.addSolicitud(soli);
             socio.get().crearSolicitud(soli, actividad);
+            repositorioActividad.actualizar(actividad);
 
             return soli;
         }
