@@ -48,7 +48,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testEcharSolicitud_ActividadExistente() {
         // Simulación de login para Carlos
-        var socioCarlos = serviciosAdmin.login("carlos@example.com", "claveCarlos123");
+        var socioCarlos = serviciosAdmin.login("carlos@example.com", "claveCarlos123").get();
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
@@ -69,7 +69,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testEcharSolicitud_ActividadNoExistente() {
         // Simulación de login para Elena
-        var socioElena = serviciosAdmin.login("elena@example.com", "claveElena456");
+        var socioElena = serviciosAdmin.login("elena@example.com", "claveElena456").get();
 
         serviciosAdmin.crearTemporada();
         assertThatThrownBy(() -> servicioSocios.echarSolicitud(socioElena, 999, 1)).isInstanceOf(ActividadNoExistente.class);
@@ -79,7 +79,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testModificarSolicitud() {
         // Simulación de login para Raul
-        var socioRaul = serviciosAdmin.login("raul@example.com", "claveRaul789");
+        var socioRaul = serviciosAdmin.login("raul@example.com", "claveRaul789").get();
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
@@ -101,7 +101,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testCancelarSolicitud() {
         // Simulación de login para Laura
-        var socioLaura = serviciosAdmin.login("laura@example.com", "claveLaura321");
+        var socioLaura = serviciosAdmin.login("laura@example.com", "claveLaura321").get();
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);

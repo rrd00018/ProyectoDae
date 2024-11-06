@@ -76,7 +76,6 @@ public class ServiciosAdmin {
            repositorioActividad.guardar(actividad);
            return actividad;
        }else throw new TemporadaNoExiste();
-
     }
 
 
@@ -84,7 +83,6 @@ public class ServiciosAdmin {
      * @brief CREA NUEVA TEMPORADA Y ASIGNA NO-PAGADO A TODOS LOS SOCIOS
      */
     public Temporada crearTemporada(){
-
         Optional<Temporada> t = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear());
         if (t.isPresent()) {
             throw new TemporadaYaCreada();
@@ -159,11 +157,8 @@ public class ServiciosAdmin {
      * @param clave clave de acceso del socio
      * @return Optional.empty si el login es correcto o Optional.of(Socio) si existe
      */
-    public Socio login(String email, String clave) {
-        Optional<Socio> s = repositorioSocio.buscarPorEmail(email);
-        if (s.isPresent() && s.get().getClaveAcceso().equals(clave)) {
-            return s.get();
-        }else throw new LoginIncorrecto();
+    public Optional<Socio> login(@Email String email, String clave) {
+        return repositorioSocio.buscarPorEmail(email).filter(socio -> socio.getClaveAcceso().equals(clave));
     }
 
 

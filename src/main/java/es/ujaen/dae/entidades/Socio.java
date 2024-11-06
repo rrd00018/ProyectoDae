@@ -34,7 +34,7 @@ public class Socio {
     @Getter @Setter
     private boolean haPagado;
 
-    @OneToMany(mappedBy = "socio", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "socio", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<Integer, Solicitud> solicitudes = new HashMap<>(); // Guarda el id de la actividad y la solicitud a la misma
 
     public Socio(@NotBlank @Email String email, @NotBlank String nombre, @NotBlank String apellidos,

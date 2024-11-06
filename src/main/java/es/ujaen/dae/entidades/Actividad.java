@@ -46,7 +46,7 @@ public class Actividad {
     private int plazasAsignadas;
     private boolean sociosAsignados;
 
-    @OneToMany(mappedBy = "actividad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "actividad", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Solicitud> solicitudes;
 
 
