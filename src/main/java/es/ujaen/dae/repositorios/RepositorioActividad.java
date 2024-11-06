@@ -32,7 +32,9 @@ public class RepositorioActividad {
     }
 
     public Actividad actualizar(Actividad actividad){
-        return em.merge(actividad);
+        Actividad mergedActividad = em.merge(actividad);
+        em.flush(); // Fuerza la sincronización de los cambios
+        return mergedActividad;
     }
 
     public List<Actividad> buscarActividadesAbiertas(){

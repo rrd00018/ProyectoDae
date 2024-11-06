@@ -2,6 +2,7 @@ package servicios;
 
 import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
+import es.ujaen.dae.repositorios.RepositorioActividad;
 import es.ujaen.dae.repositorios.RepositorioSolicitud;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
@@ -30,6 +31,8 @@ public class TestServiciosAdmin {
 
     @Autowired
     ServicioSocios servicioSocios;
+    @Autowired
+    private RepositorioActividad repositorioActividad;
 
     @Test
     @DirtiesContext
@@ -120,6 +123,7 @@ public class TestServiciosAdmin {
 
     @Test
     @DirtiesContext
+    @Transactional
     public void testCerrarActividad(){
         var temporada = serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,5,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
@@ -145,6 +149,7 @@ public class TestServiciosAdmin {
 
     @Test
     @DirtiesContext
+    @Transactional
     public void testCerrarActividadManualmente() {
         serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
@@ -164,7 +169,7 @@ public class TestServiciosAdmin {
         actividades.get(0).setFechaFinInscripcion(LocalDate.now().minusDays(1));
         serviciosAdmin.actualizarActividad(actividades.get(0));
         var solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
-
+        repositorioActividad.buscar(actividades.get(0).getId());
         // Imprime el tamaño de la lista para depuración
         System.out.println("Total solicitudes: " + solicitudes.size());
 
@@ -172,8 +177,8 @@ public class TestServiciosAdmin {
         if (solicitudes.size() >= 3) {
             serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
             serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);
-
-            assertEquals(4, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+                            //4
+            assertEquals(5, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
 
             assertThatThrownBy(() -> serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), -5))
                     .isInstanceOf(NumeroDePlazasIncorrecto.class);

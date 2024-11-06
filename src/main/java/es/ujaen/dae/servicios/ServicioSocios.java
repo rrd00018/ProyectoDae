@@ -55,6 +55,7 @@ public class ServicioSocios {
             Solicitud soli = new Solicitud(socio, invitados, actividad);
             actividad.addSolicitud(soli);
             socio.crearSolicitud(soli, actividad);
+            repositorioActividad.actualizar(actividad);
 
             return soli;
         }
