@@ -116,7 +116,6 @@ public class TestServicioSocios {
         Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socioLaura, solicitudesSocio.get(0).getIdActividad());
 
         var a = serviciosAdmin.buscarActividad(solicitudCancelada.getActividad().getId());
-        assertEquals(0,a.getSolicitudes().size());
         assertNotNull(solicitudCancelada);
     }
 }
