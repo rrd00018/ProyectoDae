@@ -26,6 +26,8 @@ public class ServicioSocios {
     private RepositorioSolicitud repositorioSolicitud;
     @Autowired
     private RepositorioActividad repositorioActividad;
+    @Autowired
+    private RepositorioSocio repositorioSocio;
 
     public ServicioSocios() {}
 
@@ -45,6 +47,8 @@ public class ServicioSocios {
             throw new NumeroDeInvitadosIncorrecto();
         }
 
+        socio = repositorioSocio.actualizar(socio);
+        socio.numeroSolicitudes();
         if (!socio.existeSolicitud(idActividad)) {
             Solicitud soli = new Solicitud(socio, invitados, actividad);
             actividad.addSolicitud(soli);
@@ -66,6 +70,8 @@ public class ServicioSocios {
         if(nuevosInvitados < 0 || nuevosInvitados > 5){
             throw new NumeroDeInvitadosIncorrecto();
         }
+        socio = repositorioSocio.actualizar(socio);
+        socio.numeroSolicitudes();
         Solicitud s = socio.modificarSolicitud(idActividad,nuevosInvitados);
         return repositorioSolicitud.actualizar(s);
 
@@ -77,6 +83,7 @@ public class ServicioSocios {
      */
     @Transactional
     public Solicitud cancelarSolicitud(@Valid Socio socio, int idActividad) {
+        socio = repositorioSocio.actualizar(socio);
         Solicitud solicitud = socio.cancelarSolicitud(idActividad);
         Actividad actividad = solicitud.getActividad();
         repositorioSolicitud.actualizar(solicitud);
@@ -89,6 +96,8 @@ public class ServicioSocios {
      * @brief OBTIENE LAS SOLICITUDES
      */
     public ArrayList<Solicitud> obtenerSolicitudes(@Valid Socio socio) {
+        socio = repositorioSocio.actualizar(socio);
+        socio.numeroSolicitudes();
         return socio.obtenerSolicitudes();
     }
 }

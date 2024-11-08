@@ -114,6 +114,7 @@ public class TestServicioSocios {
         servicioSocios.echarSolicitud(socioLaura, actividadesAbiertas.get(0).getId(), 1);
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioLaura);
         Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socioLaura, solicitudesSocio.get(0).getIdActividad());
+
         var a = serviciosAdmin.buscarActividad(solicitudCancelada.getActividad().getId());
         assertEquals(0,a.getSolicitudes().size());
         assertNotNull(solicitudCancelada);

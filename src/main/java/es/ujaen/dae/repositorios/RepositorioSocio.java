@@ -23,8 +23,10 @@ public class RepositorioSocio {
     }
 
 
-    public void actualizar(Socio socio) {
-        em.merge(socio);
+    public Socio actualizar(Socio socio) {
+        Socio mergedSocio = em.merge(socio);
+        em.flush();
+        return mergedSocio;
     }
 
 

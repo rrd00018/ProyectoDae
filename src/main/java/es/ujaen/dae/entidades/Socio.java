@@ -122,4 +122,12 @@ public class Socio {
         return new ArrayList<>(solicitudes.values());
     }
 
+    /**
+     * Operación usada para cargar las solicitudes
+     * @return
+     */
+    public int numeroSolicitudes() {
+        return solicitudes.size();
+    }
+
 }
