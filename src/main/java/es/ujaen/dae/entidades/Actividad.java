@@ -74,6 +74,7 @@ public class Actividad {
      */
     public void addSolicitud(Solicitud solicitud) {
         solicitudes.add(solicitud);
+        solicitud.getSocio().crearSolicitud(solicitud, this);
         if(plazasAsignadas < plazas && solicitud.getSocio().isHaPagado()){ //Si el socio ha pagado se le confirma directamente su plaza
             solicitud.aceptarSolicitud();
             plazasAsignadas++;
@@ -194,7 +195,6 @@ public class Actividad {
             int solicitudesCompletas = 0; //Contador para controlar el numero de solicitudes que tienen cumplido su requerimiento de plaza
             while(plazasAsignadas < plazas) {
                 if(solicitudesCompletas >=  solicitudes.size()) break; //Si todas las solicitudes han sido completadas se termina el metodo
-                System.out.println("Vuelta: " + nVueltas + " solicitudes completas: " + solicitudesCompletas);
                 for (Solicitud solicitud : solicitudes) {
                     if(plazasAsignadas == plazas) break;
                     if(solicitudesCompletas == solicitudes.size()) break;

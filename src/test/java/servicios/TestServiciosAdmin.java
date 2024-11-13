@@ -168,10 +168,8 @@ public class TestServiciosAdmin {
 
         actividades.get(0).setFechaFinInscripcion(LocalDate.now().minusDays(1));
         serviciosAdmin.actualizarActividad(actividades.get(0));
+
         var solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
-        repositorioActividad.buscar(actividades.get(0).getId());
-        // Imprime el tamaño de la lista para depuración
-        System.out.println("Total solicitudes: " + solicitudes.size());
 
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);

@@ -48,13 +48,11 @@ public class ServicioSocios {
         }
 
         socio = repositorioSocio.actualizar(socio);
-        socio.numeroSolicitudes();
         if (!socio.existeSolicitud(idActividad)) {
             Solicitud soli = new Solicitud(socio, invitados, actividad);
+            repositorioSolicitud.guardar(soli);
             actividad.addSolicitud(soli);
-            socio.crearSolicitud(soli, actividad);
             repositorioActividad.actualizar(actividad);
-
             return soli;
         }
         return null;

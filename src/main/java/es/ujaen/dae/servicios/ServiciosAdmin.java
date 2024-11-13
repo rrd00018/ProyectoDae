@@ -190,7 +190,6 @@ public class ServiciosAdmin {
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
         Actividad a = s.getActividad();
         s.getActividad().procesarSolicitudManualmente(s, nPlazas);
-        repositorioSolicitud.actualizar(s);
         repositorioActividad.actualizar(a);
     }
 
@@ -199,12 +198,14 @@ public class ServiciosAdmin {
      * @brief LISTA LAS SOLICITUDES DE UNA ACTIVIDAD
      * (para que el administrador proceda con la asignacion manual)
      */
+    @Transactional
     public List<Solicitud> listarSolicitudesActividad(Actividad a){
        /* if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
             return a.getSolicitudes();
         }else throw new ActividadNoExistente();*/
+        a = repositorioActividad.actualizar(a);
         a.getSolicitudes().size();
-        return a.getSolicitudes();
+        return a.getSolicitudes().stream().toList();
 
 
     }

@@ -56,7 +56,7 @@ public class Socio {
     /**
      *  @brief CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
      */
-    public void crearSolicitud(Solicitud soli, Actividad actividad) {
+    void crearSolicitud(Solicitud soli, Actividad actividad) {
         solicitudes.put(actividad.getId(),soli);
     }
 
