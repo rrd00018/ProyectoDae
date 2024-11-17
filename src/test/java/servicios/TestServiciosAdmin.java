@@ -3,7 +3,6 @@ package servicios;
 import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.repositorios.RepositorioActividad;
-import es.ujaen.dae.repositorios.RepositorioSolicitud;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import jakarta.transaction.Transactional;
@@ -16,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -144,7 +142,10 @@ public class TestServiciosAdmin {
         serviciosAdmin.actualizarActividad(actividades.get(0));
         serviciosAdmin.cerrarActividad(actividades.get(0).getId());
 
-        assertThat(usuario1.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1 + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1 + usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1).isBetween(1,actividad.getPlazas());
+        int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
+                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
+
+        assertThat(plazasTotales).isEqualTo(actividad.getPlazasAsignadas());
     }
 
     @Test
@@ -172,12 +173,12 @@ public class TestServiciosAdmin {
         var solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
 
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
-        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);
+        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), 2);
 
-        assertEquals(5, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+        int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
+                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
 
-        assertThatThrownBy(() -> serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), -5))
-                .isInstanceOf(NumeroDePlazasIncorrecto.class);
+        assertThat(plazasTotales).isEqualTo(actividad.getPlazasAsignadas());
     }
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 public class Actividad {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
+    @Getter @Setter
     private int id;
 
     @Getter @NotBlank
@@ -43,6 +43,7 @@ public class Actividad {
     @Getter @Setter @NotNull
     private LocalDate fechaFinInscripcion;
 
+    @Getter
     private int plazasAsignadas;
     private boolean sociosAsignados;
 

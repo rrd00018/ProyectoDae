@@ -1,20 +1,14 @@
     package es.ujaen.dae.entidades;
 
-    import jakarta.persistence.Entity;
-    import jakarta.persistence.GeneratedValue;
-    import jakarta.persistence.GenerationType;
-    import jakarta.persistence.Id;
-    import jakarta.persistence.Entity;
-    import jakarta.persistence.Id;
-    import jakarta.persistence.JoinColumn;
-    import jakarta.persistence.ManyToOne;
+    import jakarta.persistence.*;
     import jakarta.validation.constraints.Max;
     import lombok.Getter;
     import lombok.Setter;
 
     @Entity
     public class Solicitud {
-        @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Getter @Setter
         private int idSolicitud;
         @Getter @Setter @Max(5)
