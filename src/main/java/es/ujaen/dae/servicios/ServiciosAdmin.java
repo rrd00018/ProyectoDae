@@ -13,15 +13,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +42,7 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief REGISTRA A UN NUEVO SOCIO
+     *  REGISTRA A UN NUEVO SOCIO
      */
     public Socio crearSocio(@Email @NotBlank String email, @NotBlank String nombre, @NotBlank String apellidos, @NotBlank @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
         if(repositorioSocio.existePorEmail(email))
@@ -59,15 +56,10 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief CREA UNA NUEVA ACTIVIDAD
+     *  CREA UNA NUEVA ACTIVIDAD
      */
     @Transactional
     public Actividad crearActividad(String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion) {
-       /** if(temporadas.containsKey(LocalDate.now().getYear())){
-            Actividad actividad = new Actividad(titulo,descripcion,precio,plazas,fechaCelebracion,fechaInicioInscripcion,fechaFinInscripcion);
-            temporadas.get(fechaCelebracion.getYear()).crearActividad(actividad);
-            return actividad;
-        }else throw new TemporadaNoExiste();*/
        Optional<Temporada> t = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear());
        if(t.isPresent()){
            Temporada temporada = t.get();
@@ -80,7 +72,7 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief CREA NUEVA TEMPORADA Y ASIGNA NO-PAGADO A TODOS LOS SOCIOS
+     *  CREA NUEVA TEMPORADA Y ASIGNA NO-PAGADO A TODOS LOS SOCIOS
      */
     public Temporada crearTemporada(){
         Optional<Temporada> t = repositorioTemporada.buscarPorAnio(LocalDate.now().getYear());
@@ -100,23 +92,11 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief ASIGNA LAS PLAZAS DE IDACTIVIDAD AUTOMATICAMENTE
-     * @param idActividad
+     *  ASIGNA LAS PLAZAS DE IDACTIVIDAD AUTOMATICAMENTE
+     * @param idActividad id de la actividad en cuestion
      */
     @Transactional
     public void cerrarActividad(int idActividad){
-       /* Optional<Actividad> a = repositorioActividad.buscar(idActividad);
-        if(a.isPresent()) {
-            Actividad actividad = a.get();
-            if (actividad.getFechaFinInscripcion().isBefore(LocalDate.now())) {
-                actividad.asignarAutoJusto();
-            } else throw new FechaNoAlcanzada();
-            repositorioActividad.actualizar(actividad);
-        }else throw new ActividadNoExistente();
-
-
-        */
-
         Optional<Actividad> a = repositorioActividad.buscar(idActividad);
 
         if (a.isPresent()) {
@@ -133,15 +113,10 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief DEVUELVE UNA ACTIVIDAD DADO SU ID SI SE ENCUENTRA O NULL
+     *  DEVUELVE UNA ACTIVIDAD DADO SU ID SI SE ENCUENTRA O NULL
      * @return true o false segun la consulta
      */
     public Actividad buscarActividad(int idActividad){
-        /**
-        Actividad a = temporadas.get(LocalDate.now().getYear()).buscarActividad(idActividad);
-        if(a == null) throw new ActividadNoExistente();
-        else return a;
-         */
         Optional<Actividad> a = repositorioActividad.buscar(idActividad);
         if (a.isPresent()) {
             return a.get();
@@ -152,7 +127,7 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief Devuelve el objeto socio para logearse
+     * Devuelve el objeto socio para logearse
      * @param email email del socio
      * @param clave clave de acceso del socio
      * @return Optional.empty si el login es correcto o Optional.of(Socio) si existe
@@ -163,7 +138,7 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief LISTA LAS ACTIVIDADES DISPONIBLES DE LA TEMPORADA ACTUAL
+     * LISTA LAS ACTIVIDADES DISPONIBLES DE LA TEMPORADA ACTUAL
      * @return arraylist con las actividades
      */
     public List<Actividad> listarActividadesDisponibles(){
@@ -172,7 +147,7 @@ public class ServiciosAdmin {
 
 
     /**
-     * @brief REGISTRA QUE UN SOCIO HA PAGADO SU CUOTA
+     *  REGISTRA QUE UN SOCIO HA PAGADO SU CUOTA
      */
     @Transactional
 
@@ -188,14 +163,15 @@ public class ServiciosAdmin {
      */
     @Transactional
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
+        s = repositorioSolicitud.actualizar(s);
         Actividad a = s.getActividad();
-        s.getActividad().procesarSolicitudManualmente(s, nPlazas);
+        s.getActividad().aceptarSolicitudManual(s, nPlazas);
         repositorioActividad.actualizar(a);
     }
 
 
     /**
-     * @brief LISTA LAS SOLICITUDES DE UNA ACTIVIDAD
+     *  LISTA LAS SOLICITUDES DE UNA ACTIVIDAD
      * (para que el administrador proceda con la asignacion manual)
      */
     @Transactional
@@ -212,7 +188,7 @@ public class ServiciosAdmin {
 
     /**
      * Se usa para poder actualiar las fechas de las actividades en los test
-     * @param a
+     * @param a Actividad que se va a actualizar
      */
     public void actualizarActividad(Actividad a){
         repositorioActividad.actualizar(a);

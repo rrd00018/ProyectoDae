@@ -89,51 +89,6 @@ public class Actividad {
     }
 
     /**
-     * Maneja el fin de la actividad, se aceptan las solicitudes para cumplir las plazas y se informan de cuantas plazas de invitado se han concedido a esa solicitud.
-     * En general usa una cola FIFO para aceptar las solicitudes pero matiene el siguiente orden de prioridad: miembros que han pagado -> acompañantes de miembros que han pagado -> miembros que no han pagado y sus acompañanates
-     */
-    public void moverListaEspera(){
-
-        if(!sociosAsignados){ //Si se ha hecho el procesamiento de los socios por algun ajuste manual de solicitudes no se vuelve a repetir
-            asignarSociosQueHanPagado(); //Si quedan huecos libres y socios que han pagado sin plaza se tienen que asignar antes de nada
-        }
-
-        if(plazasAsignadas < plazas) {
-            for (Solicitud solicitud : solicitudes) { //vuelve a recorrer ahora asignando  plaza a los que quedan dando prioridad a los acompañantes que a los socios que no han pagado porque los acompañantes tienen "pagada su parte po el socio invitador"
-                if(plazasAsignadas == plazas) break;
-                if (solicitud.isAceptada() && solicitud.getNumAcompaniantes() != solicitud.getAcompaniantesAceptados()) {
-                    if (plazasAsignadas + solicitud.getNumAcompaniantes() <= plazas) {
-                        solicitud.setAcompaniantesAceptados(solicitud.getNumAcompaniantes());
-                        plazasAsignadas += solicitud.getNumAcompaniantes();
-                    } else {
-                        int aceptados = solicitud.getNumAcompaniantes() - (plazasAsignadas + solicitud.getNumAcompaniantes() - plazas);
-                        solicitud.setAcompaniantesAceptados(aceptados);
-                        plazasAsignadas += aceptados;
-                    }
-                }
-            }
-            if(plazasAsignadas < plazas){ //en caso de que ni con los invitados de los socios que han pagado se llene se pasaria a los socios que no han pagado y a sus acompañantes tratandolos a todos por igual
-                for(Solicitud solicitud : solicitudes){
-                    if(plazasAsignadas == plazas) break;
-                    if(!solicitud.isAceptada()){
-                        if (plazasAsignadas + solicitud.getNumAcompaniantes() + 1 <= plazas) { //si se pueden asignar directamente se asignan todas las plazas que haya y se acepta la solicitud. El +1 representa al socio en cuestion
-                            solicitud.setAcompaniantesAceptados(solicitud.getNumAcompaniantes());
-                            plazasAsignadas += solicitud.getNumAcompaniantes() +1;
-                            solicitud.aceptarSolicitud();
-                        } else { //si solo se pudiesen aceptar unos pocos se acpetan esos y se acepta la solicitud y se le pasa el numero de aceptados. El -1 representa al socio en cuestion
-                            int aceptados = solicitud.getNumAcompaniantes() - (plazasAsignadas + solicitud.getNumAcompaniantes() - plazas) -1;
-                            solicitud.setAcompaniantesAceptados(aceptados);
-                            plazasAsignadas += aceptados + 1; //Aqui se mete el socio para tenerlo en cuenta en el total de plazas
-                            solicitud.aceptarSolicitud();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
      * Simula el procesamiento manual, se intentan asignar las plazas de la solicitud, si no se puede se asignan las maximas posibles.
      * Se aceptan automaticamente todas las solicitudes de los socios que han pagado para evitar que haya fallos en el sistema
      * @param s solicitud a procesar
@@ -179,6 +134,31 @@ public class Actividad {
         }else throw new SolicitudIncorrecta();
     }
 
+
+    public void aceptarSolicitudManual(Solicitud s, int nPlazas){
+        if(solicitudes.contains(s)){
+            if(fechaFinInscripcion.isBefore(LocalDate.now())){
+                if(nPlazas > s.getNumAcompaniantes() + 1 || nPlazas <= 0 || plazasAsignadas + nPlazas > plazas)
+                    throw new NumeroDePlazasIncorrecto();
+
+                int plazasRequeridas = s.getNumAcompaniantes() - s.getAcompaniantesAceptados();
+                if(!s.isAceptada())
+                    plazasRequeridas++;
+
+
+                if(nPlazas > plazasRequeridas)
+                    throw new NumeroDePlazasIncorrecto();
+
+                if (!s.isAceptada()) {
+                    s.aceptarSolicitud();
+                    nPlazas--;
+                }
+
+                s.setAcompaniantesAceptados(nPlazas);
+
+            }else throw new FechaNoAlcanzada();
+        }else throw new SolicitudIncorrecta();
+    }
 
     /**
      * Asigna las plazas restantes de una actividad de manera automática siguiendo el siguiente esquema. Si por borrados de ultima hora hay socios que han pagado sin plaza se les da.

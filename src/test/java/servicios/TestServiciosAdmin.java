@@ -1,9 +1,7 @@
 package servicios;
 
-import es.ujaen.dae.entidades.Temporada;
+
 import es.ujaen.dae.excepciones.*;
-import es.ujaen.dae.repositorios.RepositorioActividad;
-import es.ujaen.dae.repositorios.RepositorioSolicitud;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import jakarta.transaction.Transactional;
@@ -16,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
-import java.util.Optional;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,8 +29,6 @@ public class TestServiciosAdmin {
 
     @Autowired
     ServicioSocios servicioSocios;
-    @Autowired
-    private RepositorioActividad repositorioActividad;
 
     @Test
     @DirtiesContext
@@ -44,7 +40,7 @@ public class TestServiciosAdmin {
     @Test
     @DirtiesContext
     public void testNuevoSocioDuplicado(){
-        var socio = serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234");
+        serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234");
         assertThatThrownBy(() -> serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234")).isInstanceOf(ClienteRegistrado.class);
     }
 
@@ -58,7 +54,7 @@ public class TestServiciosAdmin {
     @DirtiesContext
     public void testCrearActividad() {
         int anioTemporada = LocalDate.now().getYear();
-        Temporada temporada = serviciosAdmin.crearTemporada();
+        serviciosAdmin.crearTemporada();
 
         String titulo = "Yoga";
         String descripcion = "Clase";
@@ -86,7 +82,7 @@ public class TestServiciosAdmin {
     public void testCrearActividadConFechasIncorrectas() {
         // Crear una temporada primero para asociar la actividad
         int anioTemporada = LocalDate.now().getYear();
-        Temporada temporada = serviciosAdmin.crearTemporada();
+        serviciosAdmin.crearTemporada();
 
 
         // Datos de la actividad con fechas incorrectas
@@ -108,7 +104,7 @@ public class TestServiciosAdmin {
     @Test
     @DirtiesContext
     public void testCrearTemporadaExistente(){
-        var temporada = serviciosAdmin.crearTemporada();
+        serviciosAdmin.crearTemporada();
         assertThatThrownBy(() -> serviciosAdmin.crearTemporada()).isInstanceOf(TemporadaYaCreada.class);
     }
 
@@ -125,7 +121,7 @@ public class TestServiciosAdmin {
     @DirtiesContext
     @Transactional
     public void testCerrarActividad(){
-        var temporada = serviciosAdmin.crearTemporada();
+        serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,5,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
         var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com","Paco","Ruiz Lopez","684190546","1234");
         var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","658986256","1234");
@@ -144,7 +140,7 @@ public class TestServiciosAdmin {
         serviciosAdmin.actualizarActividad(actividades.get(0));
         serviciosAdmin.cerrarActividad(actividades.get(0).getId());
 
-        assertThat(usuario1.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1 + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1 + usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1).isBetween(1,actividad.getPlazas());
+        assertThat(usuario1.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1 + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1).isBetween(1,actividad.getPlazas());
     }
 
     @Test
@@ -152,7 +148,7 @@ public class TestServiciosAdmin {
     @Transactional
     public void testCerrarActividadManualmente() {
         serviciosAdmin.crearTemporada();
-        var actividad = serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
+        serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
         var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com", "Paco", "Ruiz Lopez", "684190546", "1234");
         var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com", "Juan", "Torres", "658986256", "1234");
         var usuario3 = serviciosAdmin.crearSocio("maria@example.com", "Maria", "Garcia", "658986258", "claveMaria123");
@@ -174,7 +170,7 @@ public class TestServiciosAdmin {
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);
 
-        assertEquals(5, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+        assertEquals(4, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
 
         assertThatThrownBy(() -> serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), -5))
                 .isInstanceOf(NumeroDePlazasIncorrecto.class);

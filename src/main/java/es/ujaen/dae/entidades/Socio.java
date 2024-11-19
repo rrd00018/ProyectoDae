@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
@@ -54,7 +53,7 @@ public class Socio {
 
 
     /**
-     *  @brief CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
+     *  CREA UNA SOLICITUD DADA LA ACTIVIDAD Y EL NUMERO DE ACOMPAÑANTES
      */
     void crearSolicitud(Solicitud soli, Actividad actividad) {
         solicitudes.put(actividad.getId(),soli);
@@ -62,7 +61,7 @@ public class Socio {
 
 
     /**
-     *  @brief MODIFICAR EL NUMERO DE ACOMPAÑANTES DE UNA SOLICITUD DADA SU ID
+     *   MODIFICAR EL NUMERO DE ACOMPAÑANTES DE UNA SOLICITUD DADA SU ID
      */
     public Solicitud modificarSolicitud(int idActividad, int nuevosInvitados) {
         Solicitud solicitud = obtenerSolicitud(idActividad);
@@ -81,7 +80,7 @@ public class Socio {
 
 
     /**
-     *  @brief CANCELAR UNA SOLICITUD DADA SU ID
+     *   CANCELAR UNA SOLICITUD DADA SU ID
      */
     public Solicitud cancelarSolicitud(int idActividad) {
         Solicitud solicitud = obtenerSolicitud(idActividad);
@@ -100,7 +99,7 @@ public class Socio {
 
 
     /**
-     *  @brief DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
+     *   DEVUELVE SI EXISTE UNA SOLICITUD PARA UNA ACTIVIDAD DADA
      */
     public Boolean existeSolicitud(int idActividad) {
         return solicitudes.containsKey(idActividad);
@@ -108,7 +107,7 @@ public class Socio {
 
 
     /**
-     *  @brief DEVUELVE LA SOLICITUD DADA EL ID DE ACTIVIDAD
+     *   DEVUELVE LA SOLICITUD DADA EL ID DE ACTIVIDAD
      */
     public Solicitud obtenerSolicitud(int idActividad) {
         return solicitudes.get(idActividad);
@@ -116,7 +115,7 @@ public class Socio {
 
 
     /**
-     *  @brief DEVUELVE LAS SOLICITUDES DE ESTE SOCIO EN ARRAYLIST
+     *   DEVUELVE LAS SOLICITUDES DE ESTE SOCIO EN ARRAYLIST
      */
     public ArrayList<Solicitud> obtenerSolicitudes() {
         return new ArrayList<>(solicitudes.values());
@@ -124,7 +123,6 @@ public class Socio {
 
     /**
      * Operación usada para cargar las solicitudes
-     * @return
      */
     public int numeroSolicitudes() {
         return solicitudes.size();

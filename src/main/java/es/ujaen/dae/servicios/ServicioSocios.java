@@ -32,7 +32,7 @@ public class ServicioSocios {
     public ServicioSocios() {}
 
     /**
-     * @brief ECHAR SOLICITUD
+     *  ECHAR SOLICITUD
      */
     @Transactional
     public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) {
@@ -61,7 +61,7 @@ public class ServicioSocios {
 
 
     /**
-     * @brief MODIFICAR SOLICITUD
+     *  MODIFICAR SOLICITUD
      */
     @Transactional
     public Solicitud modificarSolicitud(@Valid Socio socio, int idActividad, int nuevosInvitados) {
@@ -77,7 +77,7 @@ public class ServicioSocios {
 
 
     /**
-     * @brief CANCESAR SOLICITUD
+     *  CANCESAR SOLICITUD
      */
     @Transactional
     public Solicitud cancelarSolicitud(@Valid Socio socio, int idActividad) {
@@ -91,7 +91,7 @@ public class ServicioSocios {
 
 
     /**
-     * @brief OBTIENE LAS SOLICITUDES
+     *  OBTIENE LAS SOLICITUDES
      */
     public ArrayList<Solicitud> obtenerSolicitudes(@Valid Socio socio) {
         socio = repositorioSocio.actualizar(socio);
