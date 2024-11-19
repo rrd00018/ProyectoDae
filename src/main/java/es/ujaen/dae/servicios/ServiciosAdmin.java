@@ -167,6 +167,7 @@ public class ServiciosAdmin {
         Actividad a = s.getActividad();
         s.getActividad().aceptarSolicitudManual(s, nPlazas);
         repositorioActividad.actualizar(a);
+        repositorioSolicitud.actualizar(s);
     }
 
 

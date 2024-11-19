@@ -33,8 +33,8 @@ public class Socio {
     @Getter @Setter
     private boolean haPagado;
 
-    @OneToMany(mappedBy = "socio", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Map<Integer, Solicitud> solicitudes = new HashMap<>(); // Guarda el id de la actividad y la solicitud a la misma
+    @OneToMany(mappedBy = "socio", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Map<Integer, Solicitud> solicitudes; // Guarda el id de la actividad y la solicitud a la misma
 
     public Socio(@NotBlank @Email String email, @NotBlank String nombre, @NotBlank String apellidos,
                  @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
@@ -44,6 +44,7 @@ public class Socio {
         this.telefono = telefono;
         this.claveAcceso = claveAcceso;
         this.haPagado = false;
+        this.solicitudes = new HashMap<>();
     }
 
 

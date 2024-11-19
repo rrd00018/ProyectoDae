@@ -90,52 +90,10 @@ public class Actividad {
     }
 
     /**
-     * Simula el procesamiento manual, se intentan asignar las plazas de la solicitud, si no se puede se asignan las maximas posibles.
-     * Se aceptan automaticamente todas las solicitudes de los socios que han pagado para evitar que haya fallos en el sistema
+     * Simula el procesamiento manual
      * @param s solicitud a procesar
+     * @param nPlazas numero de plazas a asignar
      */
-    public void procesarSolicitudManualmente(Solicitud s, int nPlazas) {
-        if(solicitudes.contains(s)){
-            if(fechaFinInscripcion.isBefore(LocalDate.now())){
-                if(nPlazas > s.getNumAcompaniantes() || nPlazas < 0){ //Compruebo que el numero de plazas no supere lo pedido por la silicitud o que sea negativo
-                    throw new NumeroDePlazasIncorrecto();
-                }
-
-                if(!sociosAsignados){ //Antes de empezar el procesamiento y la primera vez compruebo que si hay huecos en la lista y socios que han pagado esperando se les asigne plaza
-                    asignarSociosQueHanPagado();
-                }
-
-                boolean socioPaga = s.getSocio().isHaPagado();
-
-                if(plazasAsignadas + nPlazas <= plazas){ //Si se pueden asignar todos los asigno
-                    s.aceptarSolicitud();
-                    if(!socioPaga){
-                        s.setAcompaniantesAceptados(nPlazas-1); //Si el socio no ha pagado, para calcular las plazas tengo que contar con la suya pero al aceptar acompañantes hay que quitarla
-                    }else{
-                        s.setAcompaniantesAceptados(nPlazas);
-                    }
-                    plazasAsignadas += nPlazas; //Aqui no se resta porque si no ha pagado no se ha tenido en cuenta todavia en las plazas asignadas
-
-                }else { //Si no se pueden todos se asignan todos los posibles
-                    s.aceptarSolicitud();
-                    int aceptados = 0;
-                    if(!socioPaga){
-                        aceptados = nPlazas - (plazasAsignadas + nPlazas - plazas) - 1; //Se resta el socio a la hora de guardar los acompañanantes
-                        s.setAcompaniantesAceptados(aceptados);
-                        aceptados++; //Si el socio no habia pagado, hay que tener en cuenta su plaza en plazasAsignadas
-                    }else{
-                        s.setAcompaniantesAceptados(nPlazas);
-                        aceptados += nPlazas;
-                    }
-                    plazasAsignadas += aceptados;
-                }
-
-
-            }else throw new FechaNoAlcanzada();
-        }else throw new SolicitudIncorrecta();
-    }
-
-
     public void aceptarSolicitudManual(Solicitud s, int nPlazas){
         if(solicitudes.contains(s)){
             if(fechaFinInscripcion.isBefore(LocalDate.now())){
@@ -156,7 +114,7 @@ public class Actividad {
                 }
 
                 s.setAcompaniantesAceptados(nPlazas);
-
+                plazasAsignadas += nPlazas;
             }else throw new FechaNoAlcanzada();
         }else throw new SolicitudIncorrecta();
     }
