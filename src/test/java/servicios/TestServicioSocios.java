@@ -2,10 +2,8 @@ package servicios;
 
 import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Solicitud;
-import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.excepciones.ActividadNoExistente;
 import es.ujaen.dae.repositorios.RepositorioActividad;
-import es.ujaen.dae.repositorios.RepositorioSocio;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +16,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;

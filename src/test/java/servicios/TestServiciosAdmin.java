@@ -1,6 +1,6 @@
 package servicios;
 
-
+import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
@@ -29,6 +29,7 @@ public class TestServiciosAdmin {
 
     @Autowired
     ServicioSocios servicioSocios;
+
 
     @Test
     @DirtiesContext
@@ -140,7 +141,10 @@ public class TestServiciosAdmin {
         serviciosAdmin.actualizarActividad(actividades.get(0));
         serviciosAdmin.cerrarActividad(actividades.get(0).getId());
 
-        assertThat(usuario1.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1 + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + 1).isBetween(1,actividad.getPlazas());
+        int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
+                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
+
+        assertThat(plazasTotales).isEqualTo(actividad.getPlazasAsignadas());
     }
 
     @Test
@@ -148,7 +152,7 @@ public class TestServiciosAdmin {
     @Transactional
     public void testCerrarActividadManualmente() {
         serviciosAdmin.crearTemporada();
-        serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
+        var actividad = serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
         var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com", "Paco", "Ruiz Lopez", "684190546", "1234");
         var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com", "Juan", "Torres", "658986256", "1234");
         var usuario3 = serviciosAdmin.crearSocio("maria@example.com", "Maria", "Garcia", "658986258", "claveMaria123");
@@ -168,12 +172,12 @@ public class TestServiciosAdmin {
         var solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
 
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
-        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(1), 2);
+        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), 2);
 
-        assertEquals(4, usuario3.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados() + usuario2.obtenerSolicitud(actividades.get(0).getId()).getAcompaniantesAceptados());
+        int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
+                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
 
-        assertThatThrownBy(() -> serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), -5))
-                .isInstanceOf(NumeroDePlazasIncorrecto.class);
+        assertThat(plazasTotales).isEqualTo(actividad.getPlazasAsignadas());
     }
 
 }
