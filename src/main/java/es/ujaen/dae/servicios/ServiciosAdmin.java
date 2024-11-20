@@ -102,7 +102,7 @@ public class ServiciosAdmin {
         if (a.isPresent()) {
             Actividad actividad = a.get();
             if (actividad.getFechaFinInscripcion().isBefore(LocalDate.now())) {
-                actividad.asignarAutoJusto();
+                actividad.asignarPlazasAutomatico();
                 repositorioActividad.actualizar(actividad);
             } else {
                 throw new FechaNoAlcanzada();
@@ -171,7 +171,7 @@ public class ServiciosAdmin {
          Optional<Actividad> actividad = repositorioActividad.buscar(s.getIdActividad());
          Actividad a =actividad.get();
         //Actividad a =s.getActividad();
-        a.aceptarSolicitudManual(s, nPlazas);
+        a.asignarPlazasManualmente(s, nPlazas);
 
         repositorioActividad.actualizar(a);
     }

@@ -94,7 +94,7 @@ public class Actividad {
      * @param s solicitud a procesar
      * @param nPlazas numero de plazas a asignar
      */
-    public void aceptarSolicitudManual(Solicitud s, int nPlazas){
+    public void asignarPlazasManualmente(Solicitud s, int nPlazas){
         if(solicitudes.contains(s)){
             if(fechaFinInscripcion.isBefore(LocalDate.now())){
                 if(nPlazas > s.getNumAcompaniantes() + 1 || nPlazas <= 0 || plazasAsignadas + nPlazas > plazas)
@@ -126,10 +126,10 @@ public class Actividad {
      * Cada dos turnos se permite la asignacion a las solicitudes de socios que no han pagado de una plaza. La primera plaza siempre es la del socio.
      * Al permitir que los socios que no han pagado y sus acompañantes entren en el sistema pero cada dos turnos se premia a los socios que pagan y por consiguiente a sus acompañanates
      */
-    public void asignarAutoJusto(){
-        if(!sociosAsignados){
-            asignarSociosQueHanPagado();
-        }
+    public void asignarPlazasAutomatico(){
+
+        asignarSociosQueHanPagado();
+
         if(plazasAsignadas < plazas){
             int nVueltas = 0; //Este valor marca si los socios que no han pagado pueden entrar en la asignaciond e plazas o no, si es par acceden al sistem
             int solicitudesCompletas = 0; //Contador para controlar el numero de solicitudes que tienen cumplido su requerimiento de plaza

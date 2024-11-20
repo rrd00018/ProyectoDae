@@ -93,7 +93,7 @@ public class TestServiciosAdmin {
         LocalDate fechaInicioInscripcion = LocalDate.of(anioTemporada, 6, 1);
         LocalDate fechaFinInscripcion = LocalDate.of(anioTemporada, 7, 1);
 
-        // Verificación: Debe lanzar una excepción de FechaNoAlcanzada
+        // Verificación: Debe lanzar una excepción de FechaIncorrecta
         assertThatThrownBy(() ->
                 serviciosAdmin.crearActividad(titulo, descripcion, precio, plazas, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion)
         ).isInstanceOf(FechaIncorrecta.class);
