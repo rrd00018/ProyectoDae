@@ -50,9 +50,9 @@ public class ServicioSocios {
         if (!socio.existeSolicitud(idActividad)) {
 
             Solicitud soli = new Solicitud(socio, invitados, actividad);
-            soli.getSocio().crearSolicitud(soli, actividad);
-
+            socio.crearSolicitud(soli, actividad);
             repositorioSolicitud.guardar(soli);
+            repositorioSocio.actualizar(socio);
             repositorioActividad.actualizar(actividad);
             return soli;
         }
@@ -92,7 +92,7 @@ public class ServicioSocios {
 
 
     /**
-     *  OBTIENE LAS SOLICITUDES
+     *  Devuelve una lista con las solicitudes de un socio
      */
     public ArrayList<Solicitud> obtenerSolicitudes(@Valid Socio socio) {
         socio = repositorioSocio.actualizar(socio);
@@ -101,10 +101,10 @@ public class ServicioSocios {
     }
 
     /**
-     * ACTUALIZAR SOCIO
+     * Refresca el socio en memoria con la ultima informacion de la base de datos y lo devuelve con las solicitudes cargadas
      */
     @Transactional
-    public Socio sincronizarSocio(Socio socio){
+    public Socio refrescarSocioConSolicitudes(Socio socio){
         Optional<Socio> s = repositorioSocio.buscarPorId(socio.getIdSocio());
         Socio socioSinNada = s.get();
         socioSinNada.numeroSolicitudes();

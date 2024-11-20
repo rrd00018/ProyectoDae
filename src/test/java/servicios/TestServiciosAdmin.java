@@ -1,10 +1,8 @@
 package servicios;
 
-import es.ujaen.dae.entidades.Temporada;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +138,12 @@ public class TestServiciosAdmin {
         serviciosAdmin.actualizarActividad(actividades.get(0));
         serviciosAdmin.cerrarActividad(actividades.get(0).getId());
 
+        actividad = serviciosAdmin.buscarActividad(actividad.getId());
+
+        usuario1=servicioSocios.refrescarSocioConSolicitudes(usuario1);
+        usuario2=servicioSocios.refrescarSocioConSolicitudes(usuario2);
+        usuario3=servicioSocios.refrescarSocioConSolicitudes(usuario3);
+
         int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
                 + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
 
@@ -148,6 +152,7 @@ public class TestServiciosAdmin {
 
     @Test
     @DirtiesContext
+
     public void testCerrarActividadManualmente() {
         serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
@@ -169,17 +174,19 @@ public class TestServiciosAdmin {
 
         var solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
 
-        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
+        serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 5);
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), 2);
 
-        usuario1=servicioSocios.sincronizarSocio(usuario1);
-        usuario2=servicioSocios.sincronizarSocio(usuario2);
-        usuario3=servicioSocios.sincronizarSocio(usuario3);
+        actividad = serviciosAdmin.buscarActividad(actividad.getId());
+
+        usuario1=servicioSocios.refrescarSocioConSolicitudes(usuario1);
+        usuario2=servicioSocios.refrescarSocioConSolicitudes(usuario2);
+        usuario3=servicioSocios.refrescarSocioConSolicitudes(usuario3);
 
         int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
-                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
+                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1 + usuario2.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados();
 
         assertThat(plazasTotales).isEqualTo(actividad.getPlazasAsignadas());
-    }
 
+    }
 }

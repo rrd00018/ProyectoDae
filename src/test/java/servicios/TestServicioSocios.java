@@ -51,8 +51,7 @@ public class TestServicioSocios {
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
         LocalDate fechaFinInscripcion = LocalDate.now().plusDays(1);
         serviciosAdmin.crearTemporada();
-        serviciosAdmin.crearActividad("Pilates en la Playa", "Clases de pilates al aire libre", 40.0f, 20,
-                fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
+        var a  = serviciosAdmin.crearActividad("Pilates en la Playa", "Clases de pilates al aire libre", 40.0f, 20, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
         Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos, actividadesAbiertas.get(0).getId(), 2);

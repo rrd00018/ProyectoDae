@@ -114,12 +114,15 @@ public class ServiciosAdmin {
 
     /**
      *  DEVUELVE UNA ACTIVIDAD DADO SU ID SI SE ENCUENTRA O NULL
-     * @return true o false segun la consulta
+     * @return la actividad con las solicitudes cagadps
      */
+    @Transactional
     public Actividad buscarActividad(int idActividad){
         Optional<Actividad> a = repositorioActividad.buscar(idActividad);
         if (a.isPresent()) {
-            return a.get();
+            Actividad actividad = a.get();
+            actividad.nSolicitudes();
+            return actividad;
         } else {
             throw new ActividadNoExistente();
         }
@@ -164,10 +167,13 @@ public class ServiciosAdmin {
     @Transactional
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
         s = repositorioSolicitud.actualizar(s);
-        Actividad a = s.getActividad();
-        s.getActividad().aceptarSolicitudManual(s, nPlazas);
+
+         Optional<Actividad> actividad = repositorioActividad.buscar(s.getIdActividad());
+         Actividad a =actividad.get();
+        //Actividad a =s.getActividad();
+        a.aceptarSolicitudManual(s, nPlazas);
+
         repositorioActividad.actualizar(a);
-        repositorioSolicitud.actualizar(s);
     }
 
 
@@ -177,21 +183,23 @@ public class ServiciosAdmin {
      */
     @Transactional
     public List<Solicitud> listarSolicitudesActividad(Actividad a){
-       /* if(temporadas.get(LocalDate.now().getYear()).buscarActividad(a.getId()) != null){
-            return a.getSolicitudes();
-        }else throw new ActividadNoExistente();*/
         a = repositorioActividad.actualizar(a);
-        a.getSolicitudes().size();
+        a.getSolicitudes();
         return a.getSolicitudes().stream().toList();
-
-
     }
 
     /**
      * Se usa para poder actualiar las fechas de las actividades en los test
      * @param a Actividad que se va a actualizar
      */
-    public void actualizarActividad(Actividad a){
-        repositorioActividad.actualizar(a);
+    public Actividad actualizarActividad(Actividad a){
+        return repositorioActividad.actualizar(a);
+    }
+
+    public Socio actualizarSocio(Socio s){
+
+        s = repositorioSocio.actualizar(s);
+        s.numeroSolicitudes();
+        return s;
     }
 }

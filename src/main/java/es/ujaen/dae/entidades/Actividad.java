@@ -110,6 +110,7 @@ public class Actividad {
 
                 if (!s.isAceptada()) {
                     s.aceptarSolicitud();
+                    plazasAsignadas++;
                     nPlazas--;
                 }
 
@@ -178,5 +179,7 @@ public class Actividad {
         sociosAsignados = true;
     }
 
-    public  List<Solicitud> getSolicitudes(){return solicitudes;}
+    public List<Solicitud> getSolicitudes(){return solicitudes;}
+
+    public int nSolicitudes(){return solicitudes.size();}
 }
