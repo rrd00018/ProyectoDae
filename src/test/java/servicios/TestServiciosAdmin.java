@@ -120,7 +120,6 @@ public class TestServiciosAdmin {
 
     @Test
     @DirtiesContext
-    @Transactional
     public void testCerrarActividad(){
         serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,5,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
@@ -149,7 +148,6 @@ public class TestServiciosAdmin {
 
     @Test
     @DirtiesContext
-    @Transactional
     public void testCerrarActividadManualmente() {
         serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
