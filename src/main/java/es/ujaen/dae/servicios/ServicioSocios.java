@@ -34,7 +34,6 @@ public class ServicioSocios {
     /**
      *  ECHAR SOLICITUD
      */
-    @Transactional
     public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) {
         Actividad actividad = repositorioActividad.buscar(idActividad)
                 .orElseThrow(ActividadNoExistente::new);
@@ -99,5 +98,16 @@ public class ServicioSocios {
         socio = repositorioSocio.actualizar(socio);
         socio.numeroSolicitudes();
         return socio.obtenerSolicitudes();
+    }
+
+    /**
+     * ACTUALIZAR SOCIO
+     */
+    @Transactional
+    public Socio sincronizarSocio(Socio socio){
+        Optional<Socio> s = repositorioSocio.buscarPorId(socio.getIdSocio());
+        Socio socioSinNada = s.get();
+        socioSinNada.numeroSolicitudes();
+        return socioSinNada;
     }
 }

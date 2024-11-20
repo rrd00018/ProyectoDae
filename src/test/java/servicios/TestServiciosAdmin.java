@@ -172,6 +172,10 @@ public class TestServiciosAdmin {
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(2), 3);
         serviciosAdmin.procesarSolicitudManualmente(solicitudes.get(0), 2);
 
+        usuario1=servicioSocios.sincronizarSocio(usuario1);
+        usuario2=servicioSocios.sincronizarSocio(usuario2);
+        usuario3=servicioSocios.sincronizarSocio(usuario3);
+
         int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
                 + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
 
