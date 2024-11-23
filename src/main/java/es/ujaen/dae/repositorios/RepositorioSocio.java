@@ -40,7 +40,7 @@ public class RepositorioSocio {
     }
 
 
-    public Optional<Socio> buscarPorId(Long id) {
+    public Optional<Socio> buscarPorId(int id) {
         return Optional.ofNullable(em.find(Socio.class, id));
     }
 

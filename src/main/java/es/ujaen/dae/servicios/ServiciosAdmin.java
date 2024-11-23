@@ -168,7 +168,7 @@ public class ServiciosAdmin {
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
         s = repositorioSolicitud.actualizar(s);
 
-         Optional<Actividad> actividad = repositorioActividad.buscar(s.getIdActividad());
+         Optional<Actividad> actividad = repositorioActividad.buscar(s.getActividad().getId());
          Actividad a =actividad.get();
         //Actividad a =s.getActividad();
         a.asignarPlazasManualmente(s, nPlazas);

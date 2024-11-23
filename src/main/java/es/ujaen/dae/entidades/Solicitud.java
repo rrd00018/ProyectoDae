@@ -40,8 +40,16 @@
             acompaniantesAceptados = 0;
         }
 
+        public Solicitud(int idSolicitud, int numAcompaniantes, boolean aceptada, int acompaniantesAceptados, Socio socio, Actividad actividad) {
+            this.idSolicitud = idSolicitud;
+            this.numAcompaniantes = numAcompaniantes;
+            this.aceptada = aceptada;
+            this.acompaniantesAceptados = acompaniantesAceptados;
+            this.socio = socio;
+            this.actividad = actividad;
+        }
 
         public void aceptarSolicitud(){aceptada = true;}
 
-        public int getIdActividad(){return actividad.getId();}
+
     }

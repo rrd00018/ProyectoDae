@@ -70,6 +70,19 @@ public class Actividad {
         }
     }
 
+    public Actividad(int id, String titulo, String descripcion, float precio, int plazas, LocalDate fechaCelebracion, LocalDate fechaInicioInscripcion, LocalDate fechaFinInscripcion, int plazasAsignadas) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.plazas = plazas;
+        this.fechaCelebracion = fechaCelebracion;
+        this.fechaInicioInscripcion = fechaInicioInscripcion;
+        this.fechaFinInscripcion = fechaFinInscripcion;
+        this.plazasAsignadas = plazasAsignadas;
+        sociosAsignados = false;
+    }
+
     /**
      * Añade una nueva solicitud a la actividad, si el socio ha pagado y hay hueco se le asigna directamente la plaza
      */

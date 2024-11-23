@@ -18,7 +18,7 @@ import java.util.Map;
 public class Socio {
     @Id @Getter @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idSocio;
+    private int idSocio;
     @Getter @Setter @Email
     @Column(unique = true)
     private String email;
@@ -47,6 +47,16 @@ public class Socio {
         this.solicitudes = new HashMap<>();
     }
 
+    public Socio(int idSocio, String email, String nombre, String apellidos, String telefono, String claveAcceso, boolean haPagado) {
+        this.idSocio = idSocio;
+        this.email = email;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.telefono = telefono;
+        this.claveAcceso = claveAcceso;
+        this.haPagado = haPagado;
+        this.solicitudes = new HashMap<>();
+    }
 
     public Socio() {
         this.solicitudes = new HashMap<>();

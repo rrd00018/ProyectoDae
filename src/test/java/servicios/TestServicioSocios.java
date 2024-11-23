@@ -87,7 +87,7 @@ public class TestServicioSocios {
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
         servicioSocios.echarSolicitud(socioRaul, actividadesAbiertas.get(0).getId(), 1);
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioRaul);
-        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socioRaul, solicitudesSocio.get(0).getIdActividad(), 3);
+        Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socioRaul, solicitudesSocio.get(0).getActividad().getId(), 3);
 
         assertNotNull(solicitudModificada);
         assertEquals(3, solicitudModificada.getNumAcompaniantes());
@@ -109,7 +109,7 @@ public class TestServicioSocios {
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
         servicioSocios.echarSolicitud(socioLaura, actividadesAbiertas.get(0).getId(), 1);
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioLaura);
-        Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socioLaura, solicitudesSocio.get(0).getIdActividad());
+        Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socioLaura, solicitudesSocio.get(0).getActividad().getId());
 
         var a = serviciosAdmin.buscarActividad(solicitudCancelada.getActividad().getId());
         assertNotNull(solicitudCancelada);
