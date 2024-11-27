@@ -40,7 +40,7 @@ public class TestServiciosAdmin {
     @DirtiesContext
     public void testNuevoSocioDuplicado(){
         serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234");
-        assertThatThrownBy(() -> serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234")).isInstanceOf(ClienteRegistrado.class);
+        assertThatThrownBy(() -> serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234")).isInstanceOf(UsuarioYaRegistrado.class);
     }
 
     @Test

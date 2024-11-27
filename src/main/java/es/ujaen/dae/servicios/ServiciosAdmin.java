@@ -46,7 +46,7 @@ public class ServiciosAdmin {
      */
     public Socio crearSocio(@Email @NotBlank String email, @NotBlank String nombre, @NotBlank String apellidos, @NotBlank @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
         if(repositorioSocio.existePorEmail(email))
-            throw new ClienteRegistrado();
+            throw new UsuarioYaRegistrado();
         else{
             Socio s = new Socio(email,nombre,apellidos,telefono,claveAcceso);
             repositorioSocio.guardar(s);
