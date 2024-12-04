@@ -94,8 +94,8 @@ public class ServicioSocios {
     /**
      *  Devuelve una lista con las solicitudes de un socio
      */
+    @Transactional
     public ArrayList<Solicitud> obtenerSolicitudes(@Valid Socio socio) {
-        socio = repositorioSocio.actualizar(socio);
         socio.numeroSolicitudes();
         return socio.obtenerSolicitudes();
     }

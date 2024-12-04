@@ -2,10 +2,15 @@ package es.ujaen.dae.rest;
 
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Solicitud;
+import es.ujaen.dae.entidades.Socio;
+import es.ujaen.dae.excepciones.ActividadNoExistente;
+import es.ujaen.dae.excepciones.ActividadYaCreada;
+import es.ujaen.dae.excepciones.TemporadaYaCreada;
 import es.ujaen.dae.excepciones.UsuarioYaRegistrado;
 import es.ujaen.dae.rest.dto.DSocio;
 import es.ujaen.dae.rest.dto.DSolicitud;
 import es.ujaen.dae.rest.dto.Mapeador;
+import es.ujaen.dae.rest.dto.*;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import es.ujaen.dae.excepciones.UsuarioNoRegistrado;
@@ -41,7 +46,38 @@ public class ControladorClub {
         }catch(UsuarioYaRegistrado u){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/actividades")
+    public ResponseEntity<Void> nuevaActividad(@RequestBody DActividad actividad){
+        try{
+            serviciosAdmin.crearActividad(actividad.titulo(), actividad.descripcion(), actividad.precio(), actividad.id(), actividad.fechaCelebracion(), actividad.fechaInicioInscripcion(), actividad.fechaFinInscripcion());
+        }catch(ActividadYaCreada u){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/temporadas")
+    public ResponseEntity<Void> nuevaTemporada(){
+        try{
+            serviciosAdmin.crearTemporada();
+        }catch(TemporadaYaCreada u){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // Rutas para actividades
+    @GetMapping("/actividades/{idActividad}")
+    public ResponseEntity<DActividad> obtenerActividad(@PathVariable int idActividad) {
+        try {
+            serviciosAdmin.buscarActividad(idActividad);
+        } catch (ActividadNoExistente u) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/socios/{email}")
@@ -53,6 +89,26 @@ public class ControladorClub {
         catch(UsuarioNoRegistrado e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    // Rutas para solicitudes
+    @GetMapping("/solicitudes/{idSolicitud}")
+    public ResponseEntity<DSolicitud> obtenerSolicitud(@PathVariable int idSolicitud) {
+        try {
+        } catch () {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    // Rutas para solicitudes
+    @GetMapping("/temporada/{anio}")
+    public ResponseEntity<DSolicitud> obtenerTemporada(@PathVariable int anio) {
+        try {
+        } catch () {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/socios/{email}/solicitudes")
