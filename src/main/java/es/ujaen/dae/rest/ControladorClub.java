@@ -138,6 +138,7 @@ public class ControladorClub {
         }
     }
 
+
     // Rutas para solicitudes
     @GetMapping("/solicitudes/{idSolicitud}")
     public ResponseEntity<DSolicitud> obtenerSolicitud(@PathVariable int idSolicitud) {
@@ -150,10 +151,10 @@ public class ControladorClub {
     }
 
     @PostMapping("/solicitudes")
-    public ResponseEntity<DSolicitud> nuevaSolicitud(@RequestBody DSolicitud dSolicitud, DSocio dsocio) {
+    public ResponseEntity<DSolicitud> nuevaSolicitud(@RequestBody DSolicitud dSolicitud) {
         try {
             Solicitud solicitud = servicioSocios.echarSolicitud(
-                    mapeador.entidad(dsocio),
+                    serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
                     dSolicitud.idActividad(),
                     dSolicitud.numAcompaniantes()
             );
@@ -168,9 +169,7 @@ public class ControladorClub {
     }
 
     @PutMapping("/solicitudes/{idSolicitud}")
-    public ResponseEntity<DSolicitud> actualizarSolicitud(
-            @RequestBody DSolicitud dSolicitud,
-            DSocio dsocio) {
+    public ResponseEntity<DSolicitud> actualizarSolicitud(@RequestBody DSolicitud dSolicitud) {
         try {
             Socio socio = mapeador.entidad(dsocio);
             Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(

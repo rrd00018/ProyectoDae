@@ -218,4 +218,8 @@ public class ServiciosAdmin {
     public List<Temporada> getTemporadas(){
         return repositorioTemporada.getTemporadas();
     }
+
+    public Socio recuperarSocioPorId(int id){
+        return repositorioSocio.buscarPorId(id).orElseThrow(UsuarioNoRegistrado::new);
+    }
 }
