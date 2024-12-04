@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -47,13 +48,16 @@ public class Temporada {
     /**
      * @brief LISTA LAS ACTIVIDADES ABIERTAS DISPONIBLES
      */
-    public ArrayList<Actividad> listarActividadesEnCurso(){
+    public ArrayList<Actividad> listarActividades(boolean enCurso){
         ArrayList<Actividad> actividadesEnCurso = new ArrayList<>();
-        for(Actividad actividad : actividades.values()){
-            if(actividad.getFechaFinInscripcion().isAfter(LocalDate.now())){
-                actividadesEnCurso.add(actividad);
+        if(enCurso) {
+            for (Actividad actividad : actividades.values()) {
+                if (actividad.getFechaFinInscripcion().isAfter(LocalDate.now())) {
+                    actividadesEnCurso.add(actividad);
+                }
             }
-        }
+        }else actividadesEnCurso.addAll(actividades.values());
         return actividadesEnCurso;
     }
+
 }

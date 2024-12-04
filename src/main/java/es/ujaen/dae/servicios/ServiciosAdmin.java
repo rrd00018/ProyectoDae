@@ -114,7 +114,7 @@ public class ServiciosAdmin {
 
     /**
      *  DEVUELVE UNA ACTIVIDAD DADO SU ID SI SE ENCUENTRA O NULL
-     * @return la actividad con las solicitudes cagadps
+     * @return la actividad con las solicitudes cargadas
      */
     @Transactional
     public Actividad buscarActividad(int idActividad){
@@ -199,7 +199,23 @@ public class ServiciosAdmin {
         return s;
     }
 
+
+    /**
+     * Devuelve un socio dado su email. Usado para recuperar los socios en la api rest una vez ya identificados
+     */
     public Socio recuperarSocioPorEmail(String email){
         return repositorioSocio.buscarPorEmail(email).orElseThrow(UsuarioNoRegistrado::new);
+    }
+
+    public Temporada buscarTemporada(int anio){
+        return repositorioTemporada.buscarPorAnio(anio).orElseThrow(TemporadaNoExiste::new);
+    }
+
+    public Solicitud buscarSolicitud(int id){
+        return repositorioSolicitud.buscar(id).orElseThrow(SolicitudIncorrecta::new);
+    }
+
+    public List<Temporada> getTemporadas(){
+        return repositorioTemporada.getTemporadas();
     }
 }
