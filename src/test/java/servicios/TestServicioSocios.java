@@ -54,6 +54,7 @@ public class TestServicioSocios {
         var a  = serviciosAdmin.crearActividad("Pilates en la Playa", "Clases de pilates al aire libre", 40.0f, 20, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
+        // REFRESCAR socioCarlos HACIENDO UN LOGIN
         Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos, actividadesAbiertas.get(0).getId(), 2);
 
         assertNotNull(solicitud);

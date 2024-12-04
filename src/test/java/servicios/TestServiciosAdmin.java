@@ -179,12 +179,7 @@ public class TestServiciosAdmin {
 
         actividad = serviciosAdmin.buscarActividad(actividad.getId());
 
-        usuario1=servicioSocios.refrescarSocioConSolicitudes(usuario1);
-        usuario2=servicioSocios.refrescarSocioConSolicitudes(usuario2);
-        usuario3=servicioSocios.refrescarSocioConSolicitudes(usuario3);
-
-        int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
-                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1 + usuario2.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados();
+        int plazasTotales = serviciosAdmin.listarSolicitudesActividad(actividad).stream().mapToInt(solicitud -> solicitud.getAcompaniantesAceptados() + (solicitud.isAceptada() ? 1 : 0)).sum();
 
         assertThat(plazasTotales).isEqualTo(actividad.getPlazasAsignadas());
 

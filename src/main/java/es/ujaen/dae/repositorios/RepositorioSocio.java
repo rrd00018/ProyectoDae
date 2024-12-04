@@ -46,21 +46,9 @@ public class RepositorioSocio {
 
 
     public Optional<Socio> buscarPorEmail(String email) {
-        try {
-            Socio socio = em.createQuery("SELECT s FROM Socio s WHERE s.email = :email", Socio.class)
-                    .setParameter("email", email)
-                    .getSingleResult();
-            return Optional.of(socio);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-
-    public boolean existePorEmail(String email) {
-        Long count = em.createQuery("SELECT COUNT(s) FROM Socio s WHERE s.email = :email", Long.class)
+        return em.createQuery("SELECT s FROM Socio s WHERE s.email = :email", Socio.class)
                 .setParameter("email", email)
-                .getSingleResult();
-        return count > 0;
+                .getResultStream()
+                .findAny();
     }
 }
