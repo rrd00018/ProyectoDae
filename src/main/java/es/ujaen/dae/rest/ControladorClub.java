@@ -114,6 +114,7 @@ public class ControladorClub {
         }
     }
 
+
     @PostMapping("/socios")
     public ResponseEntity<Void> nuevoSocio(@RequestBody DSocio socio){
         try{
@@ -123,6 +124,7 @@ public class ControladorClub {
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
 
     @GetMapping("/socios/{email}/solicitudes")
     public ResponseEntity<List<DSolicitud>> solicitudesSocio(@PathVariable String email){
@@ -139,7 +141,6 @@ public class ControladorClub {
     }
 
 
-    // Rutas para solicitudes
     @GetMapping("/solicitudes/{idSolicitud}")
     public ResponseEntity<DSolicitud> obtenerSolicitud(@PathVariable int idSolicitud) {
         try {
@@ -149,6 +150,7 @@ public class ControladorClub {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
 
     @PostMapping("/solicitudes")
     public ResponseEntity<DSolicitud> nuevaSolicitud(@RequestBody DSolicitud dSolicitud) {
@@ -168,12 +170,12 @@ public class ControladorClub {
         }
     }
 
-    @PutMapping("/solicitudes/{idSolicitud}")
+
+    @PutMapping("/solicitudes")
     public ResponseEntity<DSolicitud> actualizarSolicitud(@RequestBody DSolicitud dSolicitud) {
         try {
-            Socio socio = mapeador.entidad(dsocio);
             Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(
-                    socio,
+                    serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
                     dSolicitud.idActividad(),
                     dSolicitud.numAcompaniantes()
             );
@@ -187,11 +189,12 @@ public class ControladorClub {
         }
     }
 
-    @DeleteMapping("/solicitudes/{idActividad}")
-    public ResponseEntity<DSolicitud> cancelarSolicitud(@RequestBody DSocio dsocio, @PathVariable int idActividad) {
+
+    @DeleteMapping("/solicitudes")
+    public ResponseEntity<DSolicitud> cancelarSolicitud(@RequestBody DSolicitud dsolicitud) {
         try {
-            Socio socio = mapeador.entidad(dsocio);
-            Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socio, idActividad);
+            Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(
+                    serviciosAdmin.recuperarSocioPorId(dsolicitud.idSocio()), dsolicitud.idActividad());
 
             return ResponseEntity.ok(mapeador.dto(solicitudCancelada));
 
@@ -201,9 +204,4 @@ public class ControladorClub {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-
-
-
-
 }
