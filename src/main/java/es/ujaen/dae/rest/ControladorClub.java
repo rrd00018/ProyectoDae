@@ -149,6 +149,62 @@ public class ControladorClub {
         }
     }
 
+    @PostMapping("/solicitudes")
+    public ResponseEntity<DSolicitud> nuevaSolicitud(@RequestBody DSolicitud dSolicitud, DSocio dsocio) {
+        try {
+            Solicitud solicitud = servicioSocios.echarSolicitud(
+                    mapeador.entidad(dsocio),
+                    dSolicitud.idActividad(),
+                    dSolicitud.numAcompaniantes()
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(mapeador.dto(solicitud));
+
+        }catch (ActividadNoExistente e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (SolicitudFueraDePlazo | NumeroDeInvitadosIncorrecto e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/solicitudes/{idSolicitud}")
+    public ResponseEntity<DSolicitud> actualizarSolicitud(
+            @RequestBody DSolicitud dSolicitud,
+            DSocio dsocio) {
+        try {
+            Socio socio = mapeador.entidad(dsocio);
+            Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(
+                    socio,
+                    dSolicitud.idActividad(),
+                    dSolicitud.numAcompaniantes()
+            );
+
+            return ResponseEntity.ok(mapeador.dto(solicitudActualizada));
+
+        } catch (NumeroDeInvitadosIncorrecto e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (SolicitudIncorrecta e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @DeleteMapping("/solicitudes/{idActividad}")
+    public ResponseEntity<DSolicitud> cancelarSolicitud(@RequestBody DSocio dsocio, @PathVariable int idActividad) {
+        try {
+            Socio socio = mapeador.entidad(dsocio);
+            Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socio, idActividad);
+
+            return ResponseEntity.ok(mapeador.dto(solicitudCancelada));
+
+        } catch (SolicitudIncorrecta e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (SolicitudFueraDePlazo e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+
+
 
 
 }

@@ -84,6 +84,9 @@ public class ServicioSocios {
     public Solicitud cancelarSolicitud(@Valid Socio socio, int idActividad) {
         socio = repositorioSocio.actualizar(socio);
         Solicitud solicitud = socio.cancelarSolicitud(idActividad);
+        if(solicitud==null){
+            throw new SolicitudFueraDePlazo();
+        }
         Actividad actividad = solicitud.getActividad();
         repositorioSolicitud.actualizar(solicitud);
         repositorioActividad.actualizar(actividad);
