@@ -31,7 +31,7 @@ public class TestControladorClub {
      */
     @PostConstruct
     void crearRestTemplate() {
-        var restTemplateBuilder = new RestTemplateBuilder().rootUri("http://localhost:" + localPort + "/club");  // definir el "/club" correctamente para la web
+        var restTemplateBuilder = new RestTemplateBuilder().rootUri("http://localhost:" + localPort + "/clubDeSocios");  // definir el "/club" correctamente para la web
 
         restTemplate = new TestRestTemplate(restTemplateBuilder);
     }
@@ -73,10 +73,9 @@ public class TestControladorClub {
     }
 
     @Test
-    void tesLogin() {
-
+    void testLogin() {
         //Creamos el socio
-        var socio = new Socio("email@gmail.com","Juan","Matias","611225","1234");
+        var socio = new DSocio(0,"email@gmail.com","Juan","Matias","652584273","1234",false);
         var respuesta = restTemplate.postForEntity(
                 "/socios",
                 socio,
@@ -86,21 +85,20 @@ public class TestControladorClub {
 
 
         //Buscamos no iniciar sesion ya que introducimos el socio que no es pero si la contraseña
-
         var respuestaLogin = restTemplate.getForEntity(
-                "/socios/{email}?clave={clave}",
+                "/socios/{email}?password={password}",
                 DSocio.class,
                 "otroemail@gmail.com",
-                socio.getClaveAcceso()
+                socio.claveAcceso()
         );
 
         assertThat(respuestaLogin.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 
         //Buscamos no iniciar sesion ya que introducimos la contraseña que no es pero si el usuario
         respuestaLogin = restTemplate.getForEntity(
-                "/usuarios/{email}?clave={clave}",
+                "/socios/{email}?password={password}",
                 DSocio.class,
-                socio.getEmail(),
+                socio.email(),
                 "contraQueNoEs"
         );
         assertThat(respuestaLogin.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -108,17 +106,14 @@ public class TestControladorClub {
 
         //buscamos iniciar sesion correctamente
         respuestaLogin = restTemplate.getForEntity(
-                "/usuarios/{email}?clave={clave}",
+                "/socios/{email}?password={password}",
                 DSocio.class,
-                socio.getEmail(),
-                socio.getClaveAcceso()
+                socio.email(),
+                socio.claveAcceso()
         );
         assertThat(respuestaLogin.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(respuestaLogin.getBody().email()).isEqualTo(socio.getEmail());
-
-
+        assertThat(respuestaLogin.getBody().email()).isEqualTo(socio.email());
     }
-
 
 
 
