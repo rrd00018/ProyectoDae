@@ -1,6 +1,7 @@
 package servicios;
 
 import es.ujaen.dae.excepciones.*;
+import es.ujaen.dae.repositorios.RepositorioTemporada;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import jakarta.validation.ConstraintViolationException;
@@ -27,7 +28,6 @@ public class TestServiciosAdmin {
 
     @Autowired
     ServicioSocios servicioSocios;
-
 
     @Test
     @DirtiesContext
@@ -82,7 +82,6 @@ public class TestServiciosAdmin {
         // Crear una temporada primero para asociar la actividad
         int anioTemporada = LocalDate.now().getYear();
         serviciosAdmin.crearTemporada();
-
 
         // Datos de la actividad con fechas incorrectas
         String titulo = "Clase";

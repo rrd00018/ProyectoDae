@@ -2,6 +2,7 @@ package rest;
 
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.rest.dto.DSocio;
+import es.ujaen.dae.rest.dto.DTemporada;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,19 +42,21 @@ public class TestControladorClub {
      */
 
     @Test
+    @DirtiesContext
     public void testNuevoSocioInvalido() {
         //el mail es incorrecto por lo cual tiene que dar error
-        var socio = new Socio("emailgmail.com","Juan","Matias","611225","1234");
+        var socio = new DSocio(1,"emailgmail.com","Juan","Matias","643611225","1234",false);
         var respuesta = restTemplate.postForEntity(
                 "/socios",
                 socio,
                 Void.class
         );
+
         //buscamos que el
         assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
 
         //buscamos crear un socio correctamente
-        var socio2 = new Socio("email@gmail.com","Juan","Matias","611225","1234");
+        var socio2 = new DSocio(0,"email@gmail.com","Juan","Matias","643611225","1234",false);
         respuesta = restTemplate.postForEntity(
                 "/socios",
                 socio2,
@@ -64,16 +67,18 @@ public class TestControladorClub {
 
         //buscamos crear socio duplicado y que se cree un conflico
         respuesta = restTemplate.postForEntity(
-                "/usuarios",
+                "/socios",
                 socio2,
                 Void.class
         );
-        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
     }
 
     @Test
-    void testLogin() {
+    @DirtiesContext
+    void tesLogin() {
+
         //Creamos el socio
         var socio = new DSocio(0,"email@gmail.com","Juan","Matias","652584273","1234",false);
         var respuesta = restTemplate.postForEntity(
@@ -115,6 +120,27 @@ public class TestControladorClub {
         assertThat(respuestaLogin.getBody().email()).isEqualTo(socio.email());
     }
 
+    @Test
+    @DirtiesContext
+    void testCrearTemporada(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        anio = 2023;
+        temporada = new  DTemporada(anio);
+        respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
 
 
 

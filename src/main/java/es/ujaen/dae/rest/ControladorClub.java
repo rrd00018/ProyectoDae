@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -45,13 +46,17 @@ public class ControladorClub {
     }
 
     @PostMapping("/temporadas")
-    public ResponseEntity<Void> nuevaTemporada(){
+    public ResponseEntity<Void> nuevaTemporada(@RequestBody DTemporada temporada){
         try{
+            if(temporada.anio() != LocalDate.now().getYear()){
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
             serviciosAdmin.crearTemporada();
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         }catch(TemporadaYaCreada u){
+            System.out.println(temporada.anio());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/temporadas/{anio}/actividades")
@@ -118,6 +123,7 @@ public class ControladorClub {
     @PostMapping("/socios")
     public ResponseEntity<Void> nuevoSocio(@RequestBody DSocio socio){
         try{
+            System.out.println(socio);
             serviciosAdmin.crearSocio(socio.email(),socio.nombre(),socio.apellidos(),socio.telefono(),socio.claveAcceso());
         }catch(UsuarioYaRegistrado u){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

@@ -31,13 +31,5 @@ public class RepositorioTemporada {
         public Optional<Temporada> buscarPorAnio(int anio) {
                 return Optional.ofNullable(em.find(Temporada.class, anio));
         }
-
-
-        public boolean existePorAnio(int anio) {
-                Long count = em.createQuery("SELECT COUNT(t) FROM Temporada t WHERE t.anio = :anio", Long.class)
-                        .setParameter("anio", anio)
-                        .getSingleResult();
-                return count > 0;
-        }
 }
 
