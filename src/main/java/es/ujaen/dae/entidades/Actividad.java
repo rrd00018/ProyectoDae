@@ -4,6 +4,7 @@ import es.ujaen.dae.excepciones.FechaIncorrecta;
 import es.ujaen.dae.excepciones.FechaNoAlcanzada;
 import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import es.ujaen.dae.excepciones.SolicitudIncorrecta;
+import es.ujaen.dae.repositorios.RepositorioActividad;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

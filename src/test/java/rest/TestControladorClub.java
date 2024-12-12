@@ -3,10 +3,12 @@ package rest;
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.rest.dto.DActividad;
 import es.ujaen.dae.rest.dto.DSocio;
+import es.ujaen.dae.rest.dto.DSolicitud;
 import es.ujaen.dae.rest.dto.DTemporada;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
@@ -209,7 +211,63 @@ public class TestControladorClub {
         );
 
         assertThat(respuestaActividad.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+
     }
+
+
+    @Test
+    @DirtiesContext
+    void testActualizarActividad(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+
+        //Crear actividad
+        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        var respuestaActividad = restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+        assertThat(respuestaActividad.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+
+        //Coges todas las actividades de la temporada
+        var respuestaActividades = restTemplate.getForEntity(
+                "/temporadas/{anio}/actividades",
+                DActividad[].class,
+                anio
+        );
+
+        DActividad[] actividades = respuestaActividades.getBody();
+        int idActividadEncontrada = -1;
+        if (actividades != null) {
+            for (DActividad actividadEnBusqueda : actividades) {
+                if (Objects.equals(actividadEnBusqueda.titulo(), actividad.titulo())) {
+                    idActividadEncontrada = actividadEnBusqueda.id();
+                    break;
+                }
+            }
+        }
+        // solo entra si encuentra la actividad para buscar
+        var actividad2 = new DActividad(0,"Senderismo en la sierra de Jaen", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        var respuestaActividad2 = restTemplate.postForEntity(
+                "/actividades/{idActividad}",
+                actividad2,
+                DActividad.class,
+                idActividadEncontrada
+        );
+        assertThat(respuestaActividad2.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+
+
+    }
+
+
 
     @Test
     @DirtiesContext
@@ -275,5 +333,47 @@ public class TestControladorClub {
 
         assertThat(respuestaActividades.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(respuestaActividades.getBody().length).isEqualTo(2);
+    }
+
+
+    @Test
+    @DirtiesContext
+    void testCrearSolicitud(){
+
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        //crear temporada
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+
+        //Crear actividad
+        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        respuesta = restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        //Creamos el socio
+        var socio = new DSocio(0,"email@gmail.com","Juan","Matias","652584273","1234",false);
+        var repuestaSocio = restTemplate.postForEntity(
+                "/socios",
+                socio,
+                Void.class
+        );
+        assertThat(repuestaSocio.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        //TODO FALLO AL CREAR SOLICITUD
+         var solicitud = new DSolicitud(0,2,false,0,socio.idSocio(),actividad.id());
+         var respuestaSolicitud = restTemplate.postForEntity(
+                 "/solicitudes",
+                 solicitud,
+                 Void.class
+         );
+
+        assertThat(respuestaSolicitud.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 }

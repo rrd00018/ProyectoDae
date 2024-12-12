@@ -10,6 +10,7 @@ import es.ujaen.dae.rest.dto.*;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import jakarta.validation.ConstraintViolationException;
+import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,6 +87,18 @@ public class ControladorClub {
         }
     }
 
+    @PostMapping("/actividades/{idActividad}")
+    public ResponseEntity<DActividad> actualizarActividad(@RequestBody DActividad actividad, @PathVariable int idActividad   ) {
+        try {
+            Actividad a = mapeador.entidad(actividad);
+            a.setId(idActividad);
+            serviciosAdmin.actualizarActividad(a);
+        }catch(ActividadNoExistente e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
     @PostMapping("/actividades")
     public ResponseEntity<Void> nuevaActividad(@RequestBody DActividad actividad){
         try{
@@ -159,7 +172,7 @@ public class ControladorClub {
 
 
     @PostMapping("/solicitudes")
-    public ResponseEntity<DSolicitud> nuevaSolicitud(@RequestBody DSolicitud dSolicitud) {
+    public ResponseEntity<Void> nuevaSolicitud(@RequestBody DSolicitud dSolicitud) {
         try {
             Solicitud solicitud = servicioSocios.echarSolicitud(
                     serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
@@ -167,8 +180,7 @@ public class ControladorClub {
                     dSolicitud.numAcompaniantes()
             );
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(mapeador.dto(solicitud));
-
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         }catch (ActividadNoExistente e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (SolicitudFueraDePlazo | NumeroDeInvitadosIncorrecto e) {
