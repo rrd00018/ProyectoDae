@@ -35,7 +35,7 @@ public class ControladorClub {
     @ExceptionHandler(ConstraintViolationException.class)
     public void mapeadoExcepcionConstraintViolationException(){}
 
-    @GetMapping("/temporada/{anio}")
+    @GetMapping("/temporadas/{anio}")
     public ResponseEntity<DTemporada> obtenerTemporada(@PathVariable int anio) {
         try {
             Temporada t = serviciosAdmin.buscarTemporada(anio);
@@ -79,19 +79,19 @@ public class ControladorClub {
     @GetMapping("/actividades/{idActividad}")
     public ResponseEntity<DActividad> obtenerActividad(@PathVariable int idActividad) {
         try {
-            serviciosAdmin.buscarActividad(idActividad);
+            Actividad a = serviciosAdmin.buscarActividad(idActividad);
+            return ResponseEntity.ok(mapeador.dto(a));
         } catch (ActividadNoExistente u) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/actividades")
     public ResponseEntity<Void> nuevaActividad(@RequestBody DActividad actividad){
         try{
             serviciosAdmin.crearActividad(actividad.titulo(), actividad.descripcion(), actividad.precio(), actividad.plazas(), actividad.fechaCelebracion(), actividad.fechaInicioInscripcion(), actividad.fechaFinInscripcion());
-        }catch(ActividadYaCreada u){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }catch(FechaIncorrecta e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

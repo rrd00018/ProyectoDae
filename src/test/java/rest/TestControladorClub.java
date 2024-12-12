@@ -1,10 +1,13 @@
 package rest;
 
 import es.ujaen.dae.entidades.Socio;
+import es.ujaen.dae.rest.dto.DActividad;
 import es.ujaen.dae.rest.dto.DSocio;
 import es.ujaen.dae.rest.dto.DTemporada;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -142,6 +145,135 @@ public class TestControladorClub {
         assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
 
+    @Test
+    @DirtiesContext
+    void testObtenerTemporada(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        var respuesta2 = restTemplate.getForEntity(
+                "/temporadas/{anio}",
+                DTemporada.class,
+                anio
+        );
+
+        assertThat(respuesta2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuesta2.getBody().anio()).isEqualTo(anio);
+    }
 
 
+    @Test
+    @DirtiesContext
+    void testObtenerTodasLasTemporadas(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+
+        var respuesta2 = restTemplate.getForEntity(
+                "/temporadas",
+                DTemporada[].class
+        );
+
+        assertThat(respuesta2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuesta2.getBody().length).isGreaterThan(0);
+    }
+
+
+    @Test
+    @DirtiesContext
+    void testNuevaActividad(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+
+        //Crear actividad
+        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        var respuestaActividad = restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+
+        assertThat(respuestaActividad.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    @DirtiesContext
+    void testBuscarActividad(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+
+        //Crear actividad
+        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        respuesta = restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+
+        var respuestaActividad = restTemplate.getForEntity(
+                "/actividades/{idActividad}",
+                DActividad.class,
+                1
+        );
+
+        assertThat(respuestaActividad.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuestaActividad.getBody().titulo()).isEqualTo(actividad.titulo());
+
+    }
+
+    @Test
+    @DirtiesContext
+    void testObtenerActividadesTemporada(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+
+        //Crear actividad
+        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        respuesta = restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+
+        var actividad2 = new DActividad(0,"Kayak en la playa", "Paseo en kayak por la playa de Tarifa", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        respuesta = restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+
+        var respuestaActividades = restTemplate.getForEntity(
+                "/temporadas/{anio}/actividades",
+                DActividad[].class,
+                anio
+        );
+
+        assertThat(respuestaActividades.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuestaActividades.getBody().length).isEqualTo(2);
+    }
 }

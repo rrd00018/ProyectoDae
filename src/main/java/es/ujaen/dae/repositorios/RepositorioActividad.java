@@ -23,12 +23,7 @@ public class RepositorioActividad {
     }
 
     public void guardar(Actividad actividad){
-        if(em.find(Actividad.class,actividad.getId()) != null){
-            throw new ActividadYaCreada();
-        }else{
             em.persist(actividad);
-            em.flush();
-        }
     }
 
     public Actividad actualizar(Actividad actividad){
