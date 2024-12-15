@@ -34,6 +34,7 @@ public class ServicioSocios {
     /**
      *  ECHAR SOLICITUD
      */
+    @Transactional
     public Solicitud echarSolicitud(Socio socio, int idActividad, int invitados) {
         Actividad actividad = repositorioActividad.buscar(idActividad)
                 .orElseThrow(ActividadNoExistente::new);
@@ -88,7 +89,7 @@ public class ServicioSocios {
             throw new SolicitudFueraDePlazo();
         }
         Actividad actividad = solicitud.getActividad();
-        repositorioSolicitud.actualizar(solicitud);
+        repositorioSolicitud.borrarSolicitud(solicitud);
         repositorioActividad.actualizar(actividad);
         return solicitud;
     }
@@ -99,18 +100,8 @@ public class ServicioSocios {
      */
     @Transactional
     public ArrayList<Solicitud> obtenerSolicitudes(@Valid Socio socio) {
-        socio.numeroSolicitudes();
+        socio = repositorioSocio.actualizar(socio);
         return socio.obtenerSolicitudes();
     }
 
-    /**
-     * Refresca el socio en memoria con la ultima informacion de la base de datos y lo devuelve con las solicitudes cargadas
-     */
-    @Transactional
-    public Socio refrescarSocioConSolicitudes(Socio socio){
-        Optional<Socio> s = repositorioSocio.buscarPorId(socio.getIdSocio());
-        Socio socioSinNada = s.get();
-        socioSinNada.numeroSolicitudes();
-        return socioSinNada;
-    }
 }

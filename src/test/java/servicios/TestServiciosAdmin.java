@@ -1,5 +1,6 @@
 package servicios;
 
+import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.repositorios.RepositorioTemporada;
 import es.ujaen.dae.servicios.ServicioSocios;
@@ -13,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -139,12 +142,12 @@ public class TestServiciosAdmin {
 
         actividad = serviciosAdmin.buscarActividad(actividad.getId());
 
-        usuario1=servicioSocios.refrescarSocioConSolicitudes(usuario1);
-        usuario2=servicioSocios.refrescarSocioConSolicitudes(usuario2);
-        usuario3=servicioSocios.refrescarSocioConSolicitudes(usuario3);
+        List<Solicitud> solicitudes = serviciosAdmin.listarSolicitudesActividad(actividades.get(0));
 
-        int plazasTotales = usuario1.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1
-                + usuario3.obtenerSolicitud(actividad.getId()).getAcompaniantesAceptados() + 1;
+        int plazasTotales = 0;
+        for (Solicitud s : solicitudes){
+            plazasTotales += s.getAcompaniantesAceptados() + (s.isAceptada() ? 1 : 0);
+        }
 
         assertThat(plazasTotales).isEqualTo(actividad.getPlazasAsignadas());
     }

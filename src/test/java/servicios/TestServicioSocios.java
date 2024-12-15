@@ -13,12 +13,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest(classes = es.ujaen.dae.app.ClubDeSocios.class)
 @ActiveProfiles("test")
@@ -55,6 +58,7 @@ public class TestServicioSocios {
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
         // REFRESCAR socioCarlos HACIENDO UN LOGIN
+        socioCarlos = serviciosAdmin.login("carlos@example.com", "claveCarlos123").get();
         Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos, actividadesAbiertas.get(0).getId(), 2);
 
         assertNotNull(solicitud);
@@ -86,8 +90,11 @@ public class TestServicioSocios {
                 fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
+
         servicioSocios.echarSolicitud(socioRaul, actividadesAbiertas.get(0).getId(), 1);
+
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioRaul);
+
         Solicitud solicitudModificada = servicioSocios.modificarSolicitud(socioRaul, solicitudesSocio.get(0).getActividad().getId(), 3);
 
         assertNotNull(solicitudModificada);
@@ -112,7 +119,8 @@ public class TestServicioSocios {
         ArrayList<Solicitud> solicitudesSocio = servicioSocios.obtenerSolicitudes(socioLaura);
         Solicitud solicitudCancelada = servicioSocios.cancelarSolicitud(socioLaura, solicitudesSocio.get(0).getActividad().getId());
 
-        var a = serviciosAdmin.buscarActividad(solicitudCancelada.getActividad().getId());
+        var a = serviciosAdmin.buscarActividad(solicitudCancelada.getActividad().getId()).getSolicitudes();
         assertNotNull(solicitudCancelada);
+        assertThat(a.size()).isEqualTo(0);
     }
 }
