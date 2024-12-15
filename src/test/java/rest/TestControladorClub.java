@@ -549,5 +549,125 @@ public class TestControladorClub {
         assertThat(respuestaBusqueda.getBody()[0].idSocio()).isEqualTo(respuestaBusquedaSocio.getBody().idSocio());
     }
 
+    @Test
+    @DirtiesContext
+    void testBorrarSolicitud(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        //crear temporada
+        var respuesta = restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
 
+        //Crear actividad
+        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        respuesta = restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+        //Creamos el socio
+        var socio = new DSocio(0,"email@gmail.com","Juan","Matias","652584273","1234",false);
+        var repuestaSocio = restTemplate.postForEntity(
+                "/socios",
+                socio,
+                Void.class
+        );
+        var respuestaBusquedaSocio = restTemplate.getForEntity(
+                "/socios/{email}?password={password}",
+                DSocio.class,
+                socio.email(),
+                socio.claveAcceso()
+        );
+        var actividades = restTemplate.getForEntity(
+                "/temporadas/{anio}/actividades",
+                DActividad[].class,
+                anio
+        );
+        var solicitud = new DSolicitud(0,2,false,0,respuestaBusquedaSocio.getBody().idSocio(),actividades.getBody()[0].id());
+        var respuestaSolicitud = restTemplate.postForEntity(
+                "/solicitudes",
+                solicitud,
+                Void.class
+        );
+        var solicitudABorrar = restTemplate.getForEntity(
+                "/socios/{email}/solicitudes",
+                DSolicitud[].class,
+                respuestaBusquedaSocio.getBody().email()
+        ).getBody()[0];
+        restTemplate.exchange(
+                "/solicitudes",
+                HttpMethod.DELETE,
+                new HttpEntity<>(solicitudABorrar),
+                DSolicitud.class
+                );
+        var busquedaPostBorrado = restTemplate.getForEntity(
+                "/solicitudes/{idSolicitud}",
+                DSolicitud.class,
+                solicitudABorrar.idSolicitud()
+        );
+        assertThat(busquedaPostBorrado.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DirtiesContext
+    void testModificarSolicitud(){
+        int anio = LocalDate.now().getYear();
+        var temporada = new DTemporada(anio);
+        //crear temporada
+        restTemplate.postForEntity(
+                "/temporadas",
+                temporada,
+                Void.class
+        );
+        //Crear actividad
+        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
+        restTemplate.postForEntity(
+                "/actividades",
+                actividad,
+                Void.class
+        );
+        //Creamos el socio
+        var socio = new DSocio(0,"email@gmail.com","Juan","Matias","652584273","1234",false);
+        restTemplate.postForEntity(
+                "/socios",
+                socio,
+                Void.class
+        );
+        var respuestaBusquedaSocio = restTemplate.getForEntity(
+                "/socios/{email}?password={password}",
+                DSocio.class,
+                socio.email(),
+                socio.claveAcceso()
+        );
+        var actividades = restTemplate.getForEntity(
+                "/temporadas/{anio}/actividades",
+                DActividad[].class,
+                anio
+        );
+        var solicitud = new DSolicitud(0,2,false,0,respuestaBusquedaSocio.getBody().idSocio(),actividades.getBody()[0].id());
+        restTemplate.postForEntity(
+                "/solicitudes",
+                solicitud,
+                Void.class
+        );
+        var respuestaBusquedaSolicitud = restTemplate.getForEntity(
+                "/solicitudes/{idSolicitud}",
+                DSolicitud.class,
+                1
+        );
+        var solicitudModificada = new DSolicitud(respuestaBusquedaSolicitud.getBody().idSolicitud(),5,respuestaBusquedaSolicitud.getBody().aceptada(),respuestaBusquedaSolicitud.getBody().acompaniantesAceptados(),respuestaBusquedaSolicitud.getBody().idSocio(),respuestaBusquedaSolicitud.getBody().idActividad());
+        restTemplate.put(
+                "/solicitudes",
+                solicitudModificada
+        );
+        var respuestaBusquedaSolicitudActualizada = restTemplate.getForEntity(
+                "/solicitudes/{idSolicitud}",
+                DSolicitud.class,
+                solicitudModificada.idSolicitud()
+        );
+        assertThat(respuestaBusquedaSolicitudActualizada.getBody().numAcompaniantes()).isEqualTo(5);
+    }
 }
