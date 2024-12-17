@@ -251,8 +251,7 @@ public class ControladorClub {
             Socio socio = serviciosAdmin.recuperarSocioPorEmail(email)
                     .orElseThrow(UsuarioNoRegistrado::new);
 
-            socio.setHaPagado(true);
-            serviciosAdmin.actualizarSocio(socio);
+            serviciosAdmin.pagar(socio);
 
             return ResponseEntity.ok(mapeador.dto(socio));
 

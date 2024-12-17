@@ -26,7 +26,7 @@ public class SeguridadClub {
                         .requestMatchers(HttpMethod.POST, "clubDeSocios/temporadas").hasRole("DIRECCION")
                         .requestMatchers(HttpMethod.POST, "clubDeSocios/actividades").hasRole("DIRECCION")
                         .requestMatchers(HttpMethod.POST, "clubDeSocios/actividades/{idActividad}").hasRole("DIRECCION")
-                        .requestMatchers(HttpMethod.GET, "/clubDeSocios/socios/{email}")
+                        .requestMatchers(HttpMethod.GET, "/clubDeSocios/socios/{email}/**")
                         .access(new WebExpressionAuthorizationManager("hasRole('DIRECCION') or (hasRole('CLIENTE') and #email == principal.username)"))
                         .requestMatchers(HttpMethod.GET,"/clubDeSocios/solicitudes/{idSolicitud}")
                         .access(new WebExpressionAuthorizationManager("hasRole('DIRECCION') or (hasRole('CLIENTE'))"))
@@ -37,8 +37,6 @@ public class SeguridadClub {
                         .requestMatchers(HttpMethod.DELETE,"/clubDeSocios/solicitudes")
                         .access(new WebExpressionAuthorizationManager("hasRole('DIRECCION') or (hasRole('CLIENTE'))"))
                         .requestMatchers(HttpMethod.GET,"/clubDeSocios/actividades/{idActividad}/solicitudes").hasRole("DIRECCION")
-                        .requestMatchers(HttpMethod.GET,"/clubDeSocios/socios/{email}/solicitudes")
-                        .access(new WebExpressionAuthorizationManager("hasRole('DIRECCION') or (hasRole('CLIENTE'))"))
                         .requestMatchers("/clubDeSocios/**").permitAll()
                 )
                 .build();
