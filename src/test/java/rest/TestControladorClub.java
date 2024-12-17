@@ -691,4 +691,42 @@ public class TestControladorClub {
         assertThat(respuestaBusquedaSolicitudActualizada.getBody().numAcompaniantes()).isEqualTo(5);
         assertThat(respuestaBusquedaSolicitudActualizada.getBody().acompaniantesAceptados()).isEqualTo(2);
     }
+
+    @Test
+    void testPagarCuota() {
+        var socio = new DSocio(0, "juan.perez@email.com", "Juan", "Pérez", "678912345", "clave123", false);
+
+        var respuestaCreacionSocio = restTemplate.postForEntity(
+                "/socios",
+                socio,
+                Void.class
+        );
+        assertThat(respuestaCreacionSocio.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        var respuestaPago = restTemplate.withBasicAuth("juan.perez@email.com", "clave123")
+                .exchange(
+                        "/clubdesocios/socios/{email}/pagar",
+                        HttpMethod.PUT,
+                        null,
+                        DSocio.class,
+                        socio.email()
+                );
+        assertThat(respuestaPago.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        var respuestaBusquedaSocio = restTemplate.withBasicAuth("juan.perez@email.com", "clave123")
+                .getForEntity(
+                        "/socios/{email}",
+                        DSocio.class,
+                        socio.email()
+                );
+
+        //Verificar que el estado es 200 OK
+        assertThat(respuestaBusquedaSocio.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        //Acceder al cuerpo de la respuesta
+        var socioActualizado = respuestaBusquedaSocio.getBody();
+        assertThat(socioActualizado).isNotNull();
+        assertThat(socioActualizado.haPagado()).isTrue();
+
+    }
 }

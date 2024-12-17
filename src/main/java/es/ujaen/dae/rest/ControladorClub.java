@@ -244,4 +244,22 @@ public class ControladorClub {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @PutMapping("/clubdesocios/socios/{email}/pagar")
+    public ResponseEntity<DSocio> pagarCuota(@PathVariable String email) {
+        try {
+            Socio socio = serviciosAdmin.recuperarSocioPorEmail(email)
+                    .orElseThrow(UsuarioNoRegistrado::new);
+
+            socio.setHaPagado(true);
+            serviciosAdmin.actualizarSocio(socio);
+
+            return ResponseEntity.ok(mapeador.dto(socio));
+
+        } catch (UsuarioNoRegistrado e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
