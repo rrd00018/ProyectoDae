@@ -37,6 +37,8 @@ public class ServiciosAdmin {
     //private HashMap<String,Socio> socios; //Usa el email como clave
     //private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
 
+    private static final Socio admin = new Socio("admin@admin","admin","admin","639658419","$2a$12$QLJH37bBpKLNHVa0daWCqOI.gOtdkuGN4Cwr/vJQZTavUPPdJT55y");
+
     public ServiciosAdmin(){
     }
 
@@ -44,13 +46,12 @@ public class ServiciosAdmin {
     /**
      *  REGISTRA A UN NUEVO SOCIO
      */
-    public Socio crearSocio(@Email @NotBlank String email, @NotBlank String nombre, @NotBlank String apellidos, @NotBlank @Pattern(regexp="^(\\+34|0034|34)?[6789]\\d{8}$") String telefono, @NotBlank String claveAcceso) {
-        if(repositorioSocio.buscarPorEmail(email).isPresent())
+    public Socio crearSocio(@Valid Socio socio) {
+        if(repositorioSocio.buscarPorEmail(socio.getEmail()).isPresent())
             throw new UsuarioYaRegistrado();
         else{
-            Socio s = new Socio(email,nombre,apellidos,telefono,claveAcceso);
-            repositorioSocio.guardar(s);
-            return s;
+            repositorioSocio.guardar(socio);
+            return socio;
         }
     }
 
@@ -135,10 +136,11 @@ public class ServiciosAdmin {
      * @param clave clave de acceso del socio
      * @return Optional.empty si el login es correcto o Optional.of(Socio) si existe
      */
+    /*
     public Optional<Socio> login(@Email String email, String clave) {
         return repositorioSocio.buscarPorEmail(email).filter(socio -> socio.getClaveAcceso().equals(clave));
     }
-
+    */
 
     /**
      * LISTA LAS ACTIVIDADES DISPONIBLES DE LA TEMPORADA ACTUAL
@@ -203,8 +205,11 @@ public class ServiciosAdmin {
     /**
      * Devuelve un socio dado su email. Usado para recuperar los socios en la api rest una vez ya identificados
      */
-    public Socio recuperarSocioPorEmail(String email){
-        return repositorioSocio.buscarPorEmail(email).orElseThrow(UsuarioNoRegistrado::new);
+    public Optional<Socio> recuperarSocioPorEmail(String email){
+        if(email.equals("admin@admin.com")){
+            return Optional.of(admin);
+        }
+        return repositorioSocio.buscarPorEmail(email);
     }
 
     public Temporada buscarTemporada(int anio){

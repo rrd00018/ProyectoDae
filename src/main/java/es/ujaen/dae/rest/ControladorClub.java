@@ -122,9 +122,9 @@ public class ControladorClub {
     }
 
     @GetMapping("/socios/{email}")
-    public ResponseEntity<DSocio> loginSocio(@PathVariable String email, @RequestParam String password){
+    public ResponseEntity<DSocio> loginSocio(@PathVariable String email){
         try {
-            Socio socio = serviciosAdmin.login(email, password).orElseThrow(UsuarioNoRegistrado::new);
+            Socio socio = serviciosAdmin.recuperarSocioPorEmail(email).orElseThrow(UsuarioNoRegistrado::new);
             return ResponseEntity.ok(mapeador.dto(socio));
         }
         catch(UsuarioNoRegistrado e) {
@@ -136,8 +136,7 @@ public class ControladorClub {
     @PostMapping("/socios")
     public ResponseEntity<Void> nuevoSocio(@RequestBody DSocio socio){
         try{
-            System.out.println(socio);
-            serviciosAdmin.crearSocio(socio.email(),socio.nombre(),socio.apellidos(),socio.telefono(),socio.claveAcceso());
+            serviciosAdmin.crearSocio(mapeador.nuevaEntidad(socio));
         }catch(UsuarioYaRegistrado u){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -149,7 +148,7 @@ public class ControladorClub {
     public ResponseEntity<List<DSolicitud>> solicitudesSocio(@PathVariable String email){
         List<Solicitud> solicitudes;
         try {
-            Socio socio = serviciosAdmin.recuperarSocioPorEmail(email);
+            Socio socio = serviciosAdmin.recuperarSocioPorEmail(email).orElseThrow(UsuarioNoRegistrado::new);
 
             solicitudes = servicioSocios.obtenerSolicitudes(socio);
 
@@ -220,6 +219,29 @@ public class ControladorClub {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (SolicitudFueraDePlazo e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/solicitudes/admin")
+    public ResponseEntity<DSolicitud> actualizarSolicitudAdmin(@RequestBody DSolicitud dSolicitud) {
+        try {
+            Solicitud s = serviciosAdmin.buscarSolicitud(dSolicitud.idSolicitud());
+
+            Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(
+                    serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
+                    dSolicitud.idActividad(),
+                    dSolicitud.numAcompaniantes()
+            );
+            int plazas  = dSolicitud.acompaniantesAceptados() - s.getAcompaniantesAceptados();
+            System.out.println(plazas);
+            serviciosAdmin.procesarSolicitudManualmente(solicitudActualizada,plazas);
+
+            return ResponseEntity.ok(mapeador.dto(solicitudActualizada));
+
+        } catch (NumeroDeInvitadosIncorrecto e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (SolicitudIncorrecta e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

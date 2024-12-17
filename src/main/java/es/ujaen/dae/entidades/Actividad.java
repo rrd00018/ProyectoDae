@@ -110,27 +110,25 @@ public class Actividad {
      */
     public void asignarPlazasManualmente(Solicitud s, int nPlazas){
         if(solicitudes.contains(s)){
-            if(fechaFinInscripcion.isBefore(LocalDate.now())){
-                if(nPlazas > s.getNumAcompaniantes() + 1 || nPlazas <= 0 || plazasAsignadas + nPlazas > plazas)
-                    throw new NumeroDePlazasIncorrecto();
+            if(nPlazas > s.getNumAcompaniantes() + 1 || nPlazas <= 0 || plazasAsignadas + nPlazas > plazas)
+                throw new NumeroDePlazasIncorrecto();
 
-                int plazasRequeridas = s.getNumAcompaniantes() - s.getAcompaniantesAceptados();
-                if(!s.isAceptada())
-                    plazasRequeridas++;
+            int plazasRequeridas = s.getNumAcompaniantes() - s.getAcompaniantesAceptados();
+            if(!s.isAceptada())
+                plazasRequeridas++;
 
 
-                if(nPlazas > plazasRequeridas)
-                    throw new NumeroDePlazasIncorrecto();
+            if(nPlazas > plazasRequeridas)
+                throw new NumeroDePlazasIncorrecto();
 
-                if (!s.isAceptada()) {
-                    s.aceptarSolicitud();
-                    plazasAsignadas++;
-                    nPlazas--;
-                }
+            if (!s.isAceptada()) {
+                s.aceptarSolicitud();
+                plazasAsignadas++;
+                nPlazas--;
+            }
 
-                s.setAcompaniantesAceptados(nPlazas);
-                plazasAsignadas += nPlazas;
-            }else throw new FechaNoAlcanzada();
+            s.setAcompaniantesAceptados(nPlazas);
+            plazasAsignadas += nPlazas;
         }else throw new SolicitudIncorrecta();
     }
 

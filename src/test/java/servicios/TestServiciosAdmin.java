@@ -1,5 +1,6 @@
 package servicios;
 
+import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.excepciones.*;
 import es.ujaen.dae.repositorios.RepositorioTemporada;
@@ -35,21 +36,24 @@ public class TestServiciosAdmin {
     @Test
     @DirtiesContext
     public void testNuevoSocio(){
-        var socio = serviciosAdmin.crearSocio("juan@gmail.com", "Juan","Torres","684190546","1234");
+        Socio s = new Socio(0,"juan@gmail.com", "Juan","Torres","684190546","1234",false);
+        var socio = serviciosAdmin.crearSocio(s);
         assertThat(socio).isNotNull();
     }
 
     @Test
     @DirtiesContext
     public void testNuevoSocioDuplicado(){
-        serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234");
-        assertThatThrownBy(() -> serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","684190546","1234")).isInstanceOf(UsuarioYaRegistrado.class);
+        Socio s = new Socio(0,"juan@gmail.com", "Juan","Torres","684190546","1234",false);
+        serviciosAdmin.crearSocio(s);
+        assertThatThrownBy(() -> serviciosAdmin.crearSocio(s)).isInstanceOf(UsuarioYaRegistrado.class);
     }
 
     @Test
     @DirtiesContext
     public void testNuevoSocioConFallos(){
-        assertThatThrownBy(() -> serviciosAdmin.crearSocio("a","","","1","")).isInstanceOf(ConstraintViolationException.class);
+        Socio s = new Socio(0,"a","","","1","",false);
+        assertThatThrownBy(() -> serviciosAdmin.crearSocio(s)).isInstanceOf(ConstraintViolationException.class);
     }
 
     @Test
@@ -123,9 +127,12 @@ public class TestServiciosAdmin {
     public void testCerrarActividad(){
         serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga","Clase de yoga al aire libre",50,5,LocalDate.now().plusDays(10),LocalDate.now().minusDays(5),LocalDate.now().plusDays(1));
-        var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com","Paco","Ruiz Lopez","684190546","1234");
-        var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com","Juan","Torres","658986256","1234");
-        var usuario3 = serviciosAdmin.crearSocio("maria@example.com", "Maria", "Garcia", "658986258", "claveMaria123");
+        Socio carlos = new Socio(0,"carlos@example.com", "Carlos", "Perez", "600000001", "claveCarlos123",false);
+        Socio elena = new Socio(0,"elena@example.com", "Elena", "Gomez", "600000002", "claveElena456",false);
+        Socio raul = new Socio(0,"raul@example.com", "Raul", "Martinez", "600000003", "claveRaul789",false);
+        var usuario1 = serviciosAdmin.crearSocio(carlos);
+        var usuario2 = serviciosAdmin.crearSocio(elena);
+        var usuario3 = serviciosAdmin.crearSocio(raul);
 
         serviciosAdmin.pagar(usuario1);
         serviciosAdmin.pagar(usuario3);
@@ -158,9 +165,12 @@ public class TestServiciosAdmin {
     public void testCerrarActividadManualmente() {
         serviciosAdmin.crearTemporada();
         var actividad = serviciosAdmin.crearActividad("Clase de yoga", "Clase de yoga al aire libre", 50, 10, LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(1));
-        var usuario1 = serviciosAdmin.crearSocio("paco@gmail.com", "Paco", "Ruiz Lopez", "684190546", "1234");
-        var usuario2 = serviciosAdmin.crearSocio("juan@gmail.com", "Juan", "Torres", "658986256", "1234");
-        var usuario3 = serviciosAdmin.crearSocio("maria@example.com", "Maria", "Garcia", "658986258", "claveMaria123");
+        Socio carlos = new Socio(0,"carlos@example.com", "Carlos", "Perez", "600000001", "claveCarlos123",false);
+        Socio elena = new Socio(0,"elena@example.com", "Elena", "Gomez", "600000002", "claveElena456",false);
+        Socio raul = new Socio(0,"raul@example.com", "Raul", "Martinez", "600000003", "claveRaul789",false);
+        var usuario1 = serviciosAdmin.crearSocio(carlos);
+        var usuario2 = serviciosAdmin.crearSocio(elena);
+        var usuario3 = serviciosAdmin.crearSocio(raul);
 
         serviciosAdmin.pagar(usuario1);
         serviciosAdmin.pagar(usuario3);

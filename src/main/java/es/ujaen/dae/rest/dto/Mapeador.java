@@ -10,6 +10,7 @@ import es.ujaen.dae.repositorios.RepositorioActividad;
 import es.ujaen.dae.repositorios.RepositorioSocio;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import es.ujaen.dae.excepciones.ActividadNoExistente;
 
@@ -21,16 +22,23 @@ public class Mapeador {
     @Autowired
     RepositorioSocio repositorioSocio;
 
+    @Autowired
+    PasswordEncoder codificador;
+
     public Mapeador(RepositorioActividad repositorioActividad) {
         this.repositorioActividad = repositorioActividad;
     }
 
     public DSocio dto(@NotNull Socio socio){
-        return new DSocio(socio.getIdSocio(),socio.getEmail(),socio.getNombre(),socio.getApellidos(),socio.getTelefono(),socio.getClaveAcceso(),socio.isHaPagado());
+        return new DSocio(socio.getIdSocio(),socio.getEmail(),socio.getNombre(),socio.getApellidos(),socio.getTelefono(),"",socio.isHaPagado());
     }
 
     public Socio entidad(@NotNull DSocio socio){
         return new Socio(socio.idSocio(),socio.email(),socio.nombre(),socio.apellidos(),socio.telefono(),socio.claveAcceso(),socio.haPagado());
+    }
+
+    public Socio nuevaEntidad(@NotNull DSocio socio){
+        return new Socio(socio.idSocio(),socio.email(),socio.nombre(),socio.apellidos(),socio.telefono(), codificador.encode(socio.claveAcceso()), socio.haPagado());
     }
 
     public DTemporada dto(@NotNull Temporada temporada){

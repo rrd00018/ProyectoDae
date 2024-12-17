@@ -1,9 +1,12 @@
 package servicios;
 
 import es.ujaen.dae.entidades.Actividad;
+import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.excepciones.ActividadNoExistente;
+import es.ujaen.dae.excepciones.UsuarioNoRegistrado;
 import es.ujaen.dae.repositorios.RepositorioActividad;
+import es.ujaen.dae.rest.dto.DSocio;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,17 +41,21 @@ public class TestServicioSocios {
     @BeforeEach
     public void setUp() {
         // Registra los socios en el repositorio (simula un registro)
-        serviciosAdmin.crearSocio("carlos@example.com", "Carlos", "Perez", "600000001", "claveCarlos123");
-        serviciosAdmin.crearSocio("elena@example.com", "Elena", "Gomez", "600000002", "claveElena456");
-        serviciosAdmin.crearSocio("raul@example.com", "Raul", "Martinez", "600000003", "claveRaul789");
-        serviciosAdmin.crearSocio("laura@example.com", "Laura", "Sanchez", "600000004", "claveLaura321");
+        Socio carlos = new Socio(0,"carlos@example.com", "Carlos", "Perez", "600000001", "claveCarlos123",false);
+        Socio elena = new Socio(0,"elena@example.com", "Elena", "Gomez", "600000002", "claveElena456",false);
+        Socio raul = new Socio(0,"raul@example.com", "Raul", "Martinez", "600000003", "claveRaul789",false);
+        Socio laura = new Socio(0,"laura@example.com", "Laura", "Sanchez", "600000004", "claveLaura321",false);
+        serviciosAdmin.crearSocio(carlos);
+        serviciosAdmin.crearSocio(elena);
+        serviciosAdmin.crearSocio(raul);
+        serviciosAdmin.crearSocio(laura);
     }
 
     @Test
     @DirtiesContext
     public void testEcharSolicitud_ActividadExistente() {
         // Simulación de login para Carlos
-        var socioCarlos = serviciosAdmin.login("carlos@example.com", "claveCarlos123").get();
+        var socioCarlos = serviciosAdmin.recuperarSocioPorEmail("carlos@example.com").orElseThrow(UsuarioNoRegistrado::new);
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
@@ -58,7 +65,7 @@ public class TestServicioSocios {
 
         List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
         // REFRESCAR socioCarlos HACIENDO UN LOGIN
-        socioCarlos = serviciosAdmin.login("carlos@example.com", "claveCarlos123").get();
+        socioCarlos = serviciosAdmin.recuperarSocioPorEmail("carlos@example.com").orElseThrow(UsuarioNoRegistrado::new);
         Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos, actividadesAbiertas.get(0).getId(), 2);
 
         assertNotNull(solicitud);
@@ -70,7 +77,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testEcharSolicitud_ActividadNoExistente() {
         // Simulación de login para Elena
-        var socioElena = serviciosAdmin.login("elena@example.com", "claveElena456").get();
+        var socioElena = serviciosAdmin.recuperarSocioPorEmail("elena@example.com").orElseThrow(UsuarioNoRegistrado::new);
 
         serviciosAdmin.crearTemporada();
         assertThatThrownBy(() -> servicioSocios.echarSolicitud(socioElena, 999, 1)).isInstanceOf(ActividadNoExistente.class);
@@ -80,7 +87,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testModificarSolicitud() {
         // Simulación de login para Raul
-        var socioRaul = serviciosAdmin.login("raul@example.com", "claveRaul789").get();
+        var socioRaul = serviciosAdmin.recuperarSocioPorEmail("raul@example.com").orElseThrow(UsuarioNoRegistrado::new);
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
@@ -105,7 +112,7 @@ public class TestServicioSocios {
     @DirtiesContext
     public void testCancelarSolicitud() {
         // Simulación de login para Laura
-        var socioLaura = serviciosAdmin.login("laura@example.com", "claveLaura321").get();
+        var socioLaura = serviciosAdmin.recuperarSocioPorEmail("laura@example.com").orElseThrow(UsuarioNoRegistrado::new);
 
         LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
         LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
