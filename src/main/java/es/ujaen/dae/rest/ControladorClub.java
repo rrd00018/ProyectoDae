@@ -221,8 +221,7 @@ public class ControladorClub {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-    @PutMapping("/solicitudes/admin")
+    @PutMapping("/admin/solicitudes")
     public ResponseEntity<DSolicitud> actualizarSolicitudAdmin(@RequestBody DSolicitud dSolicitud) {
         try {
             Solicitud s = serviciosAdmin.buscarSolicitud(dSolicitud.idSolicitud());
@@ -245,7 +244,7 @@ public class ControladorClub {
         }
     }
 
-    @PutMapping("/clubdesocios/socios/{email}/pagar")
+    @PutMapping("/clubdesocios/socios/{email}")
     public ResponseEntity<DSocio> pagarCuota(@PathVariable String email) {
         try {
             Socio socio = serviciosAdmin.recuperarSocioPorEmail(email)

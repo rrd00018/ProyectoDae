@@ -680,7 +680,7 @@ public class TestControladorClub {
         );
         var solicitudModificada = new DSolicitud(respuestaBusquedaSolicitud.getBody().idSolicitud(),5,respuestaBusquedaSolicitud.getBody().aceptada(),3,respuestaBusquedaSolicitud.getBody().idSocio(),respuestaBusquedaSolicitud.getBody().idActividad());
         restTemplate.withBasicAuth("admin@admin.com","adminPassword").put(
-                "/solicitudes/admin",
+                "/admin/solicitudes",
                 solicitudModificada
         );
         var respuestaBusquedaSolicitudActualizada = restTemplate.withBasicAuth("email@gmail.com","1234").getForEntity(
@@ -705,7 +705,7 @@ public class TestControladorClub {
 
         var respuestaPago = restTemplate.withBasicAuth("juan.perez@email.com", "clave123")
                 .exchange(
-                        "/clubdesocios/socios/{email}/pagar",
+                        "/clubdesocios/socios/{email}",
                         HttpMethod.PUT,
                         null,
                         DSocio.class,
