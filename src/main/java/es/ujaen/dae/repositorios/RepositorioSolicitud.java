@@ -27,7 +27,9 @@ public class RepositorioSolicitud {
         em.persist(solicitud);
         em.flush();
     }
-
+    public void comprobarErrores() {
+        em.flush();
+    }
 
     public Solicitud actualizar(Solicitud solicitud) {
         return em.merge(solicitud);

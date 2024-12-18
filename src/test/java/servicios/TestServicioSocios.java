@@ -4,6 +4,7 @@ import es.ujaen.dae.entidades.Actividad;
 import es.ujaen.dae.entidades.Socio;
 import es.ujaen.dae.entidades.Solicitud;
 import es.ujaen.dae.excepciones.ActividadNoExistente;
+import es.ujaen.dae.excepciones.NumeroDePlazasIncorrecto;
 import es.ujaen.dae.excepciones.UsuarioNoRegistrado;
 import es.ujaen.dae.repositorios.RepositorioActividad;
 import es.ujaen.dae.rest.dto.DSocio;
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
+import java.util.logging.Logger;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -73,6 +74,44 @@ public class TestServicioSocios {
         assertEquals("Pilates en la Playa", solicitud.getActividad().getTitulo());
     }
 
+
+    @Test
+    @DirtiesContext
+    public void testEcharSolicitud_ActividadSinEspacio() {
+        // Simulación de login para Carlos
+        var socioCarlos = serviciosAdmin.recuperarSocioPorEmail("carlos@example.com").orElseThrow(UsuarioNoRegistrado::new);
+        var socioElena = serviciosAdmin.recuperarSocioPorEmail("elena@example.com").orElseThrow(UsuarioNoRegistrado::new);
+
+        socioCarlos.setHaPagado(true);
+        socioElena.setHaPagado(true);
+        LocalDate fechaCelebracion = LocalDate.now().plusDays(10);
+        LocalDate fechaInicioInscripcion = LocalDate.now().minusDays(10);
+        LocalDate fechaFinInscripcion = LocalDate.now().plusDays(1);
+        serviciosAdmin.crearTemporada();
+        var a  = serviciosAdmin.crearActividad("Pilates en la Playa", "Clases de pilates al aire libre", 40.0f, 2, fechaCelebracion, fechaInicioInscripcion, fechaFinInscripcion);
+
+        List<Actividad> actividadesAbiertas = serviciosAdmin.listarActividadesDisponibles();
+        // REFRESCAR socioCarlos HACIENDO UN LOGIN
+       // var th = new Thread(()-> {
+            try {
+                Solicitud solicitud = servicioSocios.echarSolicitud(socioCarlos, actividadesAbiertas.get(0).getId(), 2);
+
+            }catch (NumeroDePlazasIncorrecto e){
+                Logger.getLogger(servicioSocios.getClass().getName()).warning("echar solicitud imposible maximo plazas alcanzado");
+            }
+        //});
+        //th.start();
+        try {
+            Solicitud solicitudDOS = servicioSocios.echarSolicitud(socioElena, actividadesAbiertas.get(0).getId(), 2);
+
+        }catch (NumeroDePlazasIncorrecto e){
+            Logger.getLogger(servicioSocios.getClass().getName()).warning("echar solicitud 2 imposible maximo plazas alcanzado");
+        }
+        //try { th.join(); } catch(InterruptedException e) {}
+        var act = serviciosAdmin.buscarActividad(actividadesAbiertas.get(0).getId());
+        assertThat(act.getSolicitudes().size() == 2);
+
+    }
     @Test
     @DirtiesContext
     public void testEcharSolicitud_ActividadNoExistente() {

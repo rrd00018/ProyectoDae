@@ -10,6 +10,7 @@ import es.ujaen.dae.repositorios.RepositorioActividad;
 import es.ujaen.dae.repositorios.RepositorioSocio;
 import es.ujaen.dae.repositorios.RepositorioSolicitud;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,8 @@ public class ServicioSocios {
     private RepositorioActividad repositorioActividad;
     @Autowired
     private RepositorioSocio repositorioSocio;
+    @Autowired
+    private ServiciosAdmin serviciosAdmin;
 
     public ServicioSocios() {}
 
@@ -47,16 +50,33 @@ public class ServicioSocios {
             throw new NumeroDeInvitadosIncorrecto();
         }
 
-        socio = repositorioSocio.actualizar(socio);
-        if (!socio.existeSolicitud(idActividad)) {
+        if ( actividad.getPlazasAsignadas() == actividad.getPlazas()){
+            throw new NumeroDeInvitadosIncorrecto();   // si ya se han asignado el total de plazas no se pueden echar mas solicitudes
+        }
 
-            Solicitud soli = new Solicitud(socio, invitados, actividad);
-            socio.crearSolicitud(soli, actividad);
-            repositorioSolicitud.guardar(soli);
+        socio = repositorioSocio.actualizar(socio);
+        Solicitud soli = new Solicitud(socio, invitados, actividad);
+        boolean reservado = false;
+        while (!reservado) {
+            try {
+                socio.crearSolicitud(soli, actividad);
+                repositorioSolicitud.guardar(soli);
+                if(socio.isHaPagado()){
+                    actividad.addSolicitud(soli);
+                }
+                repositorioSolicitud.comprobarErrores();
+                reservado = true;
+            }
+            catch(OptimisticLockingFailureException e) {
+            }
+        }
+
+        if (!socio.existeSolicitud(idActividad)) {
             repositorioSocio.actualizar(socio);
             repositorioActividad.actualizar(actividad);
             return soli;
         }
+
         return null;
     }
 

@@ -110,7 +110,7 @@ public class Actividad {
      */
     public void asignarPlazasManualmente(Solicitud s, int nPlazas){
         if(solicitudes.contains(s)){
-            if(nPlazas > s.getNumAcompaniantes() + 1 || nPlazas <= 0 || plazasAsignadas + nPlazas > plazas)
+            if(nPlazas > s.getNumAcompaniantes() + 1 || nPlazas < 0 || plazasAsignadas + nPlazas > plazas)
                 throw new NumeroDePlazasIncorrecto();
 
             int plazasRequeridas = s.getNumAcompaniantes() - s.getAcompaniantesAceptados();
@@ -122,13 +122,18 @@ public class Actividad {
                 throw new NumeroDePlazasIncorrecto();
 
             if (!s.isAceptada()) {
-                s.aceptarSolicitud();
                 plazasAsignadas++;
-                nPlazas--;
+                    nPlazas--;
             }
 
             s.setAcompaniantesAceptados(nPlazas);
-            plazasAsignadas += nPlazas;
+            if(nPlazas>0){
+                plazasAsignadas += nPlazas;
+            }
+            if(nPlazas == s.getNumAcompaniantes()){
+                s.aceptarSolicitud();
+            }
+
         }else throw new SolicitudIncorrecta();
     }
 

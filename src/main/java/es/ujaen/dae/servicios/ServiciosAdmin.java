@@ -166,12 +166,13 @@ public class ServiciosAdmin {
      */
     @Transactional
     public void procesarSolicitudManualmente(@Valid Solicitud s, int nPlazas){
-        s = repositorioSolicitud.actualizar(s);
 
+        s = repositorioSolicitud.actualizar(s);
          Optional<Actividad> actividad = repositorioActividad.buscar(s.getActividad().getId());
          Actividad a = actividad.get();
         //Actividad a =s.getActividad();
         a.asignarPlazasManualmente(s, nPlazas);
+        s = repositorioSolicitud.actualizar(s);
     }
 
 
