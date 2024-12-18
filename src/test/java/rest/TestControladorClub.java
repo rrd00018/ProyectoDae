@@ -631,66 +631,24 @@ public class TestControladorClub {
                 solicitudModificada.idSolicitud()
         );
         assertThat(respuestaBusquedaSolicitudActualizada.getBody().numAcompaniantes()).isEqualTo(5);
-    }
+        var solicitudModificadaAdmin = new DSolicitud(respuestaBusquedaSolicitud.getBody().idSolicitud(),5,respuestaBusquedaSolicitud.getBody().aceptada(),3,respuestaBusquedaSolicitud.getBody().idSocio(),respuestaBusquedaSolicitud.getBody().idActividad());
 
-
-    @Test
-    @DirtiesContext
-    void testModificarSolicitudAdmin(){
-        int anio = LocalDate.now().getYear();
-        var temporada = new DTemporada(anio);
-        restTemplate.withBasicAuth("admin@admin.com", "adminPassword").postForEntity(
-                "/temporadas",
-                temporada,
-                Void.class
-        );
-        var actividad = new DActividad(0,"Senderismo en la sierra de Cazorla", "Paseo por los principales puntos de la sierra de Cazorla", 50,20,LocalDate.now().plusDays(2),LocalDate.now(),LocalDate.now().plusDays(1),0);
-        restTemplate.withBasicAuth("admin@admin.com", "adminPassword").postForEntity(
-                "/actividades",
-                actividad,
-                Void.class
-        );
-        var socio = new DSocio(0,"email@gmail.com","Juan","Matias","652584273","1234",false);
-        restTemplate.postForEntity(
-                "/socios",
-                socio,
-                Void.class
-        );
-        var respuestaBusquedaSocio = restTemplate.withBasicAuth("email@gmail.com","1234").getForEntity(
-                "/socios/{email}",
-                DSocio.class,
-                socio.email(),
-                socio.claveAcceso()
-        );
-        var actividades = restTemplate.getForEntity(
-                "/temporadas/{anio}/actividades",
-                DActividad[].class,
-                anio
-        );
-        var solicitud = new DSolicitud(0,2,false,0,respuestaBusquedaSocio.getBody().idSocio(),actividades.getBody()[0].id());
-        restTemplate.withBasicAuth("email@gmail.com","1234").postForEntity(
+        var actualizarPLazas = restTemplate.withBasicAuth("admin@admin.com","adminPassword").exchange(
                 "/solicitudes",
-                solicitud,
-                Void.class
+                HttpMethod.PUT,
+                new HttpEntity<>(solicitudModificadaAdmin),
+                DSolicitud.class
         );
-        var respuestaBusquedaSolicitud = restTemplate.withBasicAuth("email@gmail.com","1234").getForEntity(
+        assertThat(actualizarPLazas.getStatusCode()).isEqualTo(HttpStatus.OK);
+        var respuestaBusquedaSolicitudActualizadaAdmin = restTemplate.withBasicAuth("email@gmail.com","1234").getForEntity(
                 "/solicitudes/{idSolicitud}",
                 DSolicitud.class,
-                1
+                solicitudModificadaAdmin.idSolicitud()
         );
-        var solicitudModificada = new DSolicitud(respuestaBusquedaSolicitud.getBody().idSolicitud(),5,respuestaBusquedaSolicitud.getBody().aceptada(),3,respuestaBusquedaSolicitud.getBody().idSocio(),respuestaBusquedaSolicitud.getBody().idActividad());
-        restTemplate.withBasicAuth("admin@admin.com","adminPassword").put(
-                "/admin/solicitudes",
-                solicitudModificada
-        );
-        var respuestaBusquedaSolicitudActualizada = restTemplate.withBasicAuth("email@gmail.com","1234").getForEntity(
-                "/solicitudes/{idSolicitud}",
-                DSolicitud.class,
-                solicitudModificada.idSolicitud()
-        );
-        assertThat(respuestaBusquedaSolicitudActualizada.getBody().numAcompaniantes()).isEqualTo(5);
-        assertThat(respuestaBusquedaSolicitudActualizada.getBody().acompaniantesAceptados()).isEqualTo(2);
+        assertThat(respuestaBusquedaSolicitudActualizadaAdmin.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuestaBusquedaSolicitudActualizadaAdmin.getBody().acompaniantesAceptados()).isEqualTo(2);
     }
+
 
     @Test
     void testPagarCuota() {

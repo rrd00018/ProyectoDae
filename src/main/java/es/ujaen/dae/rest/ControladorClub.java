@@ -7,6 +7,7 @@ import es.ujaen.dae.rest.dto.DSocio;
 import es.ujaen.dae.rest.dto.DSolicitud;
 import es.ujaen.dae.rest.dto.Mapeador;
 import es.ujaen.dae.rest.dto.*;
+import es.ujaen.dae.seguridad.ServicioCredenciales;
 import es.ujaen.dae.servicios.ServicioSocios;
 import es.ujaen.dae.servicios.ServiciosAdmin;
 import jakarta.validation.ConstraintViolationException;
@@ -31,6 +32,8 @@ public class ControladorClub {
 
     @Autowired
     ServicioSocios servicioSocios;
+    @Autowired
+    private ServicioCredenciales servicioCredenciales;
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(ConstraintViolationException.class)
@@ -189,16 +192,31 @@ public class ControladorClub {
 
 
     @PutMapping("/solicitudes")
-    public ResponseEntity<DSolicitud> actualizarSolicitud(@RequestBody DSolicitud dSolicitud) {
+    public ResponseEntity<DSolicitud> actualizarSolicitud(@RequestBody DSolicitud dSolicitud, Principal user) {
         try {
-            Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(
-                    serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
-                    dSolicitud.idActividad(),
-                    dSolicitud.numAcompaniantes()
-            );
+            var esAdmin = servicioCredenciales.loadUserByUsername(user.getName()).getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_DIRECCION"));
+            System.out.println("Admin : " + esAdmin);
+            if(!esAdmin) {
+                Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(
+                        serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
+                        dSolicitud.idActividad(),
+                        dSolicitud.numAcompaniantes()
+                );
+                return ResponseEntity.ok(mapeador.dto(solicitudActualizada));
+            }else{
+                Solicitud s = serviciosAdmin.buscarSolicitud(dSolicitud.idSolicitud());
 
-            return ResponseEntity.ok(mapeador.dto(solicitudActualizada));
+                Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(
+                        serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
+                        dSolicitud.idActividad(),
+                        dSolicitud.numAcompaniantes()
+                );
+                int plazas  = dSolicitud.acompaniantesAceptados() - s.getAcompaniantesAceptados();
+                System.out.println(plazas);
+                serviciosAdmin.procesarSolicitudManualmente(solicitudActualizada,plazas);
 
+                return ResponseEntity.ok(mapeador.dto(solicitudActualizada));
+            }
         } catch (NumeroDeInvitadosIncorrecto e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (SolicitudIncorrecta e) {
@@ -219,28 +237,6 @@ public class ControladorClub {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (SolicitudFueraDePlazo e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
-    @PutMapping("/admin/solicitudes")
-    public ResponseEntity<DSolicitud> actualizarSolicitudAdmin(@RequestBody DSolicitud dSolicitud) {
-        try {
-            Solicitud s = serviciosAdmin.buscarSolicitud(dSolicitud.idSolicitud());
-
-            Solicitud solicitudActualizada = servicioSocios.modificarSolicitud(
-                    serviciosAdmin.recuperarSocioPorId(dSolicitud.idSocio()),
-                    dSolicitud.idActividad(),
-                    dSolicitud.numAcompaniantes()
-            );
-            int plazas  = dSolicitud.acompaniantesAceptados() - s.getAcompaniantesAceptados();
-            System.out.println(plazas);
-            serviciosAdmin.procesarSolicitudManualmente(solicitudActualizada,plazas);
-
-            return ResponseEntity.ok(mapeador.dto(solicitudActualizada));
-
-        } catch (NumeroDeInvitadosIncorrecto e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (SolicitudIncorrecta e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

@@ -37,7 +37,7 @@ public class ServiciosAdmin {
     //private HashMap<String,Socio> socios; //Usa el email como clave
     //private HashMap<Integer, Temporada> temporadas; //Usa el año como clave
 
-    private static final Socio admin = new Socio("admin@admin","admin","admin","639658419","$2a$12$QLJH37bBpKLNHVa0daWCqOI.gOtdkuGN4Cwr/vJQZTavUPPdJT55y");
+    private static final Socio admin = new Socio("admin@admin.com","admin","admin","639658419","$2a$12$QLJH37bBpKLNHVa0daWCqOI.gOtdkuGN4Cwr/vJQZTavUPPdJT55y");
 
     public ServiciosAdmin(){
     }
